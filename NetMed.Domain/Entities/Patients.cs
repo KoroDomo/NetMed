@@ -1,6 +1,4 @@
-﻿
-
-using NetMed.Domain.Base;
+﻿using NetMed.Domain.Base;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,7 +9,7 @@ namespace NetMed.Domain.Entities
         [Column("PatientID")]
         [Key]
         public override int Id { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
         public char Gender { get; set; }
         public string EmergencyContactName { get; set; }
         public string EmergencyContactPhone { get; set; }
