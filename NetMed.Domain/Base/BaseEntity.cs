@@ -1,5 +1,4 @@
 ﻿
-
 namespace NetMed.Domain.Base
 {
     public abstract class BaseEntity<Ttype> : AptEntity

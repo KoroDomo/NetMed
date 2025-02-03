@@ -1,5 +1,4 @@
-﻿
-using NetMed.Domain.Base;
+﻿using NetMed.Domain.Base;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 

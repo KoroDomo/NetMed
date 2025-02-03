@@ -1,5 +1,4 @@
-﻿
-using NetMed.Domain.Base;
+﻿using NetMed.Domain.Base;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,6 +18,6 @@ namespace NetMed.Domain.Entities
         public decimal? ConsultationFee { get; set; }
         public string ClinicAddress { get; set; }
         public int AvailabilityModelID { get; set; }
-        public DateTime LicenseExpirationDate { get; set; }
+        public DateOnly LicenseExpirationDate { get; set; }
     }
 }

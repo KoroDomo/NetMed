@@ -10,8 +10,8 @@ namespace NetMed.Domain.Entities
         [Key]
         public override int Id { get; set; }
         public DateTime AvailableDate { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public TimeOnly StartTime { get; set; }
+        public TimeOnly EndTime { get; set; }
 
     }
 }

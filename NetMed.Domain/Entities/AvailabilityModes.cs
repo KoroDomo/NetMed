@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NetMed.Domain.Entities
 {
-    public sealed class AvailabilityModes : BaseEntity<int> // Verificar diferencia con Base.BaseEntity
+    public sealed class AvailabilityModes : BaseEntity<int> 
     {
         [Column("SAvailabilityModeID")]
         [Key]

@@ -1,0 +1,6 @@
+@NetMed.Api_HostAddress = http://localhost:5261
+
+GET {{NetMed.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
