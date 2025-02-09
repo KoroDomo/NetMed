@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NetMed.Domain.Entities
 {
-    public sealed class Roles : BaseEntity<int>
+    public sealed class AvailabilityModes : BaseEntity<int>
     {
-        [Column("RoleID")]
+        [Column("SAvailabilityModeID")]
         [Key]
         public override int Id { get; set; }
-        public string RoleName { get; set; }
+        public string AvailabilityModeName { get; set; }
     }
 }
