@@ -11,12 +11,12 @@ namespace NetMed.Domain.Repository
     public interface IBaseRepository<TEntity, TType> where TEntity : class
     {
         Task<TEntity> GetEntityByIdAsync(TType id);
-        Task UpdateEntityAsync(TEntity entity);  
-        Task DeleteEntityAsync(TEntity entity); 
-        Task SaveEntityAsync(TEntity entity);    
+        Task<OperationResult> UpdateEntityAsync(TEntity entity);  
+        Task<OperationResult> DeleteEntityAsync(TEntity entity); 
+        Task<OperationResult> SaveEntityAsync(TEntity entity);    
         Task<List<TEntity>> GetAllAsync();
         Task<OperationResult> GetAll(Expression<Func<TEntity, bool>> filter);
-        Task<bool> Exists(Expression<Func<TEntity, bool>> filter);
+        Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> filter);
 
     }
 }
