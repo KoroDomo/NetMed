@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.Api", "NetMed.Api\Ne
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IOC", "IOC", "{23377D99-AAA9-4891-928A-4B8FCD4ADFF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed", "NetMed\NetMed.csproj", "{A195BE89-0A99-4987-B6B4-DE4EE2AAD12A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.IOC", "NetMed\NetMed.IOC.csproj", "{A195BE89-0A99-4987-B6B4-DE4EE2AAD12A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
