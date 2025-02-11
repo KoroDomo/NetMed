@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NetMed.Domain.Entities
 {
-    public sealed class Notifications : BaseEntity<int>
+    public sealed class Notification : BaseEntity<int>
     {
         [Column("NotificationID")]
         [Key]
