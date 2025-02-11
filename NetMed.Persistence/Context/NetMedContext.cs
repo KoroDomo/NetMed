@@ -5,20 +5,15 @@ using NetMed.Domain.Entities;
 
 namespace NetMed.Persistence.Context
 {
-    public partial class MyContext : DbContext
+    public  class NetMedContext: DbContext
     {
-        public MyContext(DbContextOptions options) : base(options)
-        {
+        public NetMedContext(DbContextOptions options) : base(options)
+        { }
+         public   DbSet<Doctors> Doctors { get; set; }
 
+         public   DbSet<Patients> Patients { get; set; }
 
-        }
+         public   DbSet<Users> Users { get; set; }
 
-        // MI CONTEXTO BASE DE DATOS
-        DbSet<Doctors> doctors { get; set; }
-
-        DbSet<Patients> patients { get; set; }
-
-        DbSet<Users> users { get; set; }
-
-    }
+     }         
 }

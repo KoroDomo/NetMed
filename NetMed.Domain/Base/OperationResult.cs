@@ -3,8 +3,15 @@ namespace NetMed.Domain.Base
 {
     public class OperationResult
     {
-        public string Mesagge { get; set; }
-        public bool success {get; set;}
-        public dynamic Result { get; set; }
+        public OperationResult()
+        {
+            this.Message = string.Empty; 
+            this.Success = true;
+            this.Result = null;
+        }
+        public string Message { get; set; }
+        public bool Success {get; set;}
+        public dynamic? Result { get; set; }
+
     }
 }

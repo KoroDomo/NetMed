@@ -6,17 +6,20 @@ namespace NetMed.Domain.Entities
 {
     public sealed class Doctors : BaseEntity<int>
     {
+        public readonly int AvailabilityModeId;
+
         [Column("DoctorID")]
         [Key]
         public override int Id { get; set; }
         public int SpecialtyID { get; set; }
-        public string LicenseNumber { get; set; }
-        public string PhoneNumber { get; set; }
+        public int SpecialtyId { get; set; }
+        public required string LicenseNumber { get; set; }
+        public required string PhoneNumber { get; set; }
         public int YearsOfExperience { get; set; }
-        public string Education { get; set; }
-        public string Bio { get; set; }
+        public required string Education { get; set; }
+        public string? Bio { get; set; }
         public decimal? ConsultationFee { get; set; }
-        public string ClinicAddress { get; set; }
+        public required string ClinicAddress { get; set; }
         public int AvailabilityModelID { get; set; }
         public DateOnly LicenseExpirationDate { get; set; }
     }
