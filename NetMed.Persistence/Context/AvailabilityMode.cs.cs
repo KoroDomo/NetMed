@@ -2,7 +2,7 @@
 
 namespace NetMed.Persistence.Context
 {
-    internal class AvailabilityMode
+    public class AvailabilityMode
     {
     }
 }
