@@ -6,6 +6,8 @@ namespace NetMed.Domain.Entities
 {
     public sealed class Users : PersonEntity
     {
+      
+
         [Column("UserID")]
         [Key]
         public override int Id { get; set; }
@@ -13,5 +15,8 @@ namespace NetMed.Domain.Entities
         public required string LastName { get; set; }
         public required string Password { get; set; }
         public int RoleID { get; set; }
+        public DateTime RegisterDate { get; set; }
+
+        public required string PasswordHash { get; set; }
     }
 }
