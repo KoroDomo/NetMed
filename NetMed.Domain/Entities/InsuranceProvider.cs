@@ -22,6 +22,7 @@ namespace NetMed.Domain.Entities
         public bool IsPreferred { get; set; }
         public int NetworkTypeID { get; set; }
         public string CustomerSupportContact { get; set; }
+        //AcceptedRegions Chequear
         public string AcceptedRegions { get; set; }
         public decimal MaxCoverageAmount { get; set; }
     }

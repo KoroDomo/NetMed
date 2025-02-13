@@ -13,10 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NetMed.Domain\NetMed.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Repository\" />
+    <ProjectReference Include="..\NetMed.Model\NetMed.Model.csproj" />
   </ItemGroup>
 
 </Project>

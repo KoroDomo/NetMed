@@ -12,10 +12,9 @@ namespace NetMed.Domain.Repository
     {
         Task<TEntity> GetEntityByIdAsync(TType id);
         Task<OperationResult> UpdateEntityAsync(TEntity entity);  
-        Task<OperationResult> DeleteEntityAsync(TEntity entity); 
         Task<OperationResult> SaveEntityAsync(TEntity entity);    
         Task<List<TEntity>> GetAllAsync();
-        Task<OperationResult> GetAll(Expression<Func<TEntity, bool>> filter);
+        Task<OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter);
         Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> filter);
 
     }
