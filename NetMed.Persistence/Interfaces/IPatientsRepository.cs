@@ -1,8 +1,6 @@
-﻿
-
-using NetMed.Domain.Entities;
+﻿using NetMed.Domain.Entities;
 using NetMed.Domain.Repository;
-namespace NetMed.Persistence.Repositories.Interfaces
+namespace NetMed.Persistence.Interfaces
 {
     public interface IPatientsRepository : IBaseRepository<Patients>
     {

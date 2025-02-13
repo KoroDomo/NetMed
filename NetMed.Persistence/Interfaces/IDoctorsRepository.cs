@@ -1,13 +1,12 @@
-﻿
-using NetMed.Domain.Base;
+﻿using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Domain.Repository;
 
 
 
-namespace NetMed.Persistence.Repositories.Interfaces
+namespace NetMed.Persistence.Interfaces
 {
-    public interface  IDoctorsRepository : IBaseRepository<Doctors>
+    public interface IDoctorsRepository : IBaseRepository<Doctors>
     {
         Task<List<Doctors>> GetByAvailabilityModeAsync(int availabilityModeId);
 

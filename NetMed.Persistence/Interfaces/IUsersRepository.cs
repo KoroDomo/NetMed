@@ -1,10 +1,9 @@
-﻿
-using NetMed.Domain.Entities;
+﻿using NetMed.Domain.Entities;
 using NetMed.Domain.Repository;
 
-namespace NetMed.Persistence.Repositories.Interfaces
+namespace NetMed.Persistence.Interfaces
 {
-   public interface IUsersRepository : IBaseRepository<Users>
+    public interface IUsersRepository : IBaseRepository<Users>
     {
         Task<Users> GetEmailAsync(string email);
 
@@ -22,5 +21,5 @@ namespace NetMed.Persistence.Repositories.Interfaces
         Task AssignRoleAsync(int userId, int roleId);
 
 
-    }   
+    }
 }

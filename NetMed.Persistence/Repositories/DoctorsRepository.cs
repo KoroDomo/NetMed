@@ -2,10 +2,10 @@
 using NetMed.Persistence.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Context;
-using NetMed.Persistence.Repositories.Interfaces;
 using NetMed.Domain.Base;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using NetMed.Persistence.Interfaces;
 namespace NetMed.Persistence.Repositories
 {
     public class DoctorsRepository : BaseRepository<Doctors>, IDoctorsRepository

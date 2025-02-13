@@ -6,8 +6,7 @@ using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
-using NetMed.Persistence.Repositories.Interfaces;
-
+using NetMed.Persistence.Interfaces;
 
 namespace NetMed.Persistence.Repositories
 {
