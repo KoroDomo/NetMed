@@ -15,7 +15,7 @@ namespace NetMed.Model
             public required string ClinicAddress { get; set; }
             public int AvailabilityModeId { get; set; }
             public DateOnly LicenseExpirationDate { get; set; }
-public DateTime CreatedAt { get; set; }
+            public DateTime CreatedAt { get; set; }
             public DateTime UpdatedAt { get; set; }
             public bool IsActive { get; set; }
         

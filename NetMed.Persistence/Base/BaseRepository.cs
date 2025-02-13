@@ -7,7 +7,7 @@ using NetMed.Persistence.Context;
 
 namespace NetMed.Persistence.Base
 {
-    public abstract class BaseRepository<TEntity, TType> : IBaseRepository<TEntity, TType> where TEntity : class
+    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         private readonly NetMedContext _context;
 
@@ -27,8 +27,8 @@ namespace NetMed.Persistence.Base
             OperationResult result = new OperationResult();
             try
             {
-               //var datos = Entity.Where(filter).ToList();
-               //result.Result = datos;
+                //var datos = Entity.Where(filter).ToList();
+                //result.Result = datos;
                 result.Result = await Entity.Where(filter).ToListAsync();
                 result.Success = true;
             }
@@ -40,12 +40,12 @@ namespace NetMed.Persistence.Base
             return result;
         }
 
-        public virtual async Task<TEntity> GetEntityByIdAsync(TType id)
+        public virtual async Task<TEntity> GetEntityByIdAsync(int id)
         {
             return await Entity.FindAsync(id) ?? throw new InvalidOperationException("Entity not found");
         }
-        
- 
+
+
         public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)
         {
             OperationResult result = new OperationResult();
@@ -57,9 +57,9 @@ namespace NetMed.Persistence.Base
             catch (Exception ex)
             {
                 result.Message = ex.Message + " Ocurrio un error guardando los datos.";
-                   result.Success = false;
+                result.Success = false;
             }
-                return result;    
+            return result;
         }
 
         public virtual async Task<OperationResult> UpdateEntityAsync(TEntity entity)
@@ -95,12 +95,14 @@ namespace NetMed.Persistence.Base
             }
             return result;
         }
-        Task<List<OperationResult>> IBaseRepository<TEntity, TType>.GetAllAsync()
+        public virtual async Task<List<OperationResult>> GetAllAsync()
         {
             OperationResult result = new OperationResult();
+            List<OperationResult> results = new List<OperationResult>();
+
             try
             {
-                result.Result = Entity.ToListAsync();
+                result.Result = await Entity.ToListAsync();
                 result.Success = true;
             }
             catch (Exception ex)
@@ -108,22 +110,9 @@ namespace NetMed.Persistence.Base
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
             }
-            return Task.FromResult(new List<OperationResult> { result });
+
+            results.Add(result);
+            return results;
         }
-
-        //    Task<OperationResult> IBaseRepository<TEntity, TType>.GetAll(Expression<Func<TEntity, bool>> filter)
-        //    { 
-        //        throw new NotImplementedException();
-        //    }
-
-        //    Task<bool> IBaseRepository<TEntity, TType>.Exists(Expression<Func<TEntity, bool>> filter)
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-        //}
-
-        //internal interface IBaseRepository<TEntity> where TEntity : class
-        //{
-        //}
     }
 }

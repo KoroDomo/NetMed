@@ -2,11 +2,16 @@
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Repositories.Interfaces;
-using NetMed.Domain.Base;
+
 
 namespace NetMed.Persistence.Repositories
 {
-    internal class UsersRepository
+    internal class UsersRepository : BaseRepository<Users>, IUsersRepository
     {
+        private readonly NetMedContext _context;
+        public UsersRepository(NetMedContext context) : base(context)
+        {
+            _context = context;
+        }
     }
 }
