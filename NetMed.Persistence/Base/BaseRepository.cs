@@ -7,11 +7,9 @@ using System.Linq.Expressions;
 
 namespace NetMed.Persistence.Base
 {
-    public abstract class BaseRepository<TEntity, TType> : IBaseRepository<TEntity, TType> where TEntity : class
+    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
        private readonly NetmedContext _context;
-
-
 
         private DbSet<TEntity> Entity{ get; set; }
 
@@ -21,9 +19,6 @@ namespace NetMed.Persistence.Base
             Entity = _context.Set<TEntity>();
 
         }
-
-
-        
 
         public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> filter)
         {
@@ -53,7 +48,7 @@ namespace NetMed.Persistence.Base
 
         }
 
-        public virtual async Task<TEntity> GetEntityByIdAsync(TType id)
+        public virtual async Task<TEntity> GetEntityByIdAsync(int id)
         {
             return await Entity.FindAsync(id);
 
