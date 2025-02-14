@@ -11,6 +11,6 @@ namespace NetMed.Persistence.Interfaces
         Task<OperationResult> GetActiveInsuranceProvidersAsync();
         Task<OperationResult> GetInsuranceProvidersByRegionAsync(string region);
         Task<OperationResult> GetInsuranceProvidersByMaxCoverageAsync(decimal maxCoverage);
-
+        
     }
 }

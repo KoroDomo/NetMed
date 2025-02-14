@@ -141,7 +141,7 @@ namespace NetMed.Persistence.Repository
         {
             return base.GetAllAsync(filter);
         }
-        public async override Task<List<InsuranceProvider>> GetAllAsync()
+        public async override Task<OperationResult> GetAllAsync()
         {
             OperationResult result = new OperationResult();
 
@@ -167,8 +167,8 @@ namespace NetMed.Persistence.Repository
                                         IsPrefered= insuranceProvider.IsPreferred,
                                         IsActive = insuranceProvider.IsActive,
 
-                                    }).AsNoTracking()
-                           .ToListAsync();
+                                    }).ToListAsync();
+
             }
             catch (Exception ex)
             {

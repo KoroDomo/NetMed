@@ -28,7 +28,7 @@ namespace NetMed.Persistence.Repositories
         {
             return base.SaveEntityAsync(entity);
         }
-        public override Task<NetworkType> GetEntityByIdAsync(int id)
+        public override Task<OperationResult> GetEntityByIdAsync(int id)
         {
             return base.GetEntityByIdAsync(id);
         }
@@ -40,7 +40,7 @@ namespace NetMed.Persistence.Repositories
         {
             return base.ExistsAsync(filter);
         }
-        public override Task<List<NetworkType>> GetAllAsync()
+        public override Task<OperationResult> GetAllAsync()
         {
             return base.GetAllAsync();
         }
@@ -58,5 +58,6 @@ namespace NetMed.Persistence.Repositories
         {
             throw new NotImplementedException();
         }
+
     }
 }

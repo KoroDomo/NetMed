@@ -41,14 +41,40 @@ namespace NetMed.Persistence.Base
             return result;
         }
 
-        public virtual async Task<List<TEntity>> GetAllAsync()
+        public virtual async Task<OperationResult> GetAllAsync()
         {
-            return await Entity.ToListAsync();
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var datos = await this.Entity.ToListAsync();
+                result.Result = datos;
+            }
+            catch (Exception ex)
+            {
+
+                result.Success = false;
+                result.Mesagge = $"Ocurrió un error obteniendo los datos.";
+            }
+
+            return result;
         }
 
-        public virtual async Task<TEntity> GetEntityByIdAsync(TType id)
+        public virtual async Task<OperationResult> GetEntityByIdAsync(TType id)
         {
-            return await Entity.FindAsync(id);
+            OperationResult result = new OperationResult();
+            try
+            {
+                var entity = await this.Entity.FindAsync(id);
+                result.Result = entity;
+            }
+            catch (Exception ex)
+            {
+
+                result.Success = false;
+                result.Result = $"Ocurrió un error obteniendo la entidad.";
+            }
+            return result;
         }
 
         public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)
@@ -86,6 +112,11 @@ namespace NetMed.Persistence.Base
             }
 
             return result;
+        }
+
+        Task<OperationResult> IBaseRepository<TEntity, TType>.GetAllAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 
