@@ -9,9 +9,8 @@ namespace NetMed.Domain.Entities
         [Column("AvailabilityID")]
         [Key]
         public override int Id { get; set; }
-        public DateTime AvailableDate { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-
+        public DateOnly AvailableDate { get; set; }
+        public TimeOnly StartTime { get; set; }
+        public TimeOnly EndTime { get; set; }
     }
 }
