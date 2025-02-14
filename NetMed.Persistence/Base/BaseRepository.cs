@@ -4,46 +4,91 @@ using System.Linq.Expressions;
 using NetMed.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
-
+//Me quede en el minuto 48:52
 
 namespace NetMed.Persistence.Base
 {
-    public abstract class BaseRepository<TEntity, TType> : IBaseRepository<TEntity, TType> where TEntity : class
+    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         private readonly NetMedContext _context;
-        private DbSet<TEntity> Entity { get; set; } // Investigar. El profesor tiene private TEntity Entity { get; set; } (Puede ser debido a la verison del Entity Framework
-        protected BaseRepository(NetMedContext context)
+        private DbSet<TEntity> Entity { get; set; } 
+        public BaseRepository(NetMedContext context)
         {
             _context = context;
             Entity = _context.Set<TEntity>();
         }
-        public Task<TEntity> GetEntityByIdAsync(TType id)
+        public virtual async Task<TEntity> GetEntityByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await Entity.FindAsync(id);
+          
         }
-        public Task UpdateEntityAsync(TEntity entity)
+        public virtual async Task<OperationResult> UpdateEntityAsync(TEntity entity)
         {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult() { Success = true };
+
+            try
+            {
+                Entity.Add(entity);
+                await _context.SaveChangesAsync();
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ocurrio un error guardando los datos";
+
+            }
+            return result;
         }
-        public Task DeleteEntityAsync(TEntity entity)
+        /*public Task DeleteEntityAsync(TEntity entity)
         {
             throw new NotImplementedException();
+        }*/
+        public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                Entity.Add(entity);
+                await _context.SaveChangesAsync();
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ocurrio un error guardando los datos";
+                
+            }
+            return result;
         }
-        public Task SaveEntityAsync(TEntity entity)
+        public virtual async Task<List<TEntity>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await Entity.ToListAsync();
         }
-        public Task<List<TEntity>> GetAllAsync()
+        public virtual async Task<OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter)
         {
-            throw new NotImplementedException();
-        }
-        public Task<OperationResult> GetAll(Expression<Func<TEntity, bool>> filter)
-        {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var datos = Entity.Where(filter).ToListAsync();
+                result.Success = true;
+                result.Result = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ocurrio un error obteniendo los datos";
+
+            }
+            return result;
+            
         }
         public virtual async Task<bool> Exists(Expression<Func<TEntity, bool>> filter)
         {
-            return await _context.Set<TEntity>().CountAsync(filter) > 0;
+            //return await _context.Set<TEntity>().CountAsync(filter) > 0;
+            return await Entity.AnyAsync(filter);
         }
     }
 
