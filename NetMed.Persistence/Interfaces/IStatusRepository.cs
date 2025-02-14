@@ -4,7 +4,7 @@ using NetMed.Domain.Repository;
 
 namespace NetMed.Persistence.Context.Interfaces
 {
-    public interface IStatusRepository : IBaseRepository<Status, int> 
+    public interface IStatusRepository : IBaseRepository<Status> 
     {
     }
 }

@@ -5,7 +5,7 @@ using NetMed.Persistence.Base;
 
 namespace NetMed.Persistence.Context.Interfaces
 {
-    public interface IRolesRepository : IBaseRepository<Roles, int>
+    public interface IRolesRepository : IBaseRepository<Roles>
     {
 
     }
