@@ -6,7 +6,7 @@ using NetMed.Persistence.Context;
 using NetMed.Domain.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using NetMed.Persistence.Validators;
+using NetMed.Persistence;
 
 namespace NetMed.Persistence.Repositories
 {
