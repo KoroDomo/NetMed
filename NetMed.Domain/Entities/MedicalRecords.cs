@@ -17,13 +17,13 @@ namespace NetMed.Domain.Entities
         public DateTime DateOfVisit { get; set; }
         public DateTime DateCreated { get; set; }
 
-        // Método para actualizar el diagnóstico
+        // Metodo para actualizar el diagnostico
         public void UpdateDiagnosis(string newDiagnosis)
         {
             Diagnosis = newDiagnosis;
         }
 
-        // Método para actualizar el tratamiento
+        // Metodo para actualizar el tratamiento
         public void UpdateTreatment(string newTreatment)
         {
             Treatment = newTreatment;

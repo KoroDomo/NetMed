@@ -14,13 +14,13 @@ namespace NetMed.Domain.Entities
         public DateTime DateCreated { get; set; }
         public bool IsActive { get; set; }
 
-        // Método para activar la especialidad
+        // Metodo para activar la especialidad
         public void Activate()
         {
             IsActive = true;
         }
 
-        // Método para desactivar la especialidad
+        // Metodo para desactivar la especialidad
         public void Deactivate()
         {
             IsActive = false;

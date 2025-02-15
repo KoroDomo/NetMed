@@ -14,13 +14,13 @@ namespace NetMed.Domain.Entities
         public DateTime DateCreated { get; set; }
         public bool IsActive { get; set; }
 
-        // Método para activar el modo de disponibilidad
+        // Metodo para activar el modo de disponibilidad
         public void Activate()
         {
             IsActive = true;
         }
 
-        // Método para desactivar el modo de disponibilidad
+        // Metodo para desactivar el modo de disponibilidad
         public void Deactivate()
         {
             IsActive = false;
