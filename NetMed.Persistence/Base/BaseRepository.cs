@@ -19,7 +19,21 @@ namespace NetMed.Persistence.Base
         
         public virtual async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> filter)
         {
-            return await Entity.AnyAsync(filter);
+            OperationResult result = new OperationResult();
+            try
+            {
+                var entity = await Entity.AnyAsync(filter);
+                result.Result = entity;
+                
+            }
+            catch (Exception ex)
+            {
+
+                result.Success = false;
+                result.Result = $"Ocurrió un error comprobando la entidad.";
+            }
+
+            return result.Success;
         }
 
         public virtual async Task<OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter)
@@ -28,7 +42,7 @@ namespace NetMed.Persistence.Base
             try
             {
                 
-                var datos = Entity.Where(filter).ToListAsync();
+                var datos = await Entity.Where(filter).ToListAsync();
                 result.Result = datos;
 
             }
@@ -114,10 +128,7 @@ namespace NetMed.Persistence.Base
             return result;
         }
 
-        Task<OperationResult> IBaseRepository<TEntity, TType>.GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 
 }
