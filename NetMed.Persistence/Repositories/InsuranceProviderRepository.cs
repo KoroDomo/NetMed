@@ -16,196 +16,304 @@ namespace NetMed.Persistence.Repository
         private readonly NetMedContext _context;
         private readonly ILogger<InsuranceProviderRepository> _logger;
         private readonly IConfiguration _configuration;
+        private readonly Operations _operations;
 
-        public InsuranceProviderRepository(NetMedContext context, 
-                                           ILogger<InsuranceProviderRepository> logger, 
-                                           IConfiguration configuration) : base(context) 
+        public InsuranceProviderRepository(NetMedContext context,
+                                           ILogger<InsuranceProviderRepository> logger,
+                                           IConfiguration configuration, Operations operations) : base(context, logger)
         {
             _context = context;
             _logger = logger;
             _configuration = configuration;
+            _operations = operations;
         }
 
         public async Task<OperationResult> GetInsurenProviderById(int insurenceProviderId)
         {
-            OperationResult result = new OperationResult();
+            OperationResult operationR = new OperationResult();
 
             try
             {
-                var querys = await( from insuranceProvider in _context.InsuranceProviders
-                             where insuranceProvider.Id == insurenceProviderId
-                             select new InsuranceProviderModel()
-                             {
-                                 InsuranceProviderID = insurenceProviderId,
-                                 ContactNumber = insuranceProvider.PhoneNumber,
-                                 Email = insuranceProvider.Email,
-                                 Website = insuranceProvider.Website,
-                                 Address = insuranceProvider.Address,
-                                 City = insuranceProvider.City,
-                                 State = insuranceProvider.State,
-                                 Country = insuranceProvider.Country,
-                                 ZipCode = insuranceProvider.ZipCode,
-                                 CoverageDetails = insuranceProvider.CoverageDetails,
-                                 MaxCoverageAmount = insuranceProvider.MaxCoverageAmount,
-                                 IsPrefered = insuranceProvider.IsPreferred,
-                                 IsActive = insuranceProvider.IsActive,
-                             }).ToListAsync();
+                var provider = await _context.InsuranceProviders
+                    .Where(ip => ip.Id == insurenceProviderId)
+                    .Select(ip => new InsuranceProviderModel()
+                    {
+                        InsuranceProviderID = ip.Id,
+                        ContactNumber = ip.PhoneNumber,
+                        Email = ip.Email,
+                        Website = ip.Website,
+                        Address = ip.Address,
+                        City = ip.City,
+                        State = ip.State,
+                        Country = ip.Country,
+                        ZipCode = ip.ZipCode,
+                        CoverageDetails = ip.CoverageDetails,
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        IsPrefered = ip.IsPreferred,
+                        IsActive = ip.IsActive,
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (provider == null)
+                {
+                    return _operations.SuccessResult(null,_configuration, "InsuranceProviderRepository.GetInsurenProviderById");
+                }
+
+                return _operations.SuccessResult(provider,_configuration, "InsuranceProviderRepository.GetInsurenProviderById");
             }
             catch (Exception ex)
             {
-                result.Mesagge = _configuration["Error:InsuranceProviderRepository.GetInsurenProviderById"];
-                result.Success = false;
-                _logger.LogError(result.Mesagge,ex.ToString());
-
+                return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsurenProviderById",_configuration);
             }
-            return result;
         }
-        // Aqui hay que elaborar una interfaz para implementar solamente los metodos necesarios
-        public async override Task<OperationResult> SaveEntityAsync(InsuranceProvider entity) 
+
+        public async override Task<OperationResult> SaveEntityAsync(InsuranceProvider provider)
         {
-            OperationResult operationResult = new OperationResult();
+            try
+            {
+                if (provider == null)
+                {
+                    return _operations.SuccessResult(null, _configuration, "El proveedor de seguros no puede ser nulo.");
+                }
 
-            if (entity == null)
-            {
-                operationResult.Success = false;
-                operationResult.Mesagge = "La entidad es requerida.";
-                return operationResult;
-            }
+                _context.InsuranceProviders.Add(provider);
+                await _context.SaveChangesAsync();
 
-            if (entity.PhoneNumber == null)
-            {
-                operationResult.Success = false;
-                operationResult.Mesagge = "El número de telefono es requerido.";
-                return operationResult;
+                return _operations.SuccessResult(provider, _configuration, "InsuranceProviderRepository.SaveEntityAsync");
             }
-
-            if (entity.Email == null)
+            catch (Exception ex)
             {
-                operationResult.Success = false;
-                operationResult.Mesagge = "El email es requerido";
-                return operationResult;
+                return _operations.HandleException(ex, "InsuranceProviderRepository.SaveEntityAsync", _configuration);
             }
-
-            if (entity.Website == null)
-            {
-                operationResult.Success = false;
-                operationResult.Mesagge = "El url del website es requerido.";
-                return operationResult;
-            }
-
-            if (entity.Address == null)
-            {
-                operationResult.Success = false;
-                operationResult.Mesagge = "La direccion es requerida.";
-                return operationResult;
-            }
-            if (entity.City == null)
-            {
-                operationResult.Success = false;
-                operationResult.Mesagge = "La direccion es requerida.";
-                return operationResult;
-            }
-            if (entity.State == null)
-            {
-                operationResult.Success = false;
-                operationResult.Mesagge = "El estado es requerido.";
-                return operationResult;
-            }
-            if (entity.Country == null)
-            {
-                operationResult.Success = false;
-                operationResult.Mesagge = "El pais es requerido.";
-                return operationResult;
-            }
-            if (entity.ZipCode == null)
-            {
-                operationResult.Success = false;
-                operationResult.Mesagge = "El codigo zip es requerido.";
-                return operationResult;
-            }
-            if (entity.MaxCoverageAmount <= 0)
-            {
-                operationResult.Success = false;
-                operationResult.Mesagge = "La covertura maxima no puede ser menor que cero.";
-                return operationResult;
-            }
-            
-            return operationResult;
         }
 
-        public override Task<bool> ExistsAsync(Expression<Func<InsuranceProvider, bool>> filter)
-        {
-            return base.ExistsAsync(filter);
-        }
-        public override Task<OperationResult> GetAllAsync(Expression<Func<InsuranceProvider, bool>> filter)
-        {
-            return base.GetAllAsync(filter);
-        }
         public async override Task<OperationResult> GetAllAsync()
         {
-            OperationResult result = new OperationResult();
-
             try
             {
+                var providers = await _context.InsuranceProviders
+                    .Where(ip => ip.IsActive)
+                    .OrderByDescending(ip => ip.CreatedAt)
+                    .Select(ip => new InsuranceProviderModel()
+                    {
+                        InsuranceProviderID = ip.Id,
+                        ContactNumber = ip.PhoneNumber,
+                        Email = ip.Email,
+                        Website = ip.Website,
+                        Address = ip.Address,
+                        City = ip.City,
+                        State = ip.State,
+                        Country = ip.Country,
+                        ZipCode = ip.ZipCode,
+                        CoverageDetails = ip.CoverageDetails,
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        IsPrefered = ip.IsPreferred,
+                        IsActive = ip.IsActive,
+                    })
+                    .ToListAsync();
 
-                result.Result = await(from insuranceProvider in _context.InsuranceProviders
-                                    where insuranceProvider.IsActive == true
-                                    orderby insuranceProvider.CreatedAt descending
-                                    select new InsuranceProviderModel()
-                                    {
-                                        InsuranceProviderID = insuranceProvider.Id,
-                                        ContactNumber = insuranceProvider.PhoneNumber,
-                                        Email = insuranceProvider.Email,
-                                        Website = insuranceProvider.Website,
-                                        Address = insuranceProvider.Address,
-                                        City = insuranceProvider.City,
-                                        State = insuranceProvider.State,
-                                        Country = insuranceProvider.Country,
-                                        ZipCode = insuranceProvider.ZipCode,
-                                        CoverageDetails = insuranceProvider.CoverageDetails,
-                                        MaxCoverageAmount = insuranceProvider.MaxCoverageAmount,
-                                        IsPrefered= insuranceProvider.IsPreferred,
-                                        IsActive = insuranceProvider.IsActive,
+                if (providers == null || !providers.Any())
+                {
+                    return _operations.SuccessResult(null, _configuration, "InsuranceProviderRepository.GetAllAsync");
+                }
 
-                                    }).ToListAsync();
-
+                return _operations.SuccessResult(providers, _configuration, "InsuranceProviderRepository.GetAllAsync");
             }
             catch (Exception ex)
             {
-                result.Mesagge = _configuration["Error:InsuranceProviderRepository.GetInsurenProviderById"];
-                result.Success = false;
-                _logger.LogError(result.Mesagge, ex.ToString());
+                return _operations.HandleException(ex, "InsuranceProviderRepository.GetAllAsync",_configuration );
             }
-            return result;
-        }
-        public override Task<OperationResult> UpdateEntityAsync(InsuranceProvider entity)
-        {
-            return base.UpdateEntityAsync(entity);
         }
 
-        public Task<OperationResult> DeleteInsuranceProviderAsync(int id)
+        public async override Task<OperationResult> UpdateEntityAsync(InsuranceProvider entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (entity == null)
+                {
+                    return _operations.SuccessResult(null,_configuration, "La entidad no puede ser nula.");
+                }
+
+                _context.InsuranceProviders.Update(entity);
+                await _context.SaveChangesAsync();
+
+                return _operations.SuccessResult(entity,_configuration, "InsuranceProviderRepository.UpdateEntityAsync");
+            }
+            catch (Exception ex)
+            {
+                return _operations.HandleException(ex, "InsuranceProviderRepository.UpdateEntityAsync",_configuration);
+            }
         }
 
-        public Task<OperationResult> GetPreferredInsuranceProvidersAsync()
+        public async Task<OperationResult> DeleteInsuranceProviderAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var entity = await _context.InsuranceProviders.FindAsync(id);
+                if (entity == null)
+                {
+                    _logger.LogWarning("No se encontró la entidad con el ID: {Id} para eliminar.", id);
+                    return _operations.SuccessResult(null,_configuration,"Entidad no encontrada.");
+                }
+
+                _context.InsuranceProviders.Remove(entity);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Entidad eliminada exitosamente: {Entity}", entity.ToString());
+                return _operations.SuccessResult(null, _configuration,"Entidad eliminada exitosamente.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al eliminar la entidad con el ID: {Id}", id);
+                return _operations.HandleException(ex, "Ocurrió un error eliminando la entidad", _configuration);
+            }
         }
 
-        public Task<OperationResult> GetActiveInsuranceProvidersAsync()
+        public async Task<OperationResult> GetPreferredInsuranceProvidersAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var providers = await _context.InsuranceProviders
+                    .Where(ip => ip.IsPreferred)
+                    .Select(ip => new InsuranceProviderModel()
+                    {
+                        InsuranceProviderID = ip.Id,
+                        ContactNumber = ip.PhoneNumber,
+                        Email = ip.Email,
+                        Website = ip.Website,
+                        Address = ip.Address,
+                        City = ip.City,
+                        State = ip.State,
+                        Country = ip.Country,
+                        ZipCode = ip.ZipCode,
+                        CoverageDetails = ip.CoverageDetails,
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        IsPrefered = ip.IsPreferred,
+                        IsActive = ip.IsActive,
+                    })
+                    .ToListAsync();
+
+                if (providers == null || !providers.Any())
+                {
+                    return _operations.SuccessResult(null, _configuration,"InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync");
+                }
+
+                return _operations.SuccessResult(providers, _configuration,"InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync");
+            }
+            catch (Exception ex)
+            {
+                return _operations.HandleException(ex, "InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync" , _configuration);
+            }
         }
 
-        public Task<OperationResult> GetInsuranceProvidersByRegionAsync(string region)
+        public async Task<OperationResult> GetActiveInsuranceProvidersAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var providers = await _context.InsuranceProviders
+                    .Where(ip => ip.IsActive)
+                    .Select(ip => new InsuranceProviderModel()
+                    {
+                        InsuranceProviderID = ip.Id,
+                        ContactNumber = ip.PhoneNumber,
+                        Email = ip.Email,
+                        Website = ip.Website,
+                        Address = ip.Address,
+                        City = ip.City,
+                        State = ip.State,
+                        Country = ip.Country,
+                        ZipCode = ip.ZipCode,
+                        CoverageDetails = ip.CoverageDetails,
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        IsPrefered = ip.IsPreferred,
+                        IsActive = ip.IsActive,
+                    })
+                    .ToListAsync();
+
+                if (providers == null || !providers.Any())
+                {
+                    return _operations.SuccessResult(null, _configuration,"InsuranceProviderRepository.GetActiveInsuranceProvidersAsync");
+                }
+
+                return _operations.SuccessResult(providers, _configuration,"InsuranceProviderRepository.GetActiveInsuranceProvidersAsync");
+            }
+            catch (Exception ex)
+            {
+                return _operations.HandleException(ex, "InsuranceProviderRepository.GetActiveInsuranceProvidersAsync", _configuration);
+            }
         }
 
-        public Task<OperationResult> GetInsuranceProvidersByMaxCoverageAsync(decimal maxCoverage)
+        public async Task<OperationResult> GetInsuranceProvidersByRegionAsync(string region)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var providers = await _context.InsuranceProviders
+                    .Where(ip => ip.State == region || ip.City == region)
+                    .Select(ip => new InsuranceProviderModel()
+                    {
+                        InsuranceProviderID = ip.Id,
+                        ContactNumber = ip.PhoneNumber,
+                        Email = ip.Email,
+                        Website = ip.Website,
+                        Address = ip.Address,
+                        City = ip.City,
+                        State = ip.State,
+                        Country = ip.Country,
+                        ZipCode = ip.ZipCode,
+                        CoverageDetails = ip.CoverageDetails,
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        IsPrefered = ip.IsPreferred,
+                        IsActive = ip.IsActive,
+                    })
+                    .ToListAsync();
+
+                if (providers == null || !providers.Any())
+                {
+                    return _operations.SuccessResult(null, _configuration, "InsuranceProviderRepository.GetInsuranceProvidersByRegionAsync");
+                }
+
+                return _operations.SuccessResult(providers, _configuration, "InsuranceProviderRepository.GetInsuranceProvidersByRegionAsync");
+            }
+            catch (Exception ex)
+            {
+                return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsuranceProvidersByRegionAsync", _configuration);
+            }
+        }
+
+        public async Task<OperationResult> GetInsuranceProvidersByMaxCoverageAsync(decimal maxCoverage)
+        {
+            try
+            {
+                var providers = await _context.InsuranceProviders
+                    .Where(ip => ip.MaxCoverageAmount <= maxCoverage)
+                    .Select(ip => new InsuranceProviderModel()
+                    {
+                        InsuranceProviderID = ip.Id,
+                        ContactNumber = ip.PhoneNumber,
+                        Email = ip.Email,
+                        Website = ip.Website,
+                        Address = ip.Address,
+                        City = ip.City,
+                        State = ip.State,
+                        Country = ip.Country,
+                        ZipCode = ip.ZipCode,
+                        CoverageDetails = ip.CoverageDetails,
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        IsPrefered = ip.IsPreferred,
+                        IsActive = ip.IsActive,
+                    })
+                    .ToListAsync();
+
+                if (providers == null || !providers.Any())
+                {
+                    return _operations.SuccessResult(null,_configuration, "InsuranceProviderRepository.GetInsuranceProvidersByMaxCoverageAsync");
+                }
+
+                return _operations.SuccessResult(providers,_configuration, "InsuranceProviderRepository.GetInsuranceProvidersByMaxCoverageAsync");
+            }
+            catch (Exception ex)
+            {
+                return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsuranceProvidersByMaxCoverageAsync", _configuration);
+            }
         }
     }
 }

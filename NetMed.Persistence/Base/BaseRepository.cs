@@ -1,8 +1,9 @@
-﻿using NetMed.Domain.Repository;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
-using System.Linq.Expressions;
+using NetMed.Domain.Repository;
 using NetMed.Persistence.Context;
-using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 //Hay que implemantar el DRY aqui
 namespace NetMed.Persistence.Base
@@ -10,122 +11,132 @@ namespace NetMed.Persistence.Base
     public class BaseRepository<TEntity, TType> : IBaseRepository<TEntity, TType> where TEntity : class
     {
         private readonly NetMedContext _context;
-        private DbSet<TEntity> Entity { get; set; }
-        public BaseRepository(NetMedContext context) 
+        private readonly ILogger<BaseRepository<TEntity, TType>> _logger;
+
+
+        private DbSet<TEntity> _entity { get; set; }
+        public BaseRepository(NetMedContext context, ILogger<BaseRepository<TEntity, TType>> logger) 
         {
             _context = context;
-            Entity= _context.Set<TEntity>();
+            _logger = logger;
+            _entity = _context.Set<TEntity>();
         }
         
         public virtual async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> filter)
         {
-            OperationResult result = new OperationResult();
+            OperationResult operationR = new OperationResult();
             try
             {
-                var entity = await Entity.AnyAsync(filter);
-                result.Result = entity;
+                var entity = await _entity.AnyAsync(filter);
+                operationR.Result = entity;
                 
             }
             catch (Exception ex)
             {
 
-                result.Success = false;
-                result.Result = $"Ocurrió un error comprobando la entidad.";
+                operationR.Success = false;
+                operationR.Result = $"Ocurrió un error comprobando la entidad.";
+                _logger.LogError(operationR.Mesagge, ex.ToString());
             }
 
-            return result.Success;
+            return operationR.Success;
         }
 
         public virtual async Task<OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter)
         {
-            OperationResult result = new OperationResult();
+            OperationResult operationR = new OperationResult();
             try
             {
                 
-                var datos = await Entity.Where(filter).ToListAsync();
-                result.Result = datos;
+                var datos = await _entity.Where(filter).ToListAsync();
+                operationR.Result = datos;
 
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Mesagge = "Ocurrio un error obteniendo los datos.";
+                operationR.Success = false;
+                operationR.Mesagge = "Ocurrio un error obteniendo los datos.";
+                _logger.LogError(operationR.Mesagge, ex.ToString());
             }
 
-            return result;
+            return operationR;
         }
 
         public virtual async Task<OperationResult> GetAllAsync()
         {
-            OperationResult result = new OperationResult();
+            OperationResult operationR = new OperationResult();
 
             try
             {
-                var datos = await this.Entity.ToListAsync();
-                result.Result = datos;
+                var datos = await this._entity.ToListAsync();
+                operationR.Result = datos;
             }
             catch (Exception ex)
             {
 
-                result.Success = false;
-                result.Mesagge = $"Ocurrió un error obteniendo los datos.";
+                operationR.Success = false;
+                operationR.Mesagge = $"Ocurrió un error obteniendo los datos.";
+                _logger.LogError(operationR.Mesagge, ex.ToString());
             }
 
-            return result;
+            return operationR;
         }
 
         public virtual async Task<OperationResult> GetEntityByIdAsync(TType id)
         {
-            OperationResult result = new OperationResult();
+            OperationResult operationR = new OperationResult();
             try
             {
-                var entity = await this.Entity.FindAsync(id);
-                result.Result = entity;
+                var entity = await this._entity.FindAsync(id);
+                operationR.Result = entity;
             }
             catch (Exception ex)
             {
 
-                result.Success = false;
-                result.Result = $"Ocurrió un error obteniendo la entidad.";
+                operationR.Success = false;
+                operationR.Result = $"Ocurrió un error obteniendo la entidad.";
+                _logger.LogError(operationR.Mesagge, ex.ToString());
             }
-            return result;
+            return operationR;
         }
 
         public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)
         {
-            OperationResult result = new OperationResult();
+            OperationResult operationR = new OperationResult();
             try
             {
-                Entity.Add(entity);
+                _entity.Add(entity);
                 await _context.SaveChangesAsync();
 
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Mesagge = "Ocurrio un error guardando los datos.";
+                operationR.Success = false;
+                operationR.Mesagge = "Ocurrio un error guardando los datos.";
+                _logger.LogError(operationR.Mesagge, ex.ToString());
             }
 
-            return result;
+            return operationR;
             
         }
 
         public virtual async Task<OperationResult> UpdateEntityAsync(TEntity entity)
         {
-            OperationResult result = new OperationResult();
+            OperationResult operationR = new OperationResult();
             try
             {
-                Entity.Add(entity);
+                _entity.Add(entity);
                 await _context.SaveChangesAsync();
 
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Mesagge = "Ocurrio un error actualizando los datos.";
+                operationR.Success = false;
+                operationR.Mesagge = "Ocurrio un error actualizando los datos.";
+                _logger.LogError(operationR.Mesagge, ex.ToString());
             }
 
-            return result;
+            return operationR;
         }
 
         
