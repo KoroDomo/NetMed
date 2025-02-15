@@ -9,6 +9,6 @@ namespace NetMed.Domain.Base
         }   
         public string Message { get; set; }
         public bool Success {get; set;}
-        public dynamic Result { get; set; }
+        public dynamic Data { get; set; }
     }
 }

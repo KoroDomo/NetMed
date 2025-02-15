@@ -15,7 +15,7 @@ namespace NetMed.Persistence.Base
         public BaseRepository(NetMedContext context)
         {
             _context = context;
-            Entity = _context.Set<TEntity>();
+            Entity = _context.Set<TEntity>();  
         }
         public virtual async Task<TEntity> GetEntityByIdAsync(int id)
         {
@@ -74,7 +74,7 @@ namespace NetMed.Persistence.Base
             {
                 var datos = Entity.Where(filter).ToListAsync();
                 result.Success = true;
-                result.Result = datos;
+                result.Data = datos;
             }
             catch (Exception ex)
             {

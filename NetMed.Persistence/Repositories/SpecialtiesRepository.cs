@@ -3,7 +3,6 @@ using NetMed.Persistence.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Context;
-using System.Reflection.Metadata.Ecma335;
 using NetMed.Domain.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -24,11 +23,20 @@ namespace NetMed.Persistence.Repositories
             this.logger = logger;
             this.configuration = configuration;
         }
-        public override Task<OperationResult> SaveEntityAsync(Specialties entity)
+        public override async Task<OperationResult> SaveEntityAsync(Specialties entity)
         {
             //agregar validaciones correspondientes
+            OperationResult result = new OperationResult();
 
-            return base.SaveEntityAsync(entity);
+
+            if (entity is null)
+            {
+                result.Success = false;
+                result.Message = this.configuration["DepartmentError:Entity"];
+            }     
+            await base.SaveEntityAsync(entity);
+
+            return result;
         }
 
         public async Task<OperationResult> SpecialtyName(string SpecialtyName)
@@ -40,8 +48,8 @@ namespace NetMed.Persistence.Repositories
                              where specialty.SpecialtyName == SpecialtyName
                              select new SpecialtiesModel() 
                              {  
-                                 Id = specialty.Id, 
-                                 Name = specialty.SpecialtyName
+                                 Id = specialty.Id,
+                                 SpecialtyName = specialty.SpecialtyName
                              }).ToListAsync();
 
                 //result.Data = querys;

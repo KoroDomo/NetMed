@@ -10,5 +10,20 @@ namespace NetMed.Domain.Entities
         [Key]
         public override int Id { get; set; }
         public string AvailabilityModeName { get; set; }
+        public DateTime DateOfVisit { get; set; }
+        public DateTime DateCreated { get; set; }
+        public bool IsActive { get; set; }
+
+        // Método para activar el modo de disponibilidad
+        public void Activate()
+        {
+            IsActive = true;
+        }
+
+        // Método para desactivar el modo de disponibilidad
+        public void Deactivate()
+        {
+            IsActive = false;
+        }
     }
 }
