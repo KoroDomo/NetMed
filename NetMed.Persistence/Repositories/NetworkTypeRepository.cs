@@ -20,7 +20,7 @@ namespace NetMed.Persistence.Repositories
         public NetworkTypeRepository(NetMedContext context,
                                      ILogger<NetworkTypeRepository> logger,
                                      IConfiguration configuration,
-                                     Operations operations) : base(context, logger)
+                                     Operations operations) : base(context, logger,configuration, operations)
         {
             _context = context;
             _logger = logger;

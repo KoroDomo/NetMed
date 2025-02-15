@@ -20,7 +20,7 @@ namespace NetMed.Persistence.Repository
 
         public InsuranceProviderRepository(NetMedContext context,
                                            ILogger<InsuranceProviderRepository> logger,
-                                           IConfiguration configuration, Operations operations) : base(context, logger)
+                                           IConfiguration configuration, Operations operations) : base(context, logger,configuration, operations)
         {
             _context = context;
             _logger = logger;
