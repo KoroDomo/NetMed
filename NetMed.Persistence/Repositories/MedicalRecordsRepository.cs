@@ -1,20 +1,13 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
 using NetMed.Persistence.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Context;
-using NetMed.Model.Models;
 using NetMed.Domain.Base;
-
-using NetMed.Domain.Entities;
-using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Validators;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+
 
 namespace NetMed.Persistence.Repositories
 {
