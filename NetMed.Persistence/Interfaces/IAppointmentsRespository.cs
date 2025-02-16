@@ -11,10 +11,9 @@ namespace NetMed.Persistence.Interfaces
         Task<OperationResult> GetAppointmentsByPatientAsync(int PatientID);
         Task<OperationResult> GetAppointmentsByDoctorAsync(int DoctorID);
         Task<OperationResult> UpdateAppointmentStatusAsync(int AppointmentID, int StatusID);
-        Task<List<OperationResult>> GetAppointmentsByStatusAsync(int statusId);
-        Task<List<OperationResult>> GetAppointmentsByDateAsync(DateTime AppointmentDate);
+        Task<OperationResult> GetAppointmentsByStatusAsync(int StatusID);
+        Task<OperationResult> GetAppointmentsByDateAsync(DateTime AppointmentDate);
         Task<OperationResult> CancelAppointmentAsync(int AppointmentID);
-        Task<List<OperationResult>> GetAppointmentsByPatientAndDateAsync(int PatientID, DateTime AppointmentDate);
-        Task<List<OperationResult>> GetAppointmentsByDoctorAndDateAsync(int DoctorID, DateTime AppointmentDate);
+        Task<OperationResult> GetAppointmentsByDoctorAndDateAsync(int DoctorID, DateTime AppointmentDate);
     }
 }

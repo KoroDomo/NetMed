@@ -138,12 +138,12 @@ namespace NetMed.Persistence.Repositories
             if (!patientIDResult.Success) return patientIDResult;
             try
             {
-                var patient = await _context.Appointments.Where(a => a.PatientID == PatientID).ToListAsync();
-                if (patient is null)
+                var appointments = await _context.Appointments.Where(a => a.PatientID == PatientID).ToListAsync();
+                if (appointments is null)
                 {
                     return new OperationResult { Success = false, Message = "No se encontró ninguna cita con ese ID." };
                 }
-                return new OperationResult { Success = true, Data = patient };
+                return new OperationResult { Success = true, Data = appointments };
             }
             catch (Exception ex)
             {
@@ -200,29 +200,93 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-        public Task<List<OperationResult>> GetAppointmentsByStatusAsync(int statusId)
+        public async Task<OperationResult> GetAppointmentsByStatusAsync(int StatusID)
         {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult();
+            var statusIDResult = EntityValidator.Validator(StatusID, nameof(StatusID));
+            if (!statusIDResult.Success) return statusIDResult;
+
+            try
+            {
+                var appointments = await _context.Appointments.Where(a => a.StatusID == StatusID).ToListAsync();
+                if (appointments == null || appointments.Count == 0) 
+                {
+                    return new OperationResult { Success = false, Message = "No se encontraron citas con ese estado." }; 
+                }
+                return new OperationResult { Success = true, Data = appointments };
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["AppointmentsRepositoryError: GetAppointmentsByStatusAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
 
-        public Task<List<OperationResult>> GetAppointmentsByDateAsync(DateTime AppointmentDate)
+        public async Task<OperationResult> GetAppointmentsByDateAsync(DateTime AppointmentDate)
         {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult();
+            try
+            {
+                var appointments = await _context.Appointments.Where(a => a.AppointmentDate == AppointmentDate).ToListAsync();
+                return new OperationResult { Success = true, Data = appointments };
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["AppointmentsRepositoryError: GetAppointmentsByDateAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
 
-        public Task<OperationResult> CancelAppointmentAsync(int AppointmentID)
+        public async Task<OperationResult> CancelAppointmentAsync(int AppointmentID)
         {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult();
+            var appointmentIDResult = EntityValidator.Validator(AppointmentID, nameof(AppointmentID));
+            if (!appointmentIDResult.Success) return appointmentIDResult;
+
+            try
+            {
+
+                var appointments = await _context.Appointments.FindAsync(AppointmentID);
+                if (appointments == null)
+                {
+                    return new OperationResult { Success = false, Message = "Cita no encontrada." };
+                }
+                appointments.StatusID = 2;
+                await _context.SaveChangesAsync();
+
+                return new OperationResult { Success = true, Message = "Cita cancelada." };
+            }
+            catch (Exception ex )
+            {
+                result.Message = _configuration["AppointmentsRepositoryError: CancelAppointmentAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
 
-        public Task<List<OperationResult>> GetAppointmentsByPatientAndDateAsync(int PatientID, DateTime AppointmentDate)
+        public async Task<OperationResult> GetAppointmentsByDoctorAndDateAsync(int DoctorID, DateTime AppointmentDate)
         {
-            throw new NotImplementedException();
-        }
+            OperationResult result = new OperationResult();
+            var doctorIDResult = EntityValidator.Validator(DoctorID, nameof(DoctorID));
+            if (!doctorIDResult.Success) return doctorIDResult;
 
-        public Task<List<OperationResult>> GetAppointmentsByDoctorAndDateAsync(int DoctorID, DateTime AppointmentDate)
-        {
-            throw new NotImplementedException();
+            try
+            {
+                var appointments = await _context.Appointments.Where(a => a.DoctorID == DoctorID && a.AppointmentDate == AppointmentDate).ToListAsync();
+                return new OperationResult { Success = true, Data = appointments };
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["AppointmentsRepositoryError: GetAppointmentsByDoctorAndDateAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
     }
 }
