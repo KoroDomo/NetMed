@@ -29,13 +29,12 @@ namespace NetMed.Persistence.Base
             }
             catch (Exception ex)
             {
-                result.success = false;
+                result.Success = false;
                 result.Message = "Ocurrio un error al obtener los datos";
             }
             return result;
             
         }
-
         public virtual async Task<List<TEntity>> GetAllAsync()
         {
             return await Entity.ToListAsync();
@@ -56,7 +55,7 @@ namespace NetMed.Persistence.Base
             }
             catch (Exception ex) 
             {
-                result.success = false;
+                result.Success = false;
                 result.Message = "Ocurrio un error al guardar los datos";
             }
             return result;
@@ -72,7 +71,7 @@ namespace NetMed.Persistence.Base
             }
             catch (Exception ex)
             {
-                result.success = false;
+                result.Success = false;
                 result.Message = "Ocurrio un error al actualizar los datos";
             }
             return result;

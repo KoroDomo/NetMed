@@ -7,7 +7,7 @@ using NetMed.Model.Models;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
-using System.Linq.Expressions;
+using NetMed.Persistence.Validators;
 
 namespace NetMed.Persistence.Repositories
 {
@@ -23,10 +23,10 @@ namespace NetMed.Persistence.Repositories
             _logger = logger;
             _configuration = configuration;
         }
-
         public async Task<List<DoctorAvailability>> GetAvailabilityByDoctorAndDateAsync(int DoctorID, DateOnly AvailableDate)
         {
             OperationResult result = new OperationResult();
+
             try
             {
                 return await _context.DoctorAvailabilities.Where(a => a.DoctorID == DoctorID && a.AvailableDate == AvailableDate).ToListAsync();    
@@ -34,7 +34,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Message = _configuration["ErrorDoctorAvailabilityRepository: GetAvailabilityByDoctorAndDateAsync"];
-                result.success = false;
+                result.Success = false;
                 _logger.LogError(result.Message, ex.ToString());
                 return new List<DoctorAvailability>();
             }          
@@ -42,6 +42,12 @@ namespace NetMed.Persistence.Repositories
         public async Task<OperationResult> GetDoctorAvailabilityByAppointments(int AppointmentID)
         {
            OperationResult result = new OperationResult();
+
+            var validationResult = EntityValidator.Validator(AppointmentID, nameof(AppointmentID));
+            if (!validationResult.Success)
+            {
+                return validationResult;
+            }
             try
             {
                 var querys = await (from DoctorAvailability in _context.DoctorAvailabilities
@@ -60,50 +66,46 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Message = _configuration["ErrorDoctorAvailabilityRepository: GetDoctorAvailabilityByAppointments"];
-                result.success = false;
+                result.Success = false;
                 _logger.LogError(result.Message,ex.ToString());
             }
             return result;
         }
 
-        public Task<List<DoctorAvailability>> GetFutureAvailabilityByDoctorAsync(int doctorId)
+        public Task<List<DoctorAvailability>> GetFutureAvailabilityByDoctorAsync(int DoctorID)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<DoctorAvailability>> GetGeneralAvailabilityByDoctorAsync(int doctorId)
+        public Task<List<DoctorAvailability>> GetGeneralAvailabilityByDoctorAsync(int DoctorID)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> IsDoctorAvailableAsync(int doctorId, DateOnly availableDate, TimeOnly startTime, TimeOnly endTime)
+        public Task<bool> IsDoctorAvailableAsync(int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
         {
             throw new NotImplementedException();
         }
 
-        public Task<OperationResult> RemoveAvailabilityAsync(int availabilityId)
+        public Task<OperationResult> RemoveAvailabilityAsync(int AvailabilityID)
         {
             throw new NotImplementedException();
         }
 
-        public Task<OperationResult> SetAvailabilityAsync(int doctorId, DateOnly availableDate, TimeOnly startTime, TimeOnly endTime)
+        public Task<OperationResult> SetAvailabilityAsync(int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
         {
             throw new NotImplementedException();
         }
 
-        public Task<OperationResult> UpdateAvailabilityAsync(int availabilityId, int doctorId, DateOnly availableDate, TimeOnly startTime, TimeOnly endTime)
+        public Task<OperationResult> UpdateAvailabilityAsync(int availabilityId, int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
         {
             throw new NotImplementedException();
         }
 
-        public Task<OperationResult> UpdateAvailabilityInRealTimeAsync(int doctorId, DateOnly availableDate, TimeOnly startTime, TimeOnly endTime, bool isAvailable)
+        public Task<OperationResult> UpdateAvailabilityInRealTimeAsync(int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime, bool isAvailable)
         {
             throw new NotImplementedException();
         }
-        public override Task<OperationResult> UpdateEntityAsync(DoctorAvailability entity)
-        {
-            return base.UpdateEntityAsync(entity);
-        }
-    }
+    } 
 }
 
