@@ -3,15 +3,17 @@ using NetMed.Domain.Base;
 
 public class OperationValidator
 {
-    public OperationResult SuccessResult(dynamic result,IConfiguration configuration, string configKey = null)
+    private readonly IConfiguration _configuration;
+
+    public OperationValidator(IConfiguration configuration)
     {
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+    }
 
-        
-        var successMessage = configKey != null
-            ? configuration[$"Messages:Success:{configKey}"] ?? configuration["Messages:Success:Default"]
-            : configuration["Messages:Success:Default"];
+    public OperationResult SuccessResult(dynamic result, string configKey = null)
+    {
+        var successMessage = _configuration[$"Messages:Success:{configKey}"] ;
 
-       
         return new OperationResult
         {
             Success = true,
@@ -19,12 +21,10 @@ public class OperationValidator
             Message = successMessage
         };
     }
-    
 
-    public OperationResult HandleException(Exception ex, string configKey, IConfiguration configuration)
+    public OperationResult HandleException(Exception ex, string configKey)
     {
-        
-        var errorMessage = configuration[$"Messages:Error:{configKey}"] ?? configuration["Messages:Error:Default"];
+        var errorMessage = _configuration[$"Messages:Error:{configKey}"];
 
         return new OperationResult
         {
@@ -32,4 +32,5 @@ public class OperationValidator
             Message = $"{errorMessage}: {ex.Message}"
         };
     }
+
 }

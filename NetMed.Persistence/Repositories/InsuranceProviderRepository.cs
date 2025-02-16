@@ -16,7 +16,7 @@ namespace NetMed.Persistence.Repository
         private readonly NetMedContext _context;
         private readonly ILogger<InsuranceProviderRepository> _logger;
         private readonly IConfiguration _configuration;
-        private readonly OperationValidator _operations = new OperationValidator();
+        private readonly OperationValidator _operations;
         
 
         public InsuranceProviderRepository(NetMedContext context,
@@ -26,6 +26,7 @@ namespace NetMed.Persistence.Repository
             _context = context;
             _logger = logger;
             _configuration = configuration;
+            _operations = new OperationValidator(_configuration);
             
         }
 
@@ -33,6 +34,7 @@ namespace NetMed.Persistence.Repository
         {
             OperationResult operationR = new OperationResult();
 
+           
             try
             {
                 var provider = await _context.InsuranceProviders
@@ -57,14 +59,14 @@ namespace NetMed.Persistence.Repository
 
                 if (provider == null)
                 {
-                    return _operations.SuccessResult(null,_configuration, "InsuranceProviderRepository.GetInsurenProviderById");
+                    return _operations.SuccessResult(null, "InsuranceProviderRepository.GetInsurenProviderById");
                 }
 
-                return _operations.SuccessResult(provider,_configuration, "InsuranceProviderRepository.GetInsurenProviderById");
+                return _operations.SuccessResult(provider, "InsuranceProviderRepository.GetInsurenProviderById");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsurenProviderById",_configuration);
+                return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsurenProviderById");
             }
         }
 
@@ -74,17 +76,17 @@ namespace NetMed.Persistence.Repository
             {
                 if (provider == null)
                 {
-                    return _operations.SuccessResult(null, _configuration, "El proveedor de seguros no puede ser nulo.");
+                    return _operations.SuccessResult(null, "El proveedor de seguros no puede ser nulo.");
                 }
 
                 _context.InsuranceProviders.Add(provider);
                 await _context.SaveChangesAsync();
 
-                return _operations.SuccessResult(provider, _configuration, "InsuranceProviderRepository.SaveEntityAsync");
+                return _operations.SuccessResult(provider, "InsuranceProviderRepository.SaveEntityAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "InsuranceProviderRepository.SaveEntityAsync", _configuration);
+                return _operations.HandleException(ex, "InsuranceProviderRepository.SaveEntityAsync");
             }
         }
 
@@ -115,14 +117,14 @@ namespace NetMed.Persistence.Repository
 
                 if (providers == null || !providers.Any())
                 {
-                    return _operations.SuccessResult(null, _configuration, "InsuranceProviderRepository.GetAllAsync");
+                    return _operations.SuccessResult(null, "InsuranceProviderRepository.GetAllAsync");
                 }
 
-                return _operations.SuccessResult(providers, _configuration, "InsuranceProviderRepository.GetAllAsync");
+                return _operations.SuccessResult(providers, "InsuranceProviderRepository.GetAllAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "InsuranceProviderRepository.GetAllAsync",_configuration );
+                return _operations.HandleException(ex, "InsuranceProviderRepository.GetAllAsync" );
             }
         }
 
@@ -132,17 +134,17 @@ namespace NetMed.Persistence.Repository
             {
                 if (entity == null)
                 {
-                    return _operations.SuccessResult(null,_configuration, "La entidad no puede ser nula.");
+                    return _operations.SuccessResult(null, "La entidad no puede ser nula.");
                 }
 
                 _context.InsuranceProviders.Update(entity);
                 await _context.SaveChangesAsync();
 
-                return _operations.SuccessResult(entity,_configuration, "InsuranceProviderRepository.UpdateEntityAsync");
+                return _operations.SuccessResult(entity, "InsuranceProviderRepository.UpdateEntityAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "InsuranceProviderRepository.UpdateEntityAsync",_configuration);
+                return _operations.HandleException(ex, "InsuranceProviderRepository.UpdateEntityAsync");
             }
         }
 
@@ -154,18 +156,18 @@ namespace NetMed.Persistence.Repository
                 if (entity == null)
                 {
                     _logger.LogWarning("No se encontró la entidad con el ID: {Id} para eliminar.", id);
-                    return _operations.SuccessResult(null,_configuration,"Entidad no encontrada.");
+                    return _operations.SuccessResult(null,"Entidad no encontrada.");
                 }
 
                 _context.InsuranceProviders.Remove(entity);
                 await _context.SaveChangesAsync();
                 _logger.LogInformation("Entidad eliminada exitosamente: {Entity}", entity.ToString());
-                return _operations.SuccessResult(null, _configuration,"Entidad eliminada exitosamente.");
+                return _operations.SuccessResult(null,"Entidad eliminada exitosamente.");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al eliminar la entidad con el ID: {Id}", id);
-                return _operations.HandleException(ex, "Ocurrió un error eliminando la entidad", _configuration);
+                return _operations.HandleException(ex, "Ocurrió un error eliminando la entidad");
             }
         }
 
@@ -195,14 +197,14 @@ namespace NetMed.Persistence.Repository
 
                 if (providers == null || !providers.Any())
                 {
-                    return _operations.SuccessResult(null, _configuration,"InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync");
+                    return _operations.SuccessResult(null,"InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync");
                 }
 
-                return _operations.SuccessResult(providers, _configuration,"InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync");
+                return _operations.SuccessResult(providers,"InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync" , _configuration);
+                return _operations.HandleException(ex, "InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync");
             }
         }
 
@@ -232,14 +234,14 @@ namespace NetMed.Persistence.Repository
 
                 if (providers == null || !providers.Any())
                 {
-                    return _operations.SuccessResult(null, _configuration,"InsuranceProviderRepository.GetActiveInsuranceProvidersAsync");
+                    return _operations.SuccessResult(null,"InsuranceProviderRepository.GetActiveInsuranceProvidersAsync");
                 }
 
-                return _operations.SuccessResult(providers, _configuration,"InsuranceProviderRepository.GetActiveInsuranceProvidersAsync");
+                return _operations.SuccessResult(providers,"InsuranceProviderRepository.GetActiveInsuranceProvidersAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "InsuranceProviderRepository.GetActiveInsuranceProvidersAsync", _configuration);
+                return _operations.HandleException(ex, "InsuranceProviderRepository.GetActiveInsuranceProvidersAsync");
             }
         }
 
@@ -269,14 +271,14 @@ namespace NetMed.Persistence.Repository
 
                 if (providers == null || !providers.Any())
                 {
-                    return _operations.SuccessResult(null, _configuration, "InsuranceProviderRepository.GetInsuranceProvidersByRegionAsync");
+                    return _operations.SuccessResult(null, "InsuranceProviderRepository.GetInsuranceProvidersByRegionAsync");
                 }
 
-                return _operations.SuccessResult(providers, _configuration, "InsuranceProviderRepository.GetInsuranceProvidersByRegionAsync");
+                return _operations.SuccessResult(providers, "InsuranceProviderRepository.GetInsuranceProvidersByRegionAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsuranceProvidersByRegionAsync", _configuration);
+                return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsuranceProvidersByRegionAsync");
             }
         }
 
@@ -306,14 +308,14 @@ namespace NetMed.Persistence.Repository
 
                 if (providers == null || !providers.Any())
                 {
-                    return _operations.SuccessResult(null,_configuration, "InsuranceProviderRepository.GetInsuranceProvidersByMaxCoverageAsync");
+                    return _operations.SuccessResult(null, "InsuranceProviderRepository.GetInsuranceProvidersByMaxCoverageAsync");
                 }
 
-                return _operations.SuccessResult(providers,_configuration, "InsuranceProviderRepository.GetInsuranceProvidersByMaxCoverageAsync");
+                return _operations.SuccessResult(providers, "InsuranceProviderRepository.GetInsuranceProvidersByMaxCoverageAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsuranceProvidersByMaxCoverageAsync", _configuration);
+                return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsuranceProvidersByMaxCoverageAsync");
             }
         }
     }
