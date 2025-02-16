@@ -26,7 +26,9 @@ namespace NetMed.Persistence.Interfaces
 
         }
 
-
+        //Debo buscar un sitio donde ubicar esta clase.
+        //Debo agregar más métodos para no repetir tanto código.
+     
 
     }
 }

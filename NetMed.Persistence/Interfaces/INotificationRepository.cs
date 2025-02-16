@@ -17,7 +17,7 @@ namespace NetMed.Persistence.Context.Interfaces
 
             Task<OperationResult> UpdateNotificationAsync(Notification notification);
 
-            Task<OperationResult> DeleteNotificationAsync(Notification notificationId);
+            Task<OperationResult> DeleteNotificationAsync(Notification notification);
 
     }
 }
