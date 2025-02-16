@@ -57,23 +57,44 @@ namespace NetMed.Persistence.Repositories
             return base.GetAllAsync(filter);
         }
 
-       public async Task<OperationResult> GetNotificationsByUserIdAsync(int userId)
+        public async Task<OperationResult> GetNotificationsByUserIdAsync(int userId)
         {
-            OperationResult result = new OperationResult();
+            var result = new OperationResult();
 
             if (userId < 0)
             {
                 result.success = false;
-                result.Mesagge = "El usuario no es valido";
+                result.Mesagge = "ID no válido.";
+                return result;
             }
-            else
-            { 
-            
-             result.success = true;
-             result.Mesagge = "La notificacion fue obtenida correctamente";
+
+            try
+            {
+                var user = await _context.Notifications
+                    .FirstOrDefaultAsync(n => n.Id == userId);
+
+                if (user == null)
+                {
+                    result.success = false;
+                    result.Mesagge = "Usuario no encontrado.";
+                }
+                else
+                {
+                    result.success = true;
+                    result.Mesagge = "Usuarios obtenida con éxito.";
+                    result.data = user;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                result.success = false;
+                result.Mesagge = $"Error al obtener el usuario: {ex.Message}";
+                await _context.SaveChangesAsync();
             }
             return result;
-        
+
+
         }
 
         public async Task<OperationResult> GetNotificationByIdAsync(int notificationId)
@@ -83,37 +104,68 @@ namespace NetMed.Persistence.Repositories
             if (notificationId < 0)
             {
                 result.success = false;
-                result.Mesagge = "ID no valido";
+                result.Mesagge = "ID no válido.";
+                return result;
             }
-            else 
-            { 
-             result.success = true;
-             result.Mesagge = "Notificacion obtenda con exito";
-  
+
+            try
+            {
+                var notification = await _context.Notifications
+                    .FirstOrDefaultAsync(n => n.Id == notificationId);
+
+                if (notification == null)
+                {
+                    result.success = false;
+                    result.Mesagge = "Notificación no encontrada.";
+                }
+                else
+                {
+                    result.success = true;
+                    result.Mesagge = "Notificación obtenida con éxito.";
+                    result.data = notification;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                result.success = false;
+                result.Mesagge = $"Error al obtener la notificación: {ex.Message}";
+                await _context.SaveChangesAsync();
             }
             return result;
 
         }
         public async Task<OperationResult> CreateNotificationAsync(Notification notification)
         {
-            var validationResult =  EntityValidator.ValidateNotNull(notification, "Notification");
+            var validationResult = EntityValidator.ValidateNotNull(notification, "Notification");
 
 
             if (!validationResult.success)
-            { 
-             return validationResult;
-            
+            {
+                return validationResult;
+
             }
 
             var result = new OperationResult();
-            { 
-             result.success = true;
-             result.Mesagge = "La notificacion fue creada con exito";
-            
-            };
+            try
+            {
+
+                {
+                    _context.Notifications.Add(notification);
+                    await _context.SaveChangesAsync();
+                    result.success = true;
+                    result.Mesagge = "La notificacion se a creado con exito";
+
+                };
+            }
+            catch (Exception ex)
+            {
+                result.success = false;
+                result.Mesagge = "Problemas con crear la notificacion";
+
+            }
 
             return result;
-             
 
         }
 
@@ -129,40 +181,64 @@ namespace NetMed.Persistence.Repositories
             }
 
             var result = new OperationResult();
+            try
             {
-                result.success = true;
-                result.Mesagge = "La notificacion actualizada  con exito";
 
-            };
+                {
+                    _context.Notifications.Update(notification);
+                    await _context.SaveChangesAsync();
+                    result.success = true;
+                    result.Mesagge = "La notificacion se actualizo con exito";
 
-            return result;
-
-
-
-
-        }
-
-        public async Task<OperationResult> DeleteNotificationAsync(int notificationId)
-        {
-            var validationResult = EntityValidator.ValidateNotNull(notificationId, "Notification");
-
-            var  result = new OperationResult();
-            if (notificationId < 0)
+                };
+            }
+            catch (Exception ex)
             {
                 result.success = false;
-                result.Mesagge = "El ID no es valido";
+                result.Mesagge = "Problemas con actualizar la notificacion";
 
             }
-            else
+
+            return result;
+        }
+
+        public async Task<OperationResult> DeleteNotificationAsync(Notification notification)
+        {
+            var validationResult = EntityValidator.ValidateNotNull(notification, "Notification");
+
+
+            if (!validationResult.success)
             {
-                result.success = true;
-                result.Mesagge = "El mensaje se elimino con exito";
+                return validationResult;
+
+            }
+
+            var result = new OperationResult();
+            try
+            {
+
+                {
+                    _context.Notifications.Remove(notification);
+                    await _context.SaveChangesAsync();
+                    result.success = true;
+                    result.Mesagge = "La notificacion se elimino con exito";
+
+                };
+            }
+            catch (Exception ex)
+            {
+                result.success = false;
+                result.Mesagge = "Problemas eliminando la notificacion";
 
             }
 
             return result;
 
         }
+
+
     }
 }
 
+        
+ 
