@@ -94,7 +94,7 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al verificar la existencia de la entidad con el filtro: {Filter}", filter.ToString());
+                _logger.LogError(ex, "Error al verificar la existencia de la entidad con el filtro:"+ filter.ToString());
                 throw; 
             }
         }
@@ -145,18 +145,18 @@ namespace NetMed.Persistence.Repositories
                 var entity = await _context.NetworkTypes.FindAsync(id);
                 if (entity == null)
                 {
-                    _logger.LogWarning("No se encontró la entidad con el ID: {Id} para eliminar.", id);
+                    _logger.LogWarning($"No se encontró la entidad con el ID: {id} para eliminar.");
                     return _operations.SuccessResult(null, "Entidad no encontrada.");
                 }
 
                 _context.NetworkTypes.Remove(entity);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("Entidad eliminada exitosamente: {Entity}", entity.ToString());
+                _logger.LogInformation("Entidad eliminada exitosamente: "+ entity.ToString());
                 return _operations.SuccessResult(null, "Entidad eliminada exitosamente.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al eliminar la entidad con el ID: {Id}", id);
+                _logger.LogError(ex, $"Error al eliminar la entidad con el ID: {id}");
                 return _operations.HandleException(ex, "Ocurrió un error eliminando la entidad");
             }
         }

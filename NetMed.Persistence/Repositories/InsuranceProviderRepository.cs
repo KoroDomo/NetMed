@@ -59,13 +59,19 @@ namespace NetMed.Persistence.Repository
 
                 if (provider == null)
                 {
+                    _logger.LogWarning($"No se encontró el Provider con el ID {insurenceProviderId}.");
                     return _operations.SuccessResult(null, "InsuranceProviderRepository.GetInsurenProviderById");
                 }
-
-                return _operations.SuccessResult(provider, "InsuranceProviderRepository.GetInsurenProviderById");
+                else
+                {
+                    _logger.LogInformation("Se ha obtenido el Provider: " + provider.ToString());
+                    return _operations.SuccessResult(provider, "Succes: InsuranceProviderRepository.GetInsurenProviderById");
+                }
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error al obtener el provider con el ID: {insurenceProviderId} ");
+
                 return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsurenProviderById");
             }
         }
@@ -82,10 +88,14 @@ namespace NetMed.Persistence.Repository
                 _context.InsuranceProviders.Add(provider);
                 await _context.SaveChangesAsync();
 
-                return _operations.SuccessResult(provider, "InsuranceProviderRepository.SaveEntityAsync");
+                _logger.LogInformation("Se ha guardado el Provider: " + provider.ToString());
+
+                return _operations.SuccessResult(provider, "Succes: InsuranceProviderRepository.SaveEntityAsync");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error al guardar el Provider: {provider} ");
+
                 return _operations.HandleException(ex, "InsuranceProviderRepository.SaveEntityAsync");
             }
         }
@@ -119,11 +129,13 @@ namespace NetMed.Persistence.Repository
                 {
                     return _operations.SuccessResult(null, "InsuranceProviderRepository.GetAllAsync");
                 }
-
-                return _operations.SuccessResult(providers, "InsuranceProviderRepository.GetAllAsync");
+                
+                return _operations.SuccessResult(providers, "Succes: InsuranceProviderRepository.GetAllAsync");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error al obtener todos los Providers.");
+
                 return _operations.HandleException(ex, "InsuranceProviderRepository.GetAllAsync" );
             }
         }
@@ -140,11 +152,13 @@ namespace NetMed.Persistence.Repository
                 _context.InsuranceProviders.Update(entity);
                 await _context.SaveChangesAsync();
 
-                return _operations.SuccessResult(entity, "InsuranceProviderRepository.UpdateEntityAsync");
+                _logger.LogInformation("Se ha actualizado el Provider: " + entity.ToString());
+                return _operations.SuccessResult(entity, "Succes: InsuranceProviderRepository.UpdateEntityAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "InsuranceProviderRepository.UpdateEntityAsync");
+                _logger.LogError(ex, $"Error al actualizar el Provider {entity}.");
+                return _operations.HandleException(ex, "Error: InsuranceProviderRepository.UpdateEntityAsync");
             }
         }
 
@@ -155,19 +169,19 @@ namespace NetMed.Persistence.Repository
                 var entity = await _context.InsuranceProviders.FindAsync(id);
                 if (entity == null)
                 {
-                    _logger.LogWarning("No se encontró la entidad con el ID: {Id} para eliminar.", id);
-                    return _operations.SuccessResult(null,"Entidad no encontrada.");
+                    _logger.LogWarning($"No se encontró el provider con el ID: {id} para eliminar.");
+                    return _operations.SuccessResult(null, $"NotFound: InsuranceProviderRepository.DeleteInsuranceProviderAsync.");
                 }
 
                 _context.InsuranceProviders.Remove(entity);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("Entidad eliminada exitosamente: {Entity}", entity.ToString());
-                return _operations.SuccessResult(null,"Entidad eliminada exitosamente.");
+                _logger.LogInformation("Provider eliminado exitosamente: " + entity.ToString());
+                return _operations.SuccessResult(null, "Succes: InsuranceProviderRepository.DeleteInsuranceProviderAsync.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al eliminar la entidad con el ID: {Id}", id);
-                return _operations.HandleException(ex, "Ocurrió un error eliminando la entidad");
+                _logger.LogError(ex, $"Error al eliminar el Provider con el ID: {id}");
+                return _operations.HandleException(ex, "Error: InsuranceProviderRepository.DeleteInsuranceProviderAsync.");
             }
         }
 
@@ -199,11 +213,11 @@ namespace NetMed.Persistence.Repository
                 {
                     return _operations.SuccessResult(null,"InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync");
                 }
-
                 return _operations.SuccessResult(providers,"InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error al obtener Providers con preferencia");
                 return _operations.HandleException(ex, "InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync");
             }
         }
