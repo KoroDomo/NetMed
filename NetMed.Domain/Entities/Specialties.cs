@@ -9,10 +9,8 @@ namespace NetMed.Domain.Entities
         [Column("SpecialtyID")]
         [Key]
         public override int Id { get; set; }
-        public string SpecialtyName { get; set; }
-        public DateTime DateOfVisit { get; set; }
-        public DateTime DateCreated { get; set; }
-        public bool IsActive { get; set; }
+        [Required]
+        public required string SpecialtyName { get; set; }
 
         // Metodo para activar la especialidad
         public void Activate()

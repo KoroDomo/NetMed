@@ -9,10 +9,8 @@ namespace NetMed.Domain.Entities
         [Column("SAvailabilityModeID")]
         [Key]
         public override int Id { get; set; }
-        public string AvailabilityModeName { get; set; }
-        public DateTime DateOfVisit { get; set; }
-        public DateTime DateCreated { get; set; }
-        public bool IsActive { get; set; }
+        [Required]
+        public required string AvailabilityModeName { get; set; }
 
         // Metodo para activar el modo de disponibilidad
         public void Activate()

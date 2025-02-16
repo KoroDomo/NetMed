@@ -44,7 +44,6 @@ namespace NetMed.Persistence.Repositories
 
             existingSpecialty.SpecialtyName = entity.SpecialtyName;
             existingSpecialty.IsActive = entity.IsActive;
-            existingSpecialty.DateOfVisit = entity.DateOfVisit;
 
             await base.UpdateEntityAsync(existingSpecialty);
             return new OperationResult { Success = true, Message = "Especialidad actualizada" };

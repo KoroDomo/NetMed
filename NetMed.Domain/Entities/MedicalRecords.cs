@@ -11,22 +11,27 @@ namespace NetMed.Domain.Entities
         [Column("RecordID")]
         [Key]
         public override int Id { get; set; }
-        public int PatientID { get; set; }
-        public string Diagnosis { get; set; }
-        public string Treatment { get; set; }
-        public DateTime DateOfVisit { get; set; }
-        public DateTime DateCreated { get; set; }
+        [Required]
+        public required int PatientID { get; set; }
+        [Required]
+        public required string Diagnosis { get; set; }
+        [Required]
+        public required string Treatment { get; set; }
+        [Required]
+        public required DateTime DateOfVisit { get; set; }
 
         // Metodo para actualizar el diagnostico
         public void UpdateDiagnosis(string newDiagnosis)
         {
             Diagnosis = newDiagnosis;
+            UpdatedAt = DateTime.Now;
         }
 
         // Metodo para actualizar el tratamiento
         public void UpdateTreatment(string newTreatment)
         {
             Treatment = newTreatment;
+            UpdatedAt = DateTime.Now;
         }
     }
 }

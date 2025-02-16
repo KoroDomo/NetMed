@@ -4,11 +4,10 @@ namespace NetMed.Model.Models
 {
     public class AvailabilityModesModel
     {
-        public int Id { get; set; }
-        public string AvailabilityModeName { get; set; }
-
-        public DateTime DateOfVisit { get; set; }
-        public bool IsActive { get; set; }
-
+        public required int SAvailabilityModeID { get; set; }
+        public required string AvailabilityMode { get; set; }
+        public required DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public required bool IsActive { get; set; }
     }
 }
