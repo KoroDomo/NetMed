@@ -15,7 +15,7 @@ namespace NetMed.Persistence.Repositories
         private readonly NetMedContext _context;
         private readonly ILogger<NetworkTypeRepository> _logger;
         private readonly IConfiguration _configuration;
-        private readonly OperationValidator _operations= new OperationValidator();
+        private readonly OperationValidator _operations;
 
         public NetworkTypeRepository(NetMedContext context,
                                      ILogger<NetworkTypeRepository> logger,
@@ -24,7 +24,8 @@ namespace NetMed.Persistence.Repositories
             _context = context;
             _logger = logger;
             _configuration = configuration;
-            
+            _operations = new OperationValidator(_configuration);
+
         }
 
         public override async Task<OperationResult> SaveEntityAsync(NetworkType entity)
@@ -33,17 +34,17 @@ namespace NetMed.Persistence.Repositories
             {
                 if (entity == null)
                 {
-                    return _operations.SuccessResult(null,_configuration, "La entidad no puede ser nula.");
+                    return _operations.SuccessResult(null, "La entidad no puede ser nula.");
                 }
 
                 _context.NetworkTypes.Add(entity);
                 await _context.SaveChangesAsync();
 
-                return _operations.SuccessResult(entity,_configuration, "NetworkTypeRepository.SaveEntityAsync");
+                return _operations.SuccessResult(entity, "NetworkTypeRepository.SaveEntityAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "NetworkTypeRepository.SaveEntityAsync", _configuration);
+                return _operations.HandleException(ex, "NetworkTypeRepository.SaveEntityAsync");
             }
         }
 
@@ -54,14 +55,14 @@ namespace NetMed.Persistence.Repositories
                 var entity = await _context.NetworkTypes.FindAsync(id);
                 if (entity == null)
                 {
-                    return _operations.SuccessResult(null,_configuration, "NetworkTypeRepository.GetEntityByIdAsync");
+                    return _operations.SuccessResult(null, "NetworkTypeRepository.GetEntityByIdAsync");
                 }
 
-                return _operations.SuccessResult(entity, _configuration, "NetworkTypeRepository.GetEntityByIdAsync");
+                return _operations.SuccessResult(entity, "NetworkTypeRepository.GetEntityByIdAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "NetworkTypeRepository.GetEntityByIdAsync", _configuration);
+                return _operations.HandleException(ex, "NetworkTypeRepository.GetEntityByIdAsync");
             }
         }
 
@@ -71,17 +72,17 @@ namespace NetMed.Persistence.Repositories
             {
                 if (entity == null)
                 {
-                    return _operations.SuccessResult(null, _configuration, "La entidad no puede ser nula.");
+                    return _operations.SuccessResult(null, "La entidad no puede ser nula.");
                 }
 
                 _context.NetworkTypes.Update(entity);
                 await _context.SaveChangesAsync();
 
-                return _operations.SuccessResult(entity, _configuration, "NetworkTypeRepository.UpdateEntityAsync");
+                return _operations.SuccessResult(entity, "NetworkTypeRepository.UpdateEntityAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "NetworkTypeRepository.UpdateEntityAsync", _configuration);
+                return _operations.HandleException(ex, "NetworkTypeRepository.UpdateEntityAsync");
             }
         }
 
@@ -105,14 +106,14 @@ namespace NetMed.Persistence.Repositories
                 var entities = await _context.NetworkTypes.ToListAsync();
                 if (entities == null || !entities.Any())
                 {
-                    return _operations.SuccessResult(null, _configuration, "NetworkTypeRepository.GetAllAsync");
+                    return _operations.SuccessResult(null, "NetworkTypeRepository.GetAllAsync");
                 }
 
-                return _operations.SuccessResult(entities, _configuration, "NetworkTypeRepository.GetAllAsync");
+                return _operations.SuccessResult(entities, "NetworkTypeRepository.GetAllAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "NetworkTypeRepository.GetAllAsync", _configuration);
+                return _operations.HandleException(ex, "NetworkTypeRepository.GetAllAsync");
             }
         }
 
@@ -126,14 +127,14 @@ namespace NetMed.Persistence.Repositories
 
                 if (entities == null || !entities.Any())
                 {
-                    return _operations.SuccessResult(null, _configuration, "NetworkTypeRepository.GetAllAsync");
+                    return _operations.SuccessResult(null, "NetworkTypeRepository.GetAllAsync");
                 }
 
-                return _operations.SuccessResult(entities, _configuration, "NetworkTypeRepository.GetAllAsync");
+                return _operations.SuccessResult(entities, "NetworkTypeRepository.GetAllAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "NetworkTypeRepository.GetAllAsync", _configuration);
+                return _operations.HandleException(ex, "NetworkTypeRepository.GetAllAsync");
             }
         }
 
@@ -145,18 +146,18 @@ namespace NetMed.Persistence.Repositories
                 if (entity == null)
                 {
                     _logger.LogWarning("No se encontró la entidad con el ID: {Id} para eliminar.", id);
-                    return _operations.SuccessResult(null, _configuration, "Entidad no encontrada.");
+                    return _operations.SuccessResult(null, "Entidad no encontrada.");
                 }
 
                 _context.NetworkTypes.Remove(entity);
                 await _context.SaveChangesAsync();
                 _logger.LogInformation("Entidad eliminada exitosamente: {Entity}", entity.ToString());
-                return _operations.SuccessResult(null, _configuration, "Entidad eliminada exitosamente.");
+                return _operations.SuccessResult(null, "Entidad eliminada exitosamente.");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al eliminar la entidad con el ID: {Id}", id);
-                return _operations.HandleException(ex, "Ocurrió un error eliminando la entidad", _configuration);
+                return _operations.HandleException(ex, "Ocurrió un error eliminando la entidad");
             }
         }
 
@@ -170,14 +171,14 @@ namespace NetMed.Persistence.Repositories
 
                 if (networkTypes == null || !networkTypes.Any())
                 {
-                    return _operations.SuccessResult(null, _configuration, "NetworkTypeRepository.GetNetworkTypesByProviderAsync");
+                    return _operations.SuccessResult(null, "NetworkTypeRepository.GetNetworkTypesByProviderAsync");
                 }
 
-                return _operations.SuccessResult(networkTypes, _configuration, "NetworkTypeRepository.GetNetworkTypesByProviderAsync");
+                return _operations.SuccessResult(networkTypes, "NetworkTypeRepository.GetNetworkTypesByProviderAsync");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "NetworkTypeRepository.GetNetworkTypesByProviderAsync", _configuration);
+                return _operations.HandleException(ex, "NetworkTypeRepository.GetNetworkTypesByProviderAsync");
             }
         }
     }

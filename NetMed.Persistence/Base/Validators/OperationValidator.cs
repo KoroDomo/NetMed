@@ -7,7 +7,7 @@ public class OperationValidator
 
     public OperationValidator(IConfiguration configuration)
     {
-        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        _configuration = configuration;
     }
 
     public OperationResult SuccessResult(dynamic result, string configKey = null)
