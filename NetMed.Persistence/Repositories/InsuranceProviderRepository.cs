@@ -7,7 +7,7 @@ using NetMed.Model.Models;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
-using System.Linq.Expressions;
+
 
 namespace NetMed.Persistence.Repository
 {
@@ -16,16 +16,17 @@ namespace NetMed.Persistence.Repository
         private readonly NetMedContext _context;
         private readonly ILogger<InsuranceProviderRepository> _logger;
         private readonly IConfiguration _configuration;
-        private readonly Operations _operations;
+        private readonly OperationValidator _operations = new OperationValidator();
+        
 
         public InsuranceProviderRepository(NetMedContext context,
                                            ILogger<InsuranceProviderRepository> logger,
-                                           IConfiguration configuration, Operations operations) : base(context, logger,configuration, operations)
+                                           IConfiguration configuration) : base(context, logger,configuration )
         {
             _context = context;
             _logger = logger;
             _configuration = configuration;
-            _operations = operations;
+            
         }
 
         public async Task<OperationResult> GetInsurenProviderById(int insurenceProviderId)

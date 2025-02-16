@@ -15,17 +15,16 @@ namespace NetMed.Persistence.Repositories
         private readonly NetMedContext _context;
         private readonly ILogger<NetworkTypeRepository> _logger;
         private readonly IConfiguration _configuration;
-        private readonly Operations _operations;
+        private readonly OperationValidator _operations= new OperationValidator();
 
         public NetworkTypeRepository(NetMedContext context,
                                      ILogger<NetworkTypeRepository> logger,
-                                     IConfiguration configuration,
-                                     Operations operations) : base(context, logger,configuration, operations)
+                                     IConfiguration configuration) : base(context, logger,configuration)
         {
             _context = context;
             _logger = logger;
             _configuration = configuration;
-            _operations = operations;
+            
         }
 
         public override async Task<OperationResult> SaveEntityAsync(NetworkType entity)

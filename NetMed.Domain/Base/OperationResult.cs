@@ -7,7 +7,7 @@ namespace NetMed.Domain.Base
         { 
             this.Success = true;
         }
-        public string Mesagge { get; set; }
+        public string Message { get; set; }
         public bool Success {get; set;}
         public dynamic Result { get; set; }
     }

@@ -11,21 +11,21 @@ namespace NetMed.Persistence.Base
     public class BaseRepository<TEntity, TType> : IBaseRepository<TEntity, TType> where TEntity : class
     {
         private readonly NetMedContext _context;
+
+        private readonly OperationValidator _operations = new OperationValidator();
+
         private readonly ILogger<BaseRepository<TEntity, TType>> _logger;
         private readonly IConfiguration _configuration;
-        private readonly Operations _operations;
 
         private DbSet<TEntity> _entity { get; set; }
 
         public BaseRepository(NetMedContext context,
                              ILogger<BaseRepository<TEntity, TType>> logger,
-                             IConfiguration configuration,
-                             Operations operations)
+                             IConfiguration configuration)
         {
             _context = context;
             _logger = logger;
             _configuration = configuration;
-            _operations = operations;
             _entity = _context.Set<TEntity>();
         }
 

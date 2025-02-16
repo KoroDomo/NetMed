@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using NetMed.Domain.Base;
 
-public class Operations
+public class OperationValidator
 {
     public OperationResult SuccessResult(dynamic result,IConfiguration configuration, string configKey = null)
     {
+
         
         var successMessage = configKey != null
             ? configuration[$"Messages:Success:{configKey}"] ?? configuration["Messages:Success:Default"]
@@ -15,9 +16,10 @@ public class Operations
         {
             Success = true,
             Result = result,
-            Mesagge = successMessage
+            Message = successMessage
         };
     }
+    
 
     public OperationResult HandleException(Exception ex, string configKey, IConfiguration configuration)
     {
@@ -27,7 +29,7 @@ public class Operations
         return new OperationResult
         {
             Success = false,
-            Mesagge = $"{errorMessage}: {ex.Message}"
+            Message = $"{errorMessage}: {ex.Message}"
         };
     }
 }
