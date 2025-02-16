@@ -37,7 +37,7 @@ namespace NetMed.Persistence.Base
             try
             {
                 var datos = Entity.Where(filter).ToListAsync();
-                result.Result = datos;
+                result.data= datos;
             }
             catch (Exception ex)
             {

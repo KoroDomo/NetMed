@@ -5,6 +5,6 @@ namespace NetMed.Domain.Base
     {
         public string Mesagge { get; set; }
         public bool success {get; set;}
-        public dynamic Result { get; set; }
+        public dynamic? data { get; set; }
     }
 }
