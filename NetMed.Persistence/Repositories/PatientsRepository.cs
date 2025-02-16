@@ -1,7 +1,7 @@
 ﻿
-
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Base;
@@ -13,18 +13,25 @@ namespace NetMed.Persistence.Repositories
     public class PatientsRepository : BaseRepository<Patients>, IPatientsRepository
     {
         private readonly NetMedContext _context;
-        public PatientsRepository(NetMedContext context) : base(context)
+        private readonly ILogger<PatientsRepository> _logger;
+        public PatientsRepository(NetMedContext context,
+            ILogger<PatientsRepository> logger) : base(context)
         {
             _context = context;
+            _logger = logger;
         }
 
-        public async Task<Patients> GetByBloodTypeAsync(string bloodType)
+        public async Task<OperationResult> GetByBloodTypeAsync(string bloodType)
         {
-            var result = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
-                var data = await _context.Patients.FindAsync(bloodType);
-                result.Result = data;
+                if (result.data == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }
+                result.data = await _context.Patients.FindAsync(bloodType);
                 result.Success = true;
             }
             catch (Exception ex)
@@ -32,18 +39,23 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + "Ocurrio un error al buscar los datos";
             }
-            return await _context.Patients.FindAsync(bloodType) ?? throw new InvalidOperationException("Patient not found");
+            return result;
         }
 
-            public async Task<Patients> GetByInsuranceProviderAsync(int providerId)
+        public async Task<OperationResult> GetByInsuranceProviderAsync(int providerId)
         {
-            var result = new OperationResult();
-            result.Result = await _context.Patients.FindAsync(providerId);
-            result.Success = true;
+            OperationResult result = new OperationResult();
+            
             try
+               
+
             {
-                var data = await _context.Patients.FindAsync(providerId);
-                result.Result = data;
+                if (result.data == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }
+                result.data = await _context.Patients.FindAsync(providerId);
                 result.Success = true;
             }
             catch (Exception ex)
@@ -51,15 +63,14 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + "Ocurrio un error al buscar los datos";
             }
-            return await _context.Patients.FindAsync(providerId) ?? throw new InvalidOperationException("Patient not found");
+            return  result;
         }
-            public async Task<Patients> GetPatientsAsyncWithoutInsuranceAsync()
+            public async Task<OperationResult> GetPatientsAsyncWithoutInsuranceAsync()
         {
-            var result = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
-                var data = await _context.Patients.FindAsync();
-                result.Result = data;
+                result.data = await _context.Patients.FindAsync();
                 result.Success = true;
             }
             catch (Exception ex)
@@ -67,16 +78,15 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + "Ocurrio un error al buscar los datos";
             }
-            return await _context.Patients.FindAsync() ?? throw new InvalidOperationException("Patient not found");
+            return result;
         }
 
-        public async Task<Patients> SearchByAddressAsync(string addressFragment)
+        public async Task<OperationResult> SearchByAddressAsync(string addressFragment)
         {
-            var result = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
-                var data = await _context.Patients.FindAsync(addressFragment);
-                result.Result = data;
+                result.data = await _context.Patients.FindAsync(addressFragment);
                 result.Success = true;
             }
             catch (Exception ex)
@@ -84,16 +94,16 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + "Ocurrio un error al buscar los datos";
             }
-            return await _context.Patients.FindAsync(addressFragment) ?? throw new InvalidOperationException("Patient not found");
+            return result;
         }
 
-        public async Task<Patients> GetPatientsByAgeRangeAsync(int minAge, int maxAge)
+        public async Task<OperationResult> GetPatientsByAgeRangeAsync(int minAge, int maxAge)
         {
-            var result = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
-                var data = await _context.Patients.FindAsync(minAge, maxAge);
-                result.Result = data;
+                result.data = await _context.Patients.FindAsync(minAge, maxAge);
+             
                 result.Success = true;
             }
             catch (Exception ex)
@@ -102,16 +112,20 @@ namespace NetMed.Persistence.Repositories
                 result.Message = ex.Message + "Ocurrio un error al buscar los datos";
             }
 
-            return await _context.Patients.FindAsync(minAge, maxAge) ?? throw new InvalidOperationException("Patient not found");
+            return result;
         }
 
-        public async Task<Patients> GetByEmergencyContactAsync(string contactInfo)
+        public async Task<OperationResult> GetByEmergencyContactAsync(string contactInfo)
         {
-            var result = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
-                var data = await _context.Patients.FindAsync(contactInfo);
-                result.Result = data;
+                if (result.data == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }
+                result.data = await _context.Patients.FindAsync(contactInfo);
                 result.Success = true;
             }
             catch (Exception ex)
@@ -119,16 +133,20 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + "Ocurrio un error al buscar los datos";
             }
-            return await _context.Patients.FindAsync(contactInfo) ?? throw new InvalidOperationException("Patient not found");
+            return result;
         }
-
-        public async Task<Patients> GetPatientsWithAllergiesAsync(string? allergy = null)
+        public async Task<OperationResult> GetPatientsWithAllergiesAsync(string? allergy = null)
         {
-            var result = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
-                var data = await _context.Patients.FindAsync(allergy);
-                result.Result = data;
+              if(result.data == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }   
+
+                result.data = await _context.Patients.FindAsync(allergy);
                 result.Success = true;
             }
             catch (Exception ex)
@@ -136,16 +154,21 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + "Ocurrio un error al buscar los datos";
             }
-            return await _context.Patients.FindAsync(allergy) ?? throw new InvalidOperationException("Patient not found");
+            return result;
         }
 
-        public async Task<Patients> GetPatientsByGenderAsync(string gender)
+        public async Task<OperationResult> GetPatientsByGenderAsync(string gender)
         {
-            var result = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
-                var data = await _context.Patients.FindAsync(gender);
-                result.Result = data;
+                if (result.data == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }
+                result.data = await _context.Patients.FindAsync(gender);
+             
                 result.Success = true;
             }
             catch
@@ -154,7 +177,7 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + "Ocurrio un error al buscar los datos";
             }
-            return await _context.Patients.FindAsync(gender) ?? throw new InvalidOperationException("Patient not found");
+            return result;
             }
             public override async Task<OperationResult> SaveEntityAsync(Patients entity)
         {
@@ -196,7 +219,7 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result.Result = await _context.Patients.Where(filter).ToListAsync();
+                result.data = await _context.Patients.Where(filter).ToListAsync();
                 result.Success = true;
             }
             catch (Exception ex)

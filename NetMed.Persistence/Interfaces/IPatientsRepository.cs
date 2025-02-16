@@ -1,24 +1,25 @@
-﻿using NetMed.Domain.Entities;
+﻿using NetMed.Domain.Base;
+using NetMed.Domain.Entities;
 using NetMed.Domain.Repository;
 namespace NetMed.Persistence.Interfaces
 {
     public interface IPatientsRepository : IBaseRepository<Patients>
     {
-        Task<Patients> GetPatientsAsyncWithoutInsuranceAsync();
+        Task<OperationResult> GetPatientsAsyncWithoutInsuranceAsync();
 
-        Task<Patients> GetByBloodTypeAsync(string bloodType);
+        Task<OperationResult> GetByBloodTypeAsync(string bloodType);
 
-        Task<Patients> GetByInsuranceProviderAsync(int providerId);
+        Task<OperationResult> GetByInsuranceProviderAsync(int providerId);
 
-        Task<Patients> SearchByAddressAsync(string addressFragment);
+        Task<OperationResult> SearchByAddressAsync(string addressFragment);
 
-        Task<Patients> GetPatientsByAgeRangeAsync(int minAge, int maxAge);
+        Task<OperationResult> GetPatientsByAgeRangeAsync(int minAge, int maxAge);
 
-        Task<Patients> GetByEmergencyContactAsync(string contactInfo);
+        Task<OperationResult> GetByEmergencyContactAsync(string contactInfo);
 
-        Task<Patients> GetPatientsWithAllergiesAsync(string? allergy = null);
+        Task<OperationResult> GetPatientsWithAllergiesAsync(string? allergy = null);
 
-        Task<Patients> GetPatientsByGenderAsync(string gender);
+        Task<OperationResult> GetPatientsByGenderAsync(string gender);
 
     }
 }

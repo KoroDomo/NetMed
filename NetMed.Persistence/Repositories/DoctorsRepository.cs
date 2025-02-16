@@ -6,24 +6,31 @@ using NetMed.Domain.Base;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using NetMed.Persistence.Interfaces;
+using Microsoft.Extensions.Logging;
 namespace NetMed.Persistence.Repositories
 {
     public class DoctorsRepository : BaseRepository<Doctors>, IDoctorsRepository
     {
         private readonly NetMedContext _context;
-        public DoctorsRepository(NetMedContext context) : base(context)
+        private readonly ILogger<DoctorsRepository> _logger;
+        public DoctorsRepository(NetMedContext context,
+            ILogger<DoctorsRepository> logger) : base(context)
         {
-            _context = context;
+                _context = context;
+            _logger = logger;
         }
 
-        public async Task<List<Doctors>> GetByAvailabilityModeAsync(int availabilityModeId)
+        public async Task<OperationResult> GetByAvailabilityModeAsync(int availabilityModeId)
         {
-            var result = new OperationResult();
-            List<Doctors> data = new List<Doctors>();
+            OperationResult result = new OperationResult();
             try
             {
-                data = await _context.Doctors.Where(x => x.AvailabilityModeId == availabilityModeId).ToListAsync();
-                result.Result = data;
+                if(result.data == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }
+                result.data = await _context.Doctors.Where(x => x.AvailabilityModeId == availabilityModeId).ToListAsync();
                 result.Success = true;
             }
             catch (Exception ex)
@@ -31,17 +38,21 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
             }
-            return data;
+            return result;
         }
 
-        public async Task<List<Doctors>> GetBySpecialtyAsync(int specialtyId)
+        public async Task<OperationResult> GetBySpecialtyAsync(int specialtyId)
         {
-            var result = new OperationResult();
-            List<Doctors> data = new List<Doctors>();
+            OperationResult result = new OperationResult();
+        
             try
             {
-                data = await _context.Doctors.Where(x => x.SpecialtyId == specialtyId).ToListAsync();
-                result.Result = data;
+                if(result.data == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }
+                result.data = await _context.Doctors.Where(x => x.SpecialtyId == specialtyId).ToListAsync();
                 result.Success = true;
             }
             catch (Exception ex)
@@ -49,17 +60,22 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
             }
-            return data;
+            return result;
         }
 
-        public async Task<List<Doctors>> GetByLicenseNumberAsync(string licenseNumber)
+        public async Task<OperationResult> GetByLicenseNumberAsync(string licenseNumber)
         {
-            var result = new OperationResult();
-            List<Doctors> data = new List<Doctors>();
+            OperationResult result = new OperationResult();
+         
             try
             {
-                data = await _context.Doctors.Where(x => x.LicenseNumber == licenseNumber).ToListAsync();
-                result.Result = data;
+                if(result.data == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }
+                result.data = await _context.Doctors.Where(x => x.LicenseNumber == licenseNumber).ToListAsync();
+    
                 result.Success = true;
             }
             catch (Exception ex)
@@ -67,17 +83,16 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
             }
-            return data;
+            return result;
         }
 
-        public async Task<List<Doctors>> GetActiveDoctorsAsync(bool isActive = true)
+        public async Task<OperationResult> GetActiveDoctorsAsync(bool isActive = true)
         {
-            var result = new OperationResult();
-            List<Doctors> data = new List<Doctors>();
+            OperationResult result = new OperationResult();
+
             try
             {
-                data = await _context.Doctors.Where(x => x.IsActive == isActive).ToListAsync();
-                result.Result = data;
+                result.data = await _context.Doctors.Where(x => x.IsActive == isActive).ToListAsync();
                 result.Success = true;
             }
             catch (Exception ex)
@@ -85,18 +100,20 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
             }
-            return data;
+            return result;
         }
 
-        public async Task<List<Doctors>> GetDoctorsByExperienceAsync(int minYears, int maxYears)
+        public async Task<OperationResult> GetDoctorsByExperienceAsync(int minYears, int maxYears)
         {
-            var result = new OperationResult();
-            List<Doctors> data = new List<Doctors>();
-
+            OperationResult result = new OperationResult(); 
             try
             {
-                data = await _context.Doctors.Where(x => x.YearsOfExperience >= minYears && x.YearsOfExperience <= maxYears).ToListAsync();
-                result.Result = data;
+                if(result.data == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }
+                result.data = await _context.Doctors.Where(x => x.YearsOfExperience >= minYears && x.YearsOfExperience <= maxYears).ToListAsync();
                 result.Success = true;
             }
             catch (Exception ex)
@@ -104,17 +121,22 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
             }
-            return data;
+            return result;
         }
 
-        public async Task<List<Doctors>> GetDoctorsByConsultationFeeAsync(decimal minFee, decimal maxFee)
+        public async Task<OperationResult> GetDoctorsByConsultationFeeAsync(decimal minFee, decimal maxFee)
         {
-            var result = new OperationResult();
+            OperationResult result = new OperationResult();
             List<Doctors> data = new List<Doctors>();
             try
             {
-                data = await _context.Doctors.Where(x => x.ConsultationFee >= minFee && x.ConsultationFee <= maxFee).ToListAsync();
-                result.Result = data;
+                if(result.data == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }
+                result.data = await _context.Doctors.Where(x => x.ConsultationFee >= minFee && x.ConsultationFee <= maxFee).ToListAsync();
+         
                 result.Success = true;
             }
             catch (Exception ex)
@@ -122,17 +144,22 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
             }
-            return data;
+            return result;
         }
 
-        public async Task<List<Doctors>> GetDoctorsWithExpiringLicenseAsync(DateOnly expirationDate)
+        public async Task<OperationResult> GetDoctorsWithExpiringLicenseAsync(DateOnly expirationDate)
         {
-            var result = new OperationResult();
+            OperationResult result = new OperationResult();
             List<Doctors> data = new List<Doctors>();
             try
             {
-                data = await _context.Doctors.Where(x => x.LicenseExpirationDate == expirationDate).ToListAsync();
-                result.Result = data;
+                if(result.data == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }
+                result.data = await _context.Doctors.Where(x => x.LicenseExpirationDate == expirationDate).ToListAsync();
+                
                 result.Success = true;
             }
             catch (Exception ex)
@@ -140,7 +167,7 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
             }
-            return data;
+            return result;
         }
 
         public override async Task<OperationResult> SaveEntityAsync(Doctors entity)
@@ -182,7 +209,7 @@ namespace NetMed.Persistence.Repositories
             var result = new OperationResult();
             try
             {
-                result.Result = await _context.Doctors.Where(filter).ToListAsync();
+                result.data = await _context.Doctors.Where(filter).ToListAsync();
                 result.Success = true;
             }
             catch (Exception ex)
