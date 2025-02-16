@@ -74,52 +74,17 @@ namespace NetMed.Persistence.Repositories
             }
             return await base.GetEntityByIdAsync(id);
         }
-
-        public async Task<OperationResult> GetDoctorAvailabilityByAppointments(int AppointmentID)
-        {
-            OperationResult result = new OperationResult();
-
-            var validationResult = EntityValidator.Validator(AppointmentID, nameof(AppointmentID));
-            if (!validationResult.Success)
-            {
-                return validationResult;
-            }
-            try
-            {
-                var querys = await(from DoctorAvailability in _context.DoctorAvailabilities
-                                   join appts in _context.Appointments on DoctorAvailability.DoctorID equals appts.Id
-                                   where DoctorAvailability.DoctorID == AppointmentID
-                                   select new DoctorAvailabilityModel()
-                                   {
-                                       AvailabilityID = DoctorAvailability.Id,
-                                       DoctorID = DoctorAvailability.DoctorID,
-                                       AvailableDate = DoctorAvailability.AvailableDate,
-                                       StarTime = DoctorAvailability.StartTime,
-                                       EndTime = DoctorAvailability.EndTime,
-                                   }).ToListAsync();
-                result.Data = querys;
-            }
-            catch (Exception ex)
-            {
-                result.Message = _configuration["ErrorDoctorAvailabilityRepository: GetDoctorAvailabilityByAppointments"];
-                result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
-            }
-            return result;
-
-        }
-
         public async Task<OperationResult> SetAvailabilityAsync(int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
         {
             OperationResult result = new OperationResult();
             var doctorIDResult = EntityValidator.Validator(DoctorID, nameof(DoctorID));
             if (!doctorIDResult.Success) return doctorIDResult;
 
-            if (AvailableDate < DateOnly.FromDateTime(DateTime.Now)) 
+            if (AvailableDate < DateOnly.FromDateTime(DateTime.Now))
             {
                 return new OperationResult { Success = false, Message = "La fecha disponible debe ser futura." };
             }
-            if (StartTime >= EndTime) 
+            if (StartTime >= EndTime)
             {
                 return new OperationResult { Success = false, Message = "La hora de inicio debe ser anterior a la hora de finalización." };
             }
@@ -145,30 +110,184 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-        public Task<DoctorAvailability> GetAvailabilityByDoctorAndDateAsync(int DoctorID, DateOnly AvailableDate)
+        public async Task<OperationResult> GetAvailabilityByDoctorAndDateAsync(int DoctorID, DateOnly AvailableDate)
         {
-            throw new NotImplementedException();
-        }
+            OperationResult result = new OperationResult();
+            var doctorIDResult = EntityValidator.Validator(DoctorID, nameof(DoctorID));
+            if (!doctorIDResult.Success) return doctorIDResult;
 
-        public Task<OperationResult> UpdateAvailabilityAsync(int availabilityId, int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
-        {
-            throw new NotImplementedException();
-        }
+            if (AvailableDate > DateOnly.FromDateTime(DateTime.Now))
+            {
+                result.Success = false;
+                result.Message = "La fecha debe ser mayor a la fecha actual";
+                return result;
+            }
+            try
+            {
+                var availability = await _context.DoctorAvailabilities
+                    .Where(a => a.DoctorID == DoctorID && a.AvailableDate == AvailableDate)
+                    .FirstOrDefaultAsync();
 
-        public Task<OperationResult> RemoveAvailabilityAsync(int AvailabilityID)
-        {
-            throw new NotImplementedException();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["ErrorDoctorAvailabilityRepository: GetAvailabilityByDoctorAndDateAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
+        public async Task<OperationResult> UpdateAvailabilityAsync(int AvailabilityID, int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
+        {
+            OperationResult result = new OperationResult();
 
-        public Task<bool> IsDoctorAvailableAsync(int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
-        {
-            throw new NotImplementedException();
-        }
+            var availabilityIdResult = EntityValidator.Validator(AvailabilityID, nameof(AvailabilityID));
+            if (!availabilityIdResult.Success) return availabilityIdResult;
 
-        public Task<OperationResult> UpdateAvailabilityInRealTimeAsync(int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime, bool isAvailable)
-        {
-            throw new NotImplementedException();
+            var doctorIDResult = EntityValidator.Validator(DoctorID, nameof(DoctorID));
+            if (!doctorIDResult.Success) return doctorIDResult;
+
+            if (AvailableDate > DateOnly.FromDateTime(DateTime.Now))
+            {
+                return new OperationResult { Success = false, Message = "La fecha de disponibilidad para actualizar debe ser futura." };
+            }
+            if (StartTime >= EndTime)
+            {
+                return new OperationResult { Success = false, Message = "La hora de inicio debe ser anterior a la hora de finalización." };
+            }
+            if (await Existingavailability(AvailabilityID, DoctorID, AvailableDate, StartTime, EndTime))
+            {
+                return new OperationResult { Success = false, Message = "El rango de tiempo seleccionado se superpone con una disponibilidad existente." };
+            }
+            try
+            {
+                var availability = await _context.DoctorAvailabilities.FindAsync(AvailabilityID);
+
+                if (availability == null)
+                {
+                    return new OperationResult { Success = false, Message = "Disponibilidad no encontrada." };
+                }
+
+                //Actualizacion solo si los campos son diferentes.
+                if (availability.DoctorID != DoctorID) availability.DoctorID = DoctorID;
+                if (availability.AvailableDate != AvailableDate) availability.AvailableDate = AvailableDate;
+                if (availability.StartTime != StartTime) availability.StartTime = StartTime;
+                if (availability.EndTime != EndTime) availability.EndTime = EndTime;
+                await _context.SaveChangesAsync();
+
+                return new OperationResult { Success = true, Message = "Disponibilidad actulizada exitosamente." };
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["ErrorDoctorAvailabilityRepository: UpdateAvailabilityAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
-    } 
+        //Metodo para verificar si los datos existen antes de actualizar
+        private async Task<bool> Existingavailability(int AvailabilityID, int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
+        {
+            return await _context.DoctorAvailabilities.AnyAsync(a =>
+                a.Id != AvailabilityID &&
+                a.DoctorID == DoctorID &&
+                a.AvailableDate == AvailableDate &&
+                a.StartTime < EndTime &&
+                a.EndTime > StartTime);
+        }
+        public async Task<OperationResult> RemoveAvailabilityAsync(int AvailabilityID)
+        {
+            OperationResult result = new OperationResult();
+            var availabilityIdResult = EntityValidator.Validator(AvailabilityID, nameof(AvailabilityID));
+            if (!availabilityIdResult.Success) return availabilityIdResult;
+
+            try
+            {
+                var availability = await _context.DoctorAvailabilities.FindAsync(AvailabilityID);
+
+                if (availability == null)
+                {
+                    return new OperationResult { Success = false, Message = "Disponibilidad no encontrada" };
+                }
+                _context.DoctorAvailabilities.Remove(availability);
+                await _context.SaveChangesAsync();
+
+                return new OperationResult { Success = true, Message = "Disponibilidad eliminada con exito" };
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["ErrorDoctorAvailabilityRepository: RemoveAvailabilityAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+
+        }
+        public async Task<bool> IsDoctorAvailableAsync(int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var overlappingAvailability = await _context.DoctorAvailabilities.AnyAsync(a =>
+                    a.DoctorID == DoctorID &&
+                    a.AvailableDate == AvailableDate &&
+                    a.StartTime < EndTime &&
+                    a.EndTime > StartTime);
+
+                return !overlappingAvailability;
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["ErrorDoctorAvailabilityRepository: IsDoctorAvailableAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+
+            }
+            return false;
+        }
+        public async Task<OperationResult> UpdateAvailabilityInRealTimeAsync(int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var availability = await _context.DoctorAvailabilities.FirstOrDefaultAsync(a =>
+                   a.DoctorID == DoctorID &&
+                   a.AvailableDate == AvailableDate &&
+                   a.StartTime == StartTime &&
+                   a.EndTime == EndTime);
+
+                if (availability == null)
+                {
+                    availability = new DoctorAvailability
+                    {
+                        DoctorID = DoctorID,
+                        AvailableDate = AvailableDate,
+                        StartTime = StartTime,
+                        EndTime = EndTime
+                    };
+                    _context.DoctorAvailabilities.Add(availability);
+                }
+                else
+                {
+                    return new OperationResult { Success = false, Message = "Estas intentado agregar datos ya existentes" };
+                }
+                await _context.SaveChangesAsync();
+
+                return new OperationResult { Success = true, Message = "Cambios actualizados con exito" };
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["ErrorDoctorAvailabilityRepository: UpdateAvailabilityInRealTimeAsyn"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+    }
 }
+    
+
 

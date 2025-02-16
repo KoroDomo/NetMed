@@ -74,8 +74,8 @@ namespace NetMed.Persistence.Base
                 result.Success = false;
                 result.Message = "Ocurrio un error al actualizar los datos";
             }
-            return result;
-           
+            return result;    
         }
+
     }
 }

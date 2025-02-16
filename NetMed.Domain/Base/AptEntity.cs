@@ -8,7 +8,7 @@ namespace NetMed.Domain.Base
        { 
             this.CreatedAt = DateTime.Now;
        }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; } = true;
 

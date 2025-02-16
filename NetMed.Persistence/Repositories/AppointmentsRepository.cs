@@ -82,7 +82,7 @@ namespace NetMed.Persistence.Repositories
             var doctorIdResult = EntityValidator.Validator(DoctorID, nameof(DoctorID));
             if (!doctorIdResult.Success) return doctorIdResult;
 
-            if (AppointmentDate <= DateTime.Now)
+            if (AppointmentDate >= DateTime.Now)
             {
                 result.Success = false;
                 result.Message = "La fecha debe ser mayor a la fecha actual";
@@ -186,7 +186,6 @@ namespace NetMed.Persistence.Repositories
                 if (appointment == null)
                 {
                     return new OperationResult { Success = false, Message = "Cita no encontrada." };
-
                 }
                 appointment.StatusID = StatusID; 
                 await _context.SaveChangesAsync();
@@ -227,6 +226,12 @@ namespace NetMed.Persistence.Repositories
         public async Task<OperationResult> GetAppointmentsByDateAsync(DateTime AppointmentDate)
         {
             OperationResult result = new OperationResult();
+            if (AppointmentDate >= DateTime.Now)
+            {
+                result.Success = false;
+                result.Message = "La fecha debe ser mayor a la fecha actual";
+                return result;
+            }
             try
             {
                 var appointments = await _context.Appointments.Where(a => a.AppointmentDate == AppointmentDate).ToListAsync();
@@ -275,6 +280,12 @@ namespace NetMed.Persistence.Repositories
             var doctorIDResult = EntityValidator.Validator(DoctorID, nameof(DoctorID));
             if (!doctorIDResult.Success) return doctorIDResult;
 
+            if (AppointmentDate >= DateTime.Now)
+            {
+                result.Success = false;
+                result.Message = "La fecha debe ser mayor a la fecha actual";
+                return result;
+            }
             try
             {
                 var appointments = await _context.Appointments.Where(a => a.DoctorID == DoctorID && a.AppointmentDate == AppointmentDate).ToListAsync();
