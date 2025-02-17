@@ -11,7 +11,7 @@ namespace NetMed.Domain.Repository
     public interface IBaseRepository<TEntity, TType> where TEntity : class
     {
         Task<OperationResult> GetEntityByIdAsync(TType id);
-        Task<OperationResult> UpdateEntityAsync(TEntity entity);  
+        Task<OperationResult> UpdateEntityByIdAsync(TEntity entity);  
         Task<OperationResult> SaveEntityAsync(TEntity entity);    
         Task<OperationResult> GetAllAsync();
         Task<OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter);
