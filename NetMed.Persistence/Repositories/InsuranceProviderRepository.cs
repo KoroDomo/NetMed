@@ -7,6 +7,7 @@ using NetMed.Model.Models;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
+using System.Linq.Expressions;
 
 
 namespace NetMed.Persistence.Repository
@@ -37,7 +38,7 @@ namespace NetMed.Persistence.Repository
            
             try
             {
-                var provider = await _context.InsuranceProviders
+                var insuranceProvider = await _context.InsuranceProviders
                     .Where(ip => ip.Id == insurenceProviderId)
                     .Select(ip => new InsuranceProviderModel()
                     {
@@ -51,26 +52,29 @@ namespace NetMed.Persistence.Repository
                         Country = ip.Country,
                         ZipCode = ip.ZipCode,
                         CoverageDetails = ip.CoverageDetails,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        LogoUrl = ip.LogoUrl,
                         IsPrefered = ip.IsPreferred,
+                        NetworkTypeID = ip.NetworkTypeID,
+                        AcceptedRegions = ip.AcceptedRegions,
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        CreatedAt = ip.CreatedAt,
+                        UpdatedAt = ip.UpdatedAt,
                         IsActive = ip.IsActive,
-                    })
-                    .FirstOrDefaultAsync();
+                    }).ToListAsync();
 
-                if (provider == null)
+                if (insuranceProvider == null)
                 {
                     _logger.LogWarning($"No se encontró el Provider con el ID {insurenceProviderId}.");
                     return _operations.SuccessResult(null, "InsuranceProviderRepository.GetInsurenProviderById");
                 }
                 else
                 {
-                    _logger.LogInformation("Se ha obtenido el Provider: " + provider.ToString());
-                    return _operations.SuccessResult(provider, "Succes: InsuranceProviderRepository.GetInsurenProviderById");
+                    return _operations.SuccessResult(insuranceProvider, "InsuranceProviderRepository.GetInsurenProviderById");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error al obtener el provider con el ID: {insurenceProviderId} ");
+                _logger.LogError(ex, $"Error al obtener el insuranceProvider con el ID: {insurenceProviderId} ");
 
                 return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsurenProviderById");
             }
@@ -82,7 +86,7 @@ namespace NetMed.Persistence.Repository
             {
                 if (provider == null)
                 {
-                    return _operations.SuccessResult(null, "El proveedor de seguros no puede ser nulo.");
+                    return _operations.SuccessResult(null, "InsuranceProviderRepository.SaveEntityAsync");
                 }
 
                 _context.InsuranceProviders.Add(provider);
@@ -90,7 +94,7 @@ namespace NetMed.Persistence.Repository
 
                 _logger.LogInformation("Se ha guardado el Provider: " + provider.ToString());
 
-                return _operations.SuccessResult(provider, "Succes: InsuranceProviderRepository.SaveEntityAsync");
+                return _operations.SuccessResult(provider, "InsuranceProviderRepository.SaveEntityAsync");
             }
             catch (Exception ex)
             {
@@ -119,24 +123,71 @@ namespace NetMed.Persistence.Repository
                         Country = ip.Country,
                         ZipCode = ip.ZipCode,
                         CoverageDetails = ip.CoverageDetails,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        LogoUrl = ip.LogoUrl,
                         IsPrefered = ip.IsPreferred,
+                        NetworkTypeID = ip.NetworkTypeID,
+                        AcceptedRegions = ip.AcceptedRegions,
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        CreatedAt = ip.CreatedAt,
+                        UpdatedAt = ip.UpdatedAt,
                         IsActive = ip.IsActive,
-                    })
-                    .ToListAsync();
+                    }).ToListAsync();
 
                 if (providers == null || !providers.Any())
                 {
                     return _operations.SuccessResult(null, "InsuranceProviderRepository.GetAllAsync");
                 }
                 
-                return _operations.SuccessResult(providers, "Succes: InsuranceProviderRepository.GetAllAsync");
+                return _operations.SuccessResult(providers, "InsuranceProviderRepository.GetAllAsync");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error al obtener todos los Providers.");
 
                 return _operations.HandleException(ex, "InsuranceProviderRepository.GetAllAsync" );
+            }
+        }
+        public async override Task<OperationResult> GetAllAsync(Expression<Func<InsuranceProvider, bool>> filter)
+        {
+            try
+            {
+                var providers = await _context.InsuranceProviders
+                    .Where(filter)
+                    .OrderByDescending(ip => ip.CreatedAt)
+                    .Select(ip => new InsuranceProviderModel()
+                    {
+                        InsuranceProviderID = ip.Id,
+                        ContactNumber = ip.PhoneNumber,
+                        Email = ip.Email,
+                        Website = ip.Website,
+                        Address = ip.Address,
+                        City = ip.City,
+                        State = ip.State,
+                        Country = ip.Country,
+                        ZipCode = ip.ZipCode,
+                        CoverageDetails = ip.CoverageDetails,
+                        LogoUrl = ip.LogoUrl,
+                        IsPrefered = ip.IsPreferred,
+                        NetworkTypeID = ip.NetworkTypeID,
+                        AcceptedRegions = ip.AcceptedRegions,
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        CreatedAt = ip.CreatedAt,
+                        UpdatedAt = ip.UpdatedAt,
+                        IsActive = ip.IsActive,
+                    }).ToListAsync();
+
+                if (providers == null || !providers.Any())
+                {
+                    return _operations.SuccessResult(null, "InsuranceProviderRepository.GetAllAsync");
+                }
+
+                return _operations.SuccessResult(providers, "InsuranceProviderRepository.GetAllAsync");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error al obtener todos los Providers.");
+
+                return _operations.HandleException(ex, "InsuranceProviderRepository.GetAllAsync");
             }
         }
 
@@ -153,12 +204,12 @@ namespace NetMed.Persistence.Repository
                 await _context.SaveChangesAsync();
 
                 _logger.LogInformation("Se ha actualizado el Provider: " + entity.ToString());
-                return _operations.SuccessResult(entity, "Succes: InsuranceProviderRepository.UpdateEntityAsync");
+                return _operations.SuccessResult(entity, "InsuranceProviderRepository.UpdateEntityAsync");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error al actualizar el Provider {entity}.");
-                return _operations.HandleException(ex, "Error: InsuranceProviderRepository.UpdateEntityAsync");
+                return _operations.HandleException(ex, "InsuranceProviderRepository.UpdateEntityAsync");
             }
         }
 
@@ -169,19 +220,19 @@ namespace NetMed.Persistence.Repository
                 var entity = await _context.InsuranceProviders.FindAsync(id);
                 if (entity == null)
                 {
-                    _logger.LogWarning($"No se encontró el provider con el ID: {id} para eliminar.");
-                    return _operations.SuccessResult(null, $"NotFound: InsuranceProviderRepository.DeleteInsuranceProviderAsync.");
+                    _logger.LogWarning($"No se encontró el insuranceProvider con el ID: {id} para eliminar.");
+                    return _operations.SuccessResult(null, $"InsuranceProviderRepository.DeleteInsuranceProviderAsync.");
                 }
 
                 _context.InsuranceProviders.Remove(entity);
                 await _context.SaveChangesAsync();
                 _logger.LogInformation("Provider eliminado exitosamente: " + entity.ToString());
-                return _operations.SuccessResult(null, "Succes: InsuranceProviderRepository.DeleteInsuranceProviderAsync.");
+                return _operations.SuccessResult(null, "InsuranceProviderRepository.DeleteInsuranceProviderAsync.");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error al eliminar el Provider con el ID: {id}");
-                return _operations.HandleException(ex, "Error: InsuranceProviderRepository.DeleteInsuranceProviderAsync.");
+                return _operations.HandleException(ex, "InsuranceProviderRepository.DeleteInsuranceProviderAsync.");
             }
         }
 
@@ -203,8 +254,13 @@ namespace NetMed.Persistence.Repository
                         Country = ip.Country,
                         ZipCode = ip.ZipCode,
                         CoverageDetails = ip.CoverageDetails,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        LogoUrl = ip.LogoUrl,
                         IsPrefered = ip.IsPreferred,
+                        NetworkTypeID = ip.NetworkTypeID,
+                        AcceptedRegions = ip.AcceptedRegions,
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        CreatedAt = ip.CreatedAt,
+                        UpdatedAt = ip.UpdatedAt,
                         IsActive = ip.IsActive,
                     })
                     .ToListAsync();
@@ -240,8 +296,13 @@ namespace NetMed.Persistence.Repository
                         Country = ip.Country,
                         ZipCode = ip.ZipCode,
                         CoverageDetails = ip.CoverageDetails,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        LogoUrl = ip.LogoUrl,
                         IsPrefered = ip.IsPreferred,
+                        NetworkTypeID = ip.NetworkTypeID,
+                        AcceptedRegions = ip.AcceptedRegions,
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        CreatedAt = ip.CreatedAt,
+                        UpdatedAt = ip.UpdatedAt,
                         IsActive = ip.IsActive,
                     })
                     .ToListAsync();
@@ -255,6 +316,7 @@ namespace NetMed.Persistence.Repository
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error al obtener Providers.");
                 return _operations.HandleException(ex, "InsuranceProviderRepository.GetActiveInsuranceProvidersAsync");
             }
         }
@@ -277,8 +339,13 @@ namespace NetMed.Persistence.Repository
                         Country = ip.Country,
                         ZipCode = ip.ZipCode,
                         CoverageDetails = ip.CoverageDetails,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        LogoUrl = ip.LogoUrl,
                         IsPrefered = ip.IsPreferred,
+                        NetworkTypeID = ip.NetworkTypeID,
+                        AcceptedRegions = ip.AcceptedRegions,
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        CreatedAt = ip.CreatedAt,
+                        UpdatedAt = ip.UpdatedAt,
                         IsActive = ip.IsActive,
                     })
                     .ToListAsync();
@@ -292,6 +359,7 @@ namespace NetMed.Persistence.Repository
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error al obtener Providers.");
                 return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsuranceProvidersByRegionAsync");
             }
         }
@@ -314,8 +382,13 @@ namespace NetMed.Persistence.Repository
                         Country = ip.Country,
                         ZipCode = ip.ZipCode,
                         CoverageDetails = ip.CoverageDetails,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        LogoUrl = ip.LogoUrl,
                         IsPrefered = ip.IsPreferred,
+                        NetworkTypeID = ip.NetworkTypeID,
+                        AcceptedRegions = ip.AcceptedRegions,
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        CreatedAt = ip.CreatedAt,
+                        UpdatedAt = ip.UpdatedAt,
                         IsActive = ip.IsActive,
                     })
                     .ToListAsync();
@@ -329,6 +402,7 @@ namespace NetMed.Persistence.Repository
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error al obtener Providers.");
                 return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsuranceProvidersByMaxCoverageAsync");
             }
         }

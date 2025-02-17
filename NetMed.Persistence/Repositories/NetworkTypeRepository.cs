@@ -3,10 +3,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Model.Models;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using System.Linq.Expressions;
+using System.Net;
 
 namespace NetMed.Persistence.Repositories
 {
@@ -28,22 +30,25 @@ namespace NetMed.Persistence.Repositories
 
         }
 
-        public override async Task<OperationResult> SaveEntityAsync(NetworkType entity)
+        public override async Task<OperationResult> SaveEntityAsync(NetworkType network)
         {
             try
             {
-                if (entity == null)
+                if (network == null)
                 {
-                    return _operations.SuccessResult(null, "La entidad no puede ser nula.");
+                    _logger.LogWarning($"El network no puede ser nulo.");
+                    return _operations.SuccessResult(null, "NetworkTypeRepository.SaveEntityAsync");
                 }
 
-                _context.NetworkTypes.Add(entity);
+                _context.NetworkTypes.Add(network);
                 await _context.SaveChangesAsync();
 
-                return _operations.SuccessResult(entity, "NetworkTypeRepository.SaveEntityAsync");
+                _logger.LogInformation("Network agregado exitosamente: " + network.ToString());
+                return _operations.SuccessResult(network, "NetworkTypeRepository.SaveEntityAsync");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error al guardar el Network: {network.ToString}");
                 return _operations.HandleException(ex, "NetworkTypeRepository.SaveEntityAsync");
             }
         }
@@ -52,50 +57,54 @@ namespace NetMed.Persistence.Repositories
         {
             try
             {
-                var entity = await _context.NetworkTypes.FindAsync(id);
-                if (entity == null)
+                var network = await _context.NetworkTypes
+                    .Where(n => n.Id == id)
+                    .Select(n => new NetworkTypeModel()
+                    {
+                        NetworkTypeId = n.Id,
+                        Name = n.Name,
+                        Description = n.Description,
+                        CreatedAt = n.CreatedAt,
+                        UpdatedAt = n.UpdatedAt,
+                        IsActive = n.IsActive,
+                    }).ToListAsync();
+
+                if (network == null || !network.Any())
                 {
+                    _logger.LogWarning($"No se encontro ningun Network con el ID: {id}.");
                     return _operations.SuccessResult(null, "NetworkTypeRepository.GetEntityByIdAsync");
                 }
 
-                return _operations.SuccessResult(entity, "NetworkTypeRepository.GetEntityByIdAsync");
+                
+                return _operations.SuccessResult(network, "NetworkTypeRepository.GetEntityByIdAsync");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error al obtener el Network.");
                 return _operations.HandleException(ex, "NetworkTypeRepository.GetEntityByIdAsync");
             }
         }
 
-        public override async Task<OperationResult> UpdateEntityAsync(NetworkType entity)
+        public override async Task<OperationResult> UpdateEntityAsync(NetworkType network)
         {
             try
             {
-                if (entity == null)
+                if (network == null)
                 {
-                    return _operations.SuccessResult(null, "La entidad no puede ser nula.");
+                    _logger.LogWarning($"El Networ no puede ser nulo.");
+                    return _operations.SuccessResult(null, "NetworkTypeRepository.UpdateEntityAsync");
                 }
 
-                _context.NetworkTypes.Update(entity);
+                _context.NetworkTypes.Update(network);
                 await _context.SaveChangesAsync();
 
-                return _operations.SuccessResult(entity, "NetworkTypeRepository.UpdateEntityAsync");
+                _logger.LogInformation("Network actualizada exitosamente: " + network.ToString());
+                return _operations.SuccessResult(network, "NetworkTypeRepository.UpdateEntityAsync");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al actualizar el Network.");
                 return _operations.HandleException(ex, "NetworkTypeRepository.UpdateEntityAsync");
-            }
-        }
-
-        public override async Task<bool> ExistsAsync(Expression<Func<NetworkType, bool>> filter)
-        {
-            try
-            {
-                return await _context.NetworkTypes.AnyAsync(filter);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al verificar la existencia de la entidad con el filtro:"+ filter.ToString());
-                throw; 
             }
         }
 
@@ -103,16 +112,31 @@ namespace NetMed.Persistence.Repositories
         {
             try
             {
-                var entities = await _context.NetworkTypes.ToListAsync();
-                if (entities == null || !entities.Any())
+                var network = await _context.NetworkTypes
+                    .Where(n => n.IsActive)
+                    .OrderByDescending(n => n.CreatedAt)
+                    .Select(n => new NetworkTypeModel()
+                    {
+                        NetworkTypeId = n.Id,
+                        Name = n.Name,
+                        Description = n.Description,
+                        CreatedAt = n.CreatedAt,
+                        UpdatedAt = n.UpdatedAt,
+                        IsActive = n.IsActive,
+                    }).ToListAsync();
+
+                if (network == null || !network.Any())
                 {
+                    _logger.LogWarning("No se encontro ningun Network.");
                     return _operations.SuccessResult(null, "NetworkTypeRepository.GetAllAsync");
                 }
 
-                return _operations.SuccessResult(entities, "NetworkTypeRepository.GetAllAsync");
+                _logger.LogInformation("Network obtenida exitosamente: " + network.ToString());
+                return _operations.SuccessResult(network, "NetworkTypeRepository.GetAllAsync");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al obtener el Network.");
                 return _operations.HandleException(ex, "NetworkTypeRepository.GetAllAsync");
             }
         }
@@ -123,17 +147,29 @@ namespace NetMed.Persistence.Repositories
             {
                 var entities = await _context.NetworkTypes
                     .Where(filter)
-                    .ToListAsync();
+                    .OrderByDescending(n => n.CreatedAt)
+                    .Select(n => new NetworkTypeModel()
+                    {
+                        NetworkTypeId = n.Id,
+                        Name = n.Name,
+                        Description = n.Description,
+                        CreatedAt = n.CreatedAt,
+                        UpdatedAt = n.UpdatedAt,
+                        IsActive = n.IsActive,
+                    }).ToListAsync();
 
                 if (entities == null || !entities.Any())
                 {
+                    _logger.LogWarning("No se encontro ningun Network.");
                     return _operations.SuccessResult(null, "NetworkTypeRepository.GetAllAsync");
                 }
 
+                _logger.LogInformation("Network obtenida exitosamente: ");
                 return _operations.SuccessResult(entities, "NetworkTypeRepository.GetAllAsync");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al obtener el Network.");
                 return _operations.HandleException(ex, "NetworkTypeRepository.GetAllAsync");
             }
         }
@@ -145,19 +181,19 @@ namespace NetMed.Persistence.Repositories
                 var entity = await _context.NetworkTypes.FindAsync(id);
                 if (entity == null)
                 {
-                    _logger.LogWarning($"No se encontró la entidad con el ID: {id} para eliminar.");
-                    return _operations.SuccessResult(null, "Entidad no encontrada.");
+                    _logger.LogWarning($"No se encontró el Network con el ID: {id} para eliminar.");
+                    return _operations.SuccessResult(null, "NetworkTypeRepository.DeleteNetworkTypeAsync");
                 }
 
                 _context.NetworkTypes.Remove(entity);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("Entidad eliminada exitosamente: "+ entity.ToString());
-                return _operations.SuccessResult(null, "Entidad eliminada exitosamente.");
+                _logger.LogInformation("Network eliminado exitosamente: "+ entity.ToString());
+                return _operations.SuccessResult(null, "NetworkTypeRepository.DeleteNetworkTypeAsync");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error al eliminar la entidad con el ID: {id}");
-                return _operations.HandleException(ex, "Ocurrió un error eliminando la entidad");
+                _logger.LogError(ex, $"Error al eliminar el Network con el ID: {id}");
+                return _operations.HandleException(ex, "NetworkTypeRepository.DeleteNetworkTypeAsync");
             }
         }
 
@@ -167,10 +203,19 @@ namespace NetMed.Persistence.Repositories
             {
                 var networkTypes = await _context.NetworkTypes
                     .Where(nt => nt.Id == providerId)
-                    .ToListAsync();
+                    .Select(nt => new NetworkTypeModel()
+                    {
+                        NetworkTypeId = nt.Id,
+                        Name = nt.Name,
+                        Description = nt.Description,
+                        CreatedAt = nt.CreatedAt,
+                        UpdatedAt = nt.UpdatedAt,
+                        IsActive = nt.IsActive,
+                    }).ToListAsync();
 
                 if (networkTypes == null || !networkTypes.Any())
                 {
+                    _logger.LogWarning($"No se encontró el Network con el Provider de ID: {providerId} para eliminar.");
                     return _operations.SuccessResult(null, "NetworkTypeRepository.GetNetworkTypesByProviderAsync");
                 }
 
@@ -178,6 +223,7 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error al obtener Networ conel Provider de ID: {providerId}");
                 return _operations.HandleException(ex, "NetworkTypeRepository.GetNetworkTypesByProviderAsync");
             }
         }
