@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NetMed.Persistence.Base;
 using NetMed.Domain.Entities;
@@ -13,14 +12,12 @@ namespace NetMed.Persistence.Repositories
     {
         private readonly NetMedContext context;
         private readonly ILogger<AvailabilityModesRepository> logger;
-
         public AvailabilityModesRepository(NetMedContext context, ILogger<AvailabilityModesRepository> logger)
             : base(context)
         {
             this.context = context;
             this.logger = logger;
         }
-
         public override async Task<OperationResult> SaveEntityAsync(AvailabilityModes entity)
         {
             var validation = EntityValidator.ValidateNotNull(entity, "Modo de Disponibilidad");
@@ -29,7 +26,6 @@ namespace NetMed.Persistence.Repositories
             await base.SaveEntityAsync(entity);
             return new OperationResult { Success = true, Message = "Modo de Disponibilidad guardado" };
         }
-
         public override async Task<OperationResult> UpdateEntityAsync(AvailabilityModes entity)
         {
             var validation = EntityValidator.ValidateNotNull(entity, "Modo de Disponibilidad");
@@ -38,16 +34,19 @@ namespace NetMed.Persistence.Repositories
             await base.UpdateEntityAsync(entity);
             return new OperationResult { Success = true, Message = "Modo de Disponibilidad actualizado" };
         }
-
         public async Task<OperationResult> ExistsByNameAsync(string availabilityModeName)
         {
-            var exists = await context.AvailabilityMode.AnyAsync(m => m.AvailabilityModeName == availabilityModeName);
-            return new OperationResult { Success = exists, Message = exists ? "El Modo de Disponibilidad existe" : "El Modo de Disponibilidad existe no existe" };
-        }
+            if (string.IsNullOrWhiteSpace(availabilityModeName))
+            {
+                return new OperationResult { Success = false, Message = "El nombre del Modo de Disponibilidad esta vacio" };
+            }
 
+            var exists = await context.AvailabilityModes.AnyAsync(m => m.AvailabilityModeName == availabilityModeName);
+            return new OperationResult { Success = exists, Message = exists ? "El Modo de Disponibilidad existe" : "El Modo de Disponibilidad no existe" };
+        }
         public async Task<OperationResult> GetByNameAsync(string availabilityModeName)
         {
-            var mode = await context.AvailabilityMode
+            var mode = await context.AvailabilityModes
                 .FirstOrDefaultAsync(m => m.AvailabilityModeName == availabilityModeName);
 
             return mode != null
@@ -56,4 +55,3 @@ namespace NetMed.Persistence.Repositories
         }
     }
 }
-

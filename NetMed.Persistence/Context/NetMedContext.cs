@@ -9,8 +9,7 @@ namespace NetMed.Persistence.Context
         {
          
         }
-
-        public DbSet<AvailabilityModes> AvailabilityMode { get; set; }
+        public DbSet<AvailabilityModes> AvailabilityModes { get; set; }
         public DbSet<MedicalRecords> MedicalRecords { get; set; }
         public DbSet<Specialties> Specialties { get; set; }
     }

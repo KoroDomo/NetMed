@@ -1,5 +1,4 @@
-﻿
-using NetMed.Domain.Base;
+﻿using NetMed.Domain.Base;
 
 namespace NetMed.Persistence
 {
@@ -11,14 +10,17 @@ namespace NetMed.Persistence
             if (entity == null)
             {
                 result.Success = false;
-                result.Message = $"{entityName} No puede ser nulo";
+                result.Message = $"{entityName} es nulo";
+                return result;
             }
-            else
+            if (entity is string str && string.IsNullOrWhiteSpace(str))
             {
-                result.Success = true;
+                result.Success = false;
+                result.Message = $"{entityName} esta vacio";
+                return result;
             }
+            result.Success = true;
             return result;
         }
     }
 }
-

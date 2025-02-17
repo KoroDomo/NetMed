@@ -4,8 +4,6 @@ using System.Linq.Expressions;
 using NetMed.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
-//Me quede en el minuto 48:52
-
 namespace NetMed.Persistence.Base
 {
     public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
@@ -20,30 +18,25 @@ namespace NetMed.Persistence.Base
         public virtual async Task<TEntity> GetEntityByIdAsync(int id)
         {
             return await Entity.FindAsync(id);
-          
         }
+
         public virtual async Task<OperationResult> UpdateEntityAsync(TEntity entity)
         {
             OperationResult result = new OperationResult() { Success = true };
 
             try
             {
-                Entity.Add(entity);
+                Entity.Update(entity);
                 await _context.SaveChangesAsync();
                 result.Success = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 result.Success = false;
-                result.Message = "Ocurrio un error guardando los datos";
-
+                result.Message = "Ocurrio un error actualizando los datos";
             }
             return result;
         }
-        /*public Task DeleteEntityAsync(TEntity entity)
-        {
-            throw new NotImplementedException();
-        }*/
         public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)
         {
             OperationResult result = new OperationResult();
@@ -54,11 +47,10 @@ namespace NetMed.Persistence.Base
                 await _context.SaveChangesAsync();
                 result.Success = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 result.Success = false;
-                result.Message = "Ocurrio un error guardando los datos";
-                
+                result.Message = "Ocurrio un error guardando los datos";  
             }
             return result;
         }
@@ -72,18 +64,17 @@ namespace NetMed.Persistence.Base
 
             try
             {
-                var datos = Entity.Where(filter).ToListAsync();
+                var datos = await Entity.Where(filter).ToListAsync();
                 result.Success = true;
                 result.Data = datos;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 result.Success = false;
                 result.Message = "Ocurrio un error obteniendo los datos";
 
             }
-            return result;
-            
+            return result; 
         }
         public virtual async Task<bool> Exists(Expression<Func<TEntity, bool>> filter)
         {
@@ -91,6 +82,4 @@ namespace NetMed.Persistence.Base
             return await Entity.AnyAsync(filter);
         }
     }
-
-
 }
