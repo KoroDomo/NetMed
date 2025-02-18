@@ -61,7 +61,7 @@ namespace NetMed.Persistence.Repositories
 
             if (statusId < 0)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "ID no válido.";
                 return result;
             }
@@ -73,20 +73,20 @@ namespace NetMed.Persistence.Repositories
 
                 if (status == null)
                 {
-                    result.success = false;
+                    result.Success = false;
                     result.Mesagge = "Status no encontrado.";
                 }
                 else
                 {
-                    result.success = true;
+                    result.Success = true;
                     result.Mesagge = "Statu obtenida con éxito.";
-                    result.data = status;
+                    result.Data = status;
                 }
             }
             catch (Exception ex)
             {
 
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = $"Error al obtener el rol: {ex.Message}";
                 await _context.SaveChangesAsync();
             }
@@ -99,7 +99,7 @@ namespace NetMed.Persistence.Repositories
             var validationResult = EntityValidator.ValidateNotNull(status, "Status");
 
 
-            if (!validationResult.success)
+            if (!validationResult.Success)
             {
                 return validationResult;
 
@@ -112,14 +112,14 @@ namespace NetMed.Persistence.Repositories
                 {
                     _context.statuses.Add(status);
                     await _context.SaveChangesAsync();
-                    result.success = true;
+                    result.Success = true;
                     result.Mesagge = "El status se a creado con exito";
 
                 };
             }
             catch (Exception ex)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "Problemas con crear el status";
 
             }
@@ -132,7 +132,7 @@ namespace NetMed.Persistence.Repositories
             var validationResult = EntityValidator.ValidateNotNull(status, "Status");
 
 
-            if (!validationResult.success)
+            if (!validationResult.Success)
             {
                 return validationResult;
 
@@ -145,14 +145,14 @@ namespace NetMed.Persistence.Repositories
                 {
                     _context.statuses.Update(status);
                     await _context.SaveChangesAsync();
-                    result.success = true;
+                    result.Success = true;
                     result.Mesagge = "El Status se actualizo con exito";
 
                 };
             }
             catch (Exception ex)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "Problemas con actualizar el status";
 
             }

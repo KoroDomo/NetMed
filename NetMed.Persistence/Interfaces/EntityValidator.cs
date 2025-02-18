@@ -13,13 +13,13 @@ namespace NetMed.Persistence.Interfaces
 
             if (entity == null)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = $"{entityName} No puede ser nulo";
             }
             else 
             {
 
-             result.success = true;
+             result.Success = true;
            
             }
             return result;

@@ -37,11 +37,11 @@ namespace NetMed.Persistence.Base
             try
             {
                 var datos = Entity.Where(filter).ToListAsync();
-                result.data= datos;
+                result.Data= datos;
             }
             catch (Exception ex)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "Ocurrio un error obteniendo los datos.";
             }
             return result;
@@ -65,7 +65,7 @@ namespace NetMed.Persistence.Base
             } 
             catch (Exception ex) 
             {
-                result.success = false ;
+                result.Success = false ;
                 result.Mesagge = "Ocurrio un error guardando los datos.";
             }
             return result ;
@@ -84,7 +84,7 @@ namespace NetMed.Persistence.Base
             }
             catch (Exception ex)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "Ocurrio un error actualizando los datos.";
             }
             return result;

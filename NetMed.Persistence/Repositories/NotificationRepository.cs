@@ -63,7 +63,7 @@ namespace NetMed.Persistence.Repositories
 
             if (userId < 0)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "ID no válido.";
                 return result;
             }
@@ -75,20 +75,20 @@ namespace NetMed.Persistence.Repositories
 
                 if (user == null)
                 {
-                    result.success = false;
+                    result.Success = false;
                     result.Mesagge = "Usuario no encontrado.";
                 }
                 else
                 {
-                    result.success = true;
+                    result.Success = true;
                     result.Mesagge = "Usuarios obtenida con éxito.";
-                    result.data = user;
+                    result.Data = user;
                 }
             }
             catch (Exception ex)
             {
 
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = $"Error al obtener el usuario: {ex.Message}";
                 await _context.SaveChangesAsync();
             }
@@ -103,7 +103,7 @@ namespace NetMed.Persistence.Repositories
 
             if (notificationId < 0)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "ID no válido.";
                 return result;
             }
@@ -115,20 +115,20 @@ namespace NetMed.Persistence.Repositories
 
                 if (notification == null)
                 {
-                    result.success = false;
+                    result.Success = false;
                     result.Mesagge = "Notificación no encontrada.";
                 }
                 else
                 {
-                    result.success = true;
+                    result.Success = true;
                     result.Mesagge = "Notificación obtenida con éxito.";
-                    result.data = notification;
+                    result.Data = notification;
                 }
             }
             catch (Exception ex)
             {
 
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = $"Error al obtener la notificación: {ex.Message}";
                 await _context.SaveChangesAsync();
             }
@@ -140,7 +140,7 @@ namespace NetMed.Persistence.Repositories
             var validationResult = EntityValidator.ValidateNotNull(notification, "Notification");
 
 
-            if (!validationResult.success)
+            if (!validationResult.Success)
             {
                 return validationResult;
 
@@ -153,14 +153,14 @@ namespace NetMed.Persistence.Repositories
                 {
                     _context.Notifications.Add(notification);
                     await _context.SaveChangesAsync();
-                    result.success = true;
+                    result.Success = true;
                     result.Mesagge = "La notificacion se a creado con exito";
 
                 };
             }
             catch (Exception ex)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "Problemas con crear la notificacion";
 
             }
@@ -174,7 +174,7 @@ namespace NetMed.Persistence.Repositories
             var validationResult = EntityValidator.ValidateNotNull(notification, "Notification");
 
 
-            if (!validationResult.success)
+            if (!validationResult.Success)
             {
                 return validationResult;
 
@@ -187,14 +187,14 @@ namespace NetMed.Persistence.Repositories
                 {
                     _context.Notifications.Update(notification);
                     await _context.SaveChangesAsync();
-                    result.success = true;
+                    result.Success = true;
                     result.Mesagge = "La notificacion se actualizo con exito";
 
                 };
             }
             catch (Exception ex)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "Problemas con actualizar la notificacion";
 
             }
@@ -207,7 +207,7 @@ namespace NetMed.Persistence.Repositories
             var validationResult = EntityValidator.ValidateNotNull(notification, "Notification");
 
 
-            if (!validationResult.success)
+            if (!validationResult.Success)
             {
                 return validationResult;
 
@@ -220,14 +220,14 @@ namespace NetMed.Persistence.Repositories
                 {
                     _context.Notifications.Remove(notification);
                     await _context.SaveChangesAsync();
-                    result.success = true;
+                    result.Success = true;
                     result.Mesagge = "La notificacion se elimino con exito";
 
                 };
             }
             catch (Exception ex)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "Problemas eliminando la notificacion";
 
             }

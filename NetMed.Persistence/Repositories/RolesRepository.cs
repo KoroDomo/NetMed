@@ -64,7 +64,7 @@ namespace NetMed.Persistence.Repositories
 
             if (roleId < 0)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "ID no válido.";
                 return result;
             }
@@ -76,20 +76,20 @@ namespace NetMed.Persistence.Repositories
 
                 if (roles == null)
                 {
-                    result.success = false;
+                    result.Success = false;
                     result.Mesagge = "Rol no encontrado.";
                 }
                 else
                 {
-                    result.success = true;
+                    result.Success = true;
                     result.Mesagge = "Rol obtenida con éxito.";
-                    result.data = roles;
+                    result.Data = roles;
                 }
             }
             catch (Exception ex)
             {
 
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = $"Error al obtener el rol: {ex.Message}";
                 await _context.SaveChangesAsync();
             }
@@ -103,7 +103,7 @@ namespace NetMed.Persistence.Repositories
             var validationResult = EntityValidator.ValidateNotNull(roles, "Notification");
 
 
-            if (!validationResult.success)
+            if (!validationResult.Success)
             {
                 return validationResult;
 
@@ -116,14 +116,14 @@ namespace NetMed.Persistence.Repositories
                 {
                     _context.Roles.Add(roles);
                     await _context.SaveChangesAsync();
-                    result.success = true;
+                    result.Success = true;
                     result.Mesagge = "El rol se a creado con exito";
 
                 };
             }
             catch (Exception ex)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "Problemas con crear el rol";
 
             }
@@ -136,7 +136,7 @@ namespace NetMed.Persistence.Repositories
             var validationResult = EntityValidator.ValidateNotNull(roles, "Roles");
 
 
-            if (!validationResult.success)
+            if (!validationResult.Success)
             {
                 return validationResult;
 
@@ -149,14 +149,14 @@ namespace NetMed.Persistence.Repositories
                 {
                     _context.Roles.Update(roles);
                     await _context.SaveChangesAsync();
-                    result.success = true;
+                    result.Success = true;
                     result.Mesagge = "El rol se actualizo con exito";
 
                 };
             }
             catch (Exception ex)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "Problemas con actualizar el rol";
 
             }
@@ -170,7 +170,7 @@ namespace NetMed.Persistence.Repositories
             var validationResult = EntityValidator.ValidateNotNull(roles, "Roles");
 
 
-            if (!validationResult.success)
+            if (!validationResult.Success)
             {
                 return validationResult;
 
@@ -183,14 +183,14 @@ namespace NetMed.Persistence.Repositories
                 {
                     _context.Roles.Remove(roles);
                     await _context.SaveChangesAsync();
-                    result.success = true;
+                    result.Success = true;
                     result.Mesagge = "El rol se elimino con exito";
 
                 };
             }
             catch (Exception ex)
             {
-                result.success = false;
+                result.Success = false;
                 result.Mesagge = "Problemas eliminando el rol";
 
             }
