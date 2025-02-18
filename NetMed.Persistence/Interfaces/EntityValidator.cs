@@ -1,12 +1,13 @@
 ﻿
 
+using Microsoft.Identity.Client;
 using NetMed.Domain.Base;
 
 namespace NetMed.Persistence.Interfaces
 {
     public static class EntityValidator
     {
-        public static OperationResult ValidateNotNull<T>(T entity, string entityName)
+        public static OperationResult ValidateNotNull<T>(T entity, string errorMessage)
         { 
          var result = new OperationResult();
 
@@ -14,15 +15,35 @@ namespace NetMed.Persistence.Interfaces
             if (entity == null)
             {
                 result.Success = false;
-                result.Mesagge = $"{entityName} No puede ser nulo";
+                result.Mesagge = errorMessage;
             }
             else 
             {
 
              result.Success = true;
+
            
             }
             return result;
+
+        }
+
+        public static OperationResult ValidatePositiveNumber(int number, string errorMessage)
+        {
+
+            var result = new OperationResult();
+
+            if (number < 0)
+            { 
+                result.Success = false ;
+                result.Mesagge = errorMessage;
+            }
+            else
+            {
+                result.Success = true;
+            }
+            return result;
+
 
         }
 

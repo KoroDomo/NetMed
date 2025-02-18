@@ -4,8 +4,8 @@ namespace Netmed.Model.Models
     public class StatusModel
     {
         
-        public int Id { get; set; }
+        public int StatusID { get; set; }
 
-        public string Status { get; set; }
+        public string StatusName { get; set; }
     }
 }

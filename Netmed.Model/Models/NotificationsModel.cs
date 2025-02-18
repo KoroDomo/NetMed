@@ -4,7 +4,7 @@ namespace Netmed.Model.Models
 {
     public class NotificationsModel
     {
-        public int Id { get; set; }
+        public int NotificationID { get; set; }
 
         public int UserID {get; set;}
 

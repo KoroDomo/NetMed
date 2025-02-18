@@ -10,8 +10,11 @@ namespace NetMed.Persistence.Context.Interfaces
 
             Task<OperationResult> GetStatusByIdAsync(int statusId);
 
-            Task <OperationResult>CreateStatusAsync(Status status);
 
-            Task <OperationResult>UpdateStatusAsync(Status status);
+            Task<OperationResult> CreateStatusAsync(Status status);
+
+            Task<OperationResult> UpdateStatusAsync(Status status);
+
+            Task<OperationResult> DeleteStatusAsync(int statusId);
     }
 }

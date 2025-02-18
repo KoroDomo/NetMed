@@ -204,5 +204,15 @@ namespace NetMed.Persistence.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public Task<OperationResult> UpdateRoleAsync(bool notification)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<OperationResult> DeleteRoleAsync(int roles)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

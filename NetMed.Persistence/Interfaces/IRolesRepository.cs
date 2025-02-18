@@ -11,13 +11,13 @@ namespace NetMed.Persistence.Context.Interfaces
     {
         Task<OperationResult> GetAllRolesAsync(int roleId);
 
-        Task<OperationResult> GetRoleByIdAsync(int roleId);
+        Task<OperationResult> GetRoleByIdAsync(int rolesId);
 
         Task<OperationResult> CreateRoleAsync(Roles roles);
 
         Task<OperationResult> UpdateRoleAsync(Roles roles);
 
-        Task<OperationResult> DeleteRoleAsync(Roles roles);
+        Task<OperationResult> DeleteRoleAsync(int roles);
 
     }
 }

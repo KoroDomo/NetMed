@@ -9,10 +9,13 @@ using NetMed.Persistence.Context.Interfaces;
 using NetMed.Persistence.Interfaces;
 using System.Data;
 using System.Linq.Expressions;
+using System.ComponentModel.DataAnnotations;
+
+
 
 namespace NetMed.Persistence.Repositories
 {
-     public  class StatusRepository : BaseRepository<Status>, IStatusRepository
+    public class StatusRepository : BaseRepository<Status>, IStatusRepository
     {
         private readonly NetmedContext _context;
         private readonly ILogger<StatusRepository> _logger;
@@ -27,9 +30,9 @@ namespace NetMed.Persistence.Repositories
             this._logger = logger;
             this._configuration = configuration;
         }
-        public override Task<Status> GetEntityByIdAsync(int id)
+        public override Task<Status> GetEntityByIdAsync(int statusID)
         {
-            return base.GetEntityByIdAsync(id);
+            return base.GetEntityByIdAsync(statusID);
 
         }
 
@@ -57,46 +60,45 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> GetStatusByIdAsync(int statusId)
         {
-            var result = new OperationResult();
+            var validationResult = EntityValidator.ValidatePositiveNumber(statusId, "No esta permitido valores negativos");
 
-            if (statusId < 0)
+            if (!validationResult.Success)
             {
-                result.Success = false;
-                result.Mesagge = "ID no válido.";
-                return result;
+
+                return validationResult;
+
             }
 
             try
             {
-                var status = await _context.statuses
-                    .FirstOrDefaultAsync(n => n.Id == statusId);
+                var status = await _context.Notifications.FindAsync(statusId);
 
-                if (status == null)
+                var notNullNotification = EntityValidator.ValidateNotNull(statusId, "La status no a sido encontrada");
+
+
+                if (!notNullNotification.Success)
                 {
-                    result.Success = false;
-                    result.Mesagge = "Status no encontrado.";
+
+                    return notNullNotification;
+
                 }
                 else
                 {
-                    result.Success = true;
-                    result.Mesagge = "Statu obtenida con éxito.";
-                    result.Data = status;
+                    return new OperationResult { Success = true, Mesagge = "Status obtenido con éxito", Data = statusId };
+
                 }
             }
             catch (Exception ex)
             {
-
-                result.Success = false;
-                result.Mesagge = $"Error al obtener el rol: {ex.Message}";
                 await _context.SaveChangesAsync();
+                return new OperationResult { Success = false, Mesagge = "Error al obtener el status" };
+
             }
-            return result;
-        
         }
 
-        public async Task <OperationResult> CreateStatusAsync(Status status)
+        public async Task<OperationResult> CreateStatusAsync(Status status)
         {
-            var validationResult = EntityValidator.ValidateNotNull(status, "Status");
+            var validationResult = EntityValidator.ValidateNotNull(status, "LA notificacion no puede ser creada");
 
 
             if (!validationResult.Success)
@@ -105,31 +107,30 @@ namespace NetMed.Persistence.Repositories
 
             }
 
-            var result = new OperationResult();
             try
             {
 
                 {
                     _context.statuses.Add(status);
                     await _context.SaveChangesAsync();
-                    result.Success = true;
-                    result.Mesagge = "El status se a creado con exito";
+
+                    return new OperationResult { Success = true, Mesagge = "El Status se a creado con exito" };
+
 
                 };
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Mesagge = "Problemas con crear el status";
+
+                return new OperationResult { Success = false, Mesagge = "Problemas con crear el status" };
 
             }
 
-            return result;
         }
 
         public async Task<OperationResult> UpdateStatusAsync(Status status)
         {
-            var validationResult = EntityValidator.ValidateNotNull(status, "Status");
+            var validationResult = EntityValidator.ValidateNotNull(status, "El status no se a encontrado");
 
 
             if (!validationResult.Success)
@@ -138,29 +139,65 @@ namespace NetMed.Persistence.Repositories
 
             }
 
-            var result = new OperationResult();
             try
             {
 
                 {
                     _context.statuses.Update(status);
                     await _context.SaveChangesAsync();
-                    result.Success = true;
-                    result.Mesagge = "El Status se actualizo con exito";
+
+                    return new OperationResult { Success = true, Mesagge = "El status se actualizo con exito" };
 
                 };
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Mesagge = "Problemas con actualizar el status";
+
+                return new OperationResult { Success = false, Mesagge = "Problemas con actualizar el status" };
 
             }
 
-            return result;
         }
 
+        public async Task<OperationResult> DeleteStatusAsync(int statusId)
+        {
+            var validationResult = EntityValidator.ValidatePositiveNumber(statusId, "No esta permitido valores negativos");
 
-       
+            if (!validationResult.Success)
+            {
+
+                return validationResult;
+
+            }
+
+            try
+            {
+                var status = await _context.Notifications.FindAsync(statusId);
+
+                var notNullNotification = EntityValidator.ValidateNotNull(status, "La notificacion no a sido encontrada");
+
+                if (!notNullNotification.Success)
+                {
+                    return notNullNotification;
+                };
+
+                _context.Notifications.Remove(status);
+                await _context.SaveChangesAsync();
+
+                return new OperationResult { Success = true, Mesagge = "Mensaje eliminado con exito" };
+
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult
+                {
+                    Success = false,
+                    Mesagge = "Surgieron problemas a la hora de eliminar la notificacion"
+
+                };
+
+            }
+        }
     }
 }
+
