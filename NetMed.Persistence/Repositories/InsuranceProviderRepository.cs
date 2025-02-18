@@ -262,8 +262,7 @@ namespace NetMed.Persistence.Repository
                         CreatedAt = ip.CreatedAt,
                         UpdatedAt = ip.UpdatedAt,
                         IsActive = ip.IsActive,
-                    })
-                    .ToListAsync();
+                    }).ToListAsync();
 
                 if (providers == null || !providers.Any())
                 {
@@ -304,8 +303,7 @@ namespace NetMed.Persistence.Repository
                         CreatedAt = ip.CreatedAt,
                         UpdatedAt = ip.UpdatedAt,
                         IsActive = ip.IsActive,
-                    })
-                    .ToListAsync();
+                    }).ToListAsync();
 
                 if (providers == null || !providers.Any())
                 {
@@ -347,8 +345,7 @@ namespace NetMed.Persistence.Repository
                         CreatedAt = ip.CreatedAt,
                         UpdatedAt = ip.UpdatedAt,
                         IsActive = ip.IsActive,
-                    })
-                    .ToListAsync();
+                    }).ToListAsync();
 
                 if (providers == null || !providers.Any())
                 {
@@ -390,8 +387,7 @@ namespace NetMed.Persistence.Repository
                         CreatedAt = ip.CreatedAt,
                         UpdatedAt = ip.UpdatedAt,
                         IsActive = ip.IsActive,
-                    })
-                    .ToListAsync();
+                    }).ToListAsync();
 
                 if (providers == null || !providers.Any())
                 {
