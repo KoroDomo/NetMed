@@ -29,7 +29,7 @@ namespace NetMed.Persistence.Base
             {
                 //var datos = Entity.Where(filter).ToList();
                 //result.Result = datos;
-                result.Result = await Entity.Where(filter).ToListAsync();
+                result.data = await Entity.Where(filter).ToListAsync();
                 result.Success = true;
             }
             catch (Exception ex)
@@ -85,7 +85,7 @@ namespace NetMed.Persistence.Base
             OperationResult result = new OperationResult();
             try
             {
-                result.Result = await Entity.ToListAsync();
+                result.data = await Entity.ToListAsync();
                 result.Success = true;
             }
             catch (Exception ex)
@@ -102,7 +102,7 @@ namespace NetMed.Persistence.Base
 
             try
             {
-                result.Result = await Entity.ToListAsync();
+                result.data = await Entity.ToListAsync();
                 result.Success = true;
             }
             catch (Exception ex)
