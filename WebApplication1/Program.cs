@@ -1,9 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-using NetMed.Persistence.Context;
-using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Repository;
 
-namespace NetMed.Api
+namespace WebApplication1
 {
     public class Program
     {
@@ -12,10 +8,6 @@ namespace NetMed.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
-            builder.Services.AddDbContext<NetMedContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalAppointment")));
-
-            builder.Services.AddScoped<IInsuranceProviderRepository, InsuranceProviderRepository>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
