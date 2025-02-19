@@ -9,7 +9,6 @@ namespace NetMed.Persistence.Context.Interfaces
 {
     public interface IRolesRepository : IBaseRepository<Roles>
     {
-        Task<OperationResult> GetAllRolesAsync(int roleId);
 
         Task<OperationResult> GetRoleByIdAsync(int rolesId);
 

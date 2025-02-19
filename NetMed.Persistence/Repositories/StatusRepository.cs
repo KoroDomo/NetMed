@@ -71,15 +71,15 @@ namespace NetMed.Persistence.Repositories
 
             try
             {
-                var status = await _context.Notifications.FindAsync(statusId);
+                var status = await _context.statuses.FindAsync(statusId);
 
-                var notNullNotification = EntityValidator.ValidateNotNull(statusId, "La status no a sido encontrada");
+                var notNullStatus = EntityValidator.ValidateNotNull(statusId, "La status no a sido encontrada");
 
 
-                if (!notNullNotification.Success)
+                if (!notNullStatus.Success)
                 {
 
-                    return notNullNotification;
+                    return notNullStatus;
 
                 }
                 else
@@ -172,19 +172,19 @@ namespace NetMed.Persistence.Repositories
 
             try
             {
-                var status = await _context.Notifications.FindAsync(statusId);
+                var status = await _context.statuses.FindAsync(statusId);
 
-                var notNullNotification = EntityValidator.ValidateNotNull(status, "La notificacion no a sido encontrada");
+                var notNullStatus = EntityValidator.ValidateNotNull(status, "El status no a sido encontrada");
 
-                if (!notNullNotification.Success)
+                if (!notNullStatus.Success)
                 {
-                    return notNullNotification;
-                };
+                    return notNullStatus;
+                }; 
 
-                _context.Notifications.Remove(status);
+                _context.statuses.Remove(status);
                 await _context.SaveChangesAsync();
 
-                return new OperationResult { Success = true, Mesagge = "Mensaje eliminado con exito" };
+                return new OperationResult { Success = true, Mesagge = " eliminado con exito" };
 
             }
             catch (Exception ex)
@@ -192,7 +192,7 @@ namespace NetMed.Persistence.Repositories
                 return new OperationResult
                 {
                     Success = false,
-                    Mesagge = "Surgieron problemas a la hora de eliminar la notificacion"
+                    Mesagge = "Surgieron problemas a la hora de eliminar el status"
 
                 };
 

@@ -12,7 +12,7 @@ using System.Linq.Expressions;
 
 namespace NetMed.Persistence.Repositories
 {
-   public class RolesRepository : BaseRepository<Roles>, IRolesRepository
+    public class RolesRepository : BaseRepository<Roles>, IRolesRepository
     {
         OperationResult result = new OperationResult();
 
@@ -47,8 +47,8 @@ namespace NetMed.Persistence.Repositories
             return base.GetAllAsync();
         }
 
-        public override Task<OperationResult> UpdateEntityAsync(Roles entity) 
-        { 
+        public override Task<OperationResult> UpdateEntityAsync(Roles entity)
+        {
 
             return base.UpdateEntityAsync(entity);
         }
@@ -60,47 +60,46 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> GetRoleByIdAsync(int roleId)
         {
-            var result = new OperationResult();
+            var validationResult = EntityValidator.ValidatePositiveNumber(roleId, "No esta permitido valores negativos");
 
-            if (roleId < 0)
+            if (!validationResult.Success)
             {
-                result.Success = false;
-                result.Mesagge = "ID no válido.";
-                return result;
+
+                return validationResult;
+
             }
 
             try
             {
-                var roles = await _context.Roles
-                    .FirstOrDefaultAsync(n => n.Id == roleId);
+                var roles = await _context.Roles.FindAsync(roleId);
 
-                if (roles == null)
+                var notNullRoles = EntityValidator.ValidateNotNull(roleId, "El rol no a sido encontrada");
+
+
+                if (!notNullRoles.Success)
                 {
-                    result.Success = false;
-                    result.Mesagge = "Rol no encontrado.";
+
+                    return notNullRoles;
+
                 }
                 else
                 {
-                    result.Success = true;
-                    result.Mesagge = "Rol obtenida con éxito.";
-                    result.Data = roles;
+                    return new OperationResult { Success = true, Mesagge = "Rol obtenido con éxito", Data = roleId };
+
                 }
             }
             catch (Exception ex)
             {
-
-                result.Success = false;
-                result.Mesagge = $"Error al obtener el rol: {ex.Message}";
                 await _context.SaveChangesAsync();
-            }
-            return result;
+                return new OperationResult { Success = false, Mesagge = "Error al obtener el rol" };
 
+            }
 
         }
 
-        public async  Task<OperationResult> CreateRoleAsync(Roles roles)
+        public async Task<OperationResult> CreateRoleAsync(Roles roles)
         {
-            var validationResult = EntityValidator.ValidateNotNull(roles, "Notification");
+            var validationResult = EntityValidator.ValidateNotNull(roles, "El rol no puede ser creado");
 
 
             if (!validationResult.Success)
@@ -109,31 +108,30 @@ namespace NetMed.Persistence.Repositories
 
             }
 
-            var result = new OperationResult();
             try
             {
 
                 {
                     _context.Roles.Add(roles);
                     await _context.SaveChangesAsync();
-                    result.Success = true;
-                    result.Mesagge = "El rol se a creado con exito";
+
+                    return new OperationResult { Success = true, Mesagge = "El rol se a creado con exito" };
+
 
                 };
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Mesagge = "Problemas con crear el rol";
+
+                return new OperationResult { Success = false, Mesagge = "Problemas con crear el rol" };
 
             }
 
-            return result;
         }
 
         public async Task<OperationResult> UpdateRoleAsync(Roles roles)
         {
-            var validationResult = EntityValidator.ValidateNotNull(roles, "Roles");
+            var validationResult = EntityValidator.ValidateNotNull(roles, "El rol no se a encontrado");
 
 
             if (!validationResult.Success)
@@ -142,77 +140,64 @@ namespace NetMed.Persistence.Repositories
 
             }
 
-            var result = new OperationResult();
             try
             {
 
                 {
                     _context.Roles.Update(roles);
                     await _context.SaveChangesAsync();
-                    result.Success = true;
-                    result.Mesagge = "El rol se actualizo con exito";
+
+                    return new OperationResult { Success = true, Mesagge = "El rol se actualizo con exito" };
 
                 };
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Mesagge = "Problemas con actualizar el rol";
+
+                return new OperationResult { Success = false, Mesagge = "Problemas con actualizar el rol" };
 
             }
 
-            return result;
-
         }
 
-        public async Task<OperationResult> DeleteRoleAsync(Roles roles)
+        public async Task<OperationResult> DeleteRoleAsync(int rolesId)
         {
-            var validationResult = EntityValidator.ValidateNotNull(roles, "Roles");
-
+            var validationResult = EntityValidator.ValidatePositiveNumber(rolesId, "No esta permitido valores negativos");
 
             if (!validationResult.Success)
             {
+
                 return validationResult;
 
             }
 
-            var result = new OperationResult();
             try
             {
+                var roles = await _context.Roles.FindAsync(rolesId);
 
+                var notNullRol = EntityValidator.ValidateNotNull(roles, "El rol no se a encontrado");
+
+                if (!notNullRol.Success)
                 {
-                    _context.Roles.Remove(roles);
-                    await _context.SaveChangesAsync();
-                    result.Success = true;
-                    result.Mesagge = "El rol se elimino con exito";
-
+                    return notNullRol;
                 };
+
+                _context.Roles.Remove(roles);
+                await _context.SaveChangesAsync();
+
+                return new OperationResult { Success = true, Mesagge = " eliminado con exito" };
+
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Mesagge = "Problemas eliminando el rol";
+                return new OperationResult
+                {
+                    Success = false,
+                    Mesagge = "Surgieron problemas a la hora de eliminar el rol"
+
+                };
 
             }
-
-            return result;
-
-
-        }
-
-        public Task<OperationResult> GetAllRolesAsync(int roleId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<OperationResult> UpdateRoleAsync(bool notification)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<OperationResult> DeleteRoleAsync(int roles)
-        {
-            throw new NotImplementedException();
         }
     }
 }
