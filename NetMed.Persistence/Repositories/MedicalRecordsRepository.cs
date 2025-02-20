@@ -6,19 +6,22 @@ using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Context;
 using NetMed.Domain.Base;
+using Microsoft.Extensions.Configuration;
 
 namespace NetMed.Persistence.Repositories
 {
     public class MedicalRecordsRepository : BaseRepository<MedicalRecords>, IMedicalRecordsRepository
     {
-        private readonly NetMedContext context;
-        private readonly ILogger<MedicalRecordsRepository> logger;
+        private readonly NetMedContext _context;
+        private readonly ILogger<MedicalRecordsRepository> _logger;
+        private readonly IConfiguration _configuration;
 
-        public MedicalRecordsRepository(NetMedContext context, ILogger<MedicalRecordsRepository> logger)
+        public MedicalRecordsRepository(NetMedContext context, ILogger<MedicalRecordsRepository> logger, IConfiguration configuration)
             : base(context)
         {
-            this.context = context;
-            this.logger = logger;
+            _context = context;
+            _logger = logger;
+            _configuration = configuration;
         }
 
         public override async Task<OperationResult> SaveEntityAsync(MedicalRecords entity)
@@ -42,7 +45,7 @@ namespace NetMed.Persistence.Repositories
             var validation = EntityValidator.ValidateNotNull(entity, "Record Medico");
             if (!validation.Success) return validation;
 
-            var existingRecord = await context.MedicalRecords.FindAsync(entity.Id);
+            var existingRecord = await _context.MedicalRecords.FindAsync(entity.Id);
             if (existingRecord == null)
             {
                 return new OperationResult { Success = false, Message = "Record Medico no encontrado" };
@@ -58,7 +61,7 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> GetMedicalRecordByIdAsync(int recordId)
         {
-            var record = await context.MedicalRecords
+            var record = await _context.MedicalRecords
                 .Where(r => r.Id == recordId)
                 .FirstOrDefaultAsync();
 
@@ -69,7 +72,7 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> GetByTreatmentAsync(string treatment)
         {
-            var records = await context.MedicalRecords
+            var records = await _context.MedicalRecords
                 .Where(r => r.Treatment.Contains(treatment))
                 .ToListAsync();
 
@@ -80,7 +83,7 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> GetLatestByPatientIdAsync(int patientId)
         {
-            var latestRecord = await context.MedicalRecords
+            var latestRecord = await _context.MedicalRecords
                 .Where(r => r.PatientID == patientId)
                 .OrderByDescending(r => r.DateOfVisit)
                 .FirstOrDefaultAsync();

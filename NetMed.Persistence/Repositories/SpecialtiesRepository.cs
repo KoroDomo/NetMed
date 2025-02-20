@@ -6,20 +6,23 @@ using NetMed.Persistence.Context;
 using NetMed.Domain.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 using NetMed.Persistence;
 
 namespace NetMed.Persistence.Repositories
 {
     public class SpecialtiesRepository : BaseRepository<Specialties>, ISpecialtiesRepository
     {
-        private readonly NetMedContext context;
-        private readonly ILogger<SpecialtiesRepository> logger;
+        private readonly NetMedContext _context;
+        private readonly ILogger<SpecialtiesRepository> _logger;
+        private readonly IConfiguration _configuration;
 
-        public SpecialtiesRepository(NetMedContext context, ILogger<SpecialtiesRepository> logger)
+        public SpecialtiesRepository(NetMedContext context, ILogger<SpecialtiesRepository> logger, IConfiguration configuration)
             : base(context)
         {
-            this.context = context;
-            this.logger = logger;
+            _context = context;
+            _logger = logger;
+            _configuration = configuration;
         }
 
         public override async Task<OperationResult> SaveEntityAsync(Specialties entity)
@@ -36,7 +39,7 @@ namespace NetMed.Persistence.Repositories
             var validation = EntityValidator.ValidateNotNull(entity, "Especialidad");
             if (!validation.Success) return validation;
 
-            var existingSpecialty = await context.Specialties.FindAsync(entity.Id);
+            var existingSpecialty = await _context.Specialties.FindAsync(entity.Id);
             if (existingSpecialty == null)
             {
                 return new OperationResult { Success = false, Message = "Especialidad no encontrada" };
@@ -51,13 +54,13 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> ExistsByNameAsync(string specialtyName)
         {
-            var exists = await context.Specialties.AnyAsync(s => s.SpecialtyName == specialtyName);
+            var exists = await _context.Specialties.AnyAsync(s => s.SpecialtyName == specialtyName);
             return new OperationResult { Success = exists, Message = exists ? "La Especialidad existe" : "Especialidad no existe" };
         }
 
         public async Task<OperationResult> GetByNameAsync(string specialtyName)
         {
-            var specialty = await context.Specialties
+            var specialty = await _context.Specialties
                 .Where(s => s.SpecialtyName == specialtyName)
                 .FirstOrDefaultAsync();
 

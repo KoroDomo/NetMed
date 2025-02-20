@@ -5,18 +5,21 @@ using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Context;
 using NetMed.Domain.Base;
+using Microsoft.Extensions.Configuration;
 
 namespace NetMed.Persistence.Repositories
 {
     public class AvailabilityModesRepository : BaseRepository<AvailabilityModes>, IAvailabilityModesRepository
     {
-        private readonly NetMedContext context;
-        private readonly ILogger<AvailabilityModesRepository> logger;
-        public AvailabilityModesRepository(NetMedContext context, ILogger<AvailabilityModesRepository> logger)
+        private readonly NetMedContext _context;
+        private readonly ILogger<AvailabilityModesRepository> _logger;
+        private readonly IConfiguration _configuration;
+        public AvailabilityModesRepository(NetMedContext context, ILogger<AvailabilityModesRepository> logger, IConfiguration configuration)
             : base(context)
         {
-            this.context = context;
-            this.logger = logger;
+            _context = context;
+            _logger = logger;
+            _configuration = configuration;
         }
         public override async Task<OperationResult> SaveEntityAsync(AvailabilityModes entity)
         {
@@ -41,12 +44,12 @@ namespace NetMed.Persistence.Repositories
                 return new OperationResult { Success = false, Message = "El nombre del Modo de Disponibilidad esta vacio" };
             }
 
-            var exists = await context.AvailabilityModes.AnyAsync(m => m.AvailabilityModeName == availabilityModeName);
+            var exists = await _context.AvailabilityModes.AnyAsync(m => m.AvailabilityModeName == availabilityModeName);
             return new OperationResult { Success = exists, Message = exists ? "El Modo de Disponibilidad existe" : "El Modo de Disponibilidad no existe" };
         }
         public async Task<OperationResult> GetByNameAsync(string availabilityModeName)
         {
-            var mode = await context.AvailabilityModes
+            var mode = await _context.AvailabilityModes
                 .FirstOrDefaultAsync(m => m.AvailabilityModeName == availabilityModeName);
 
             return mode != null

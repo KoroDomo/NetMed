@@ -15,11 +15,23 @@ namespace NetMed.Persistence.Base
             _context = context;
             Entity = _context.Set<TEntity>();  
         }
-        public virtual async Task<TEntity> GetEntityByIdAsync(int id)
+        public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)
         {
-            return await Entity.FindAsync(id);
-        }
+            OperationResult result = new OperationResult();
 
+            try
+            {
+                Entity.Add(entity);
+                await _context.SaveChangesAsync();
+                result.Success = true;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+                result.Message = "Ocurrio un error guardando los datos";
+            }
+            return result;
+        }
         public virtual async Task<OperationResult> UpdateEntityAsync(TEntity entity)
         {
             OperationResult result = new OperationResult() { Success = true };
@@ -37,27 +49,6 @@ namespace NetMed.Persistence.Base
             }
             return result;
         }
-        public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)
-        {
-            OperationResult result = new OperationResult();
-
-            try
-            {
-                Entity.Add(entity);
-                await _context.SaveChangesAsync();
-                result.Success = true;
-            }
-            catch (Exception)
-            {
-                result.Success = false;
-                result.Message = "Ocurrio un error guardando los datos";  
-            }
-            return result;
-        }
-        public virtual async Task<List<TEntity>> GetAllAsync()
-        {
-            return await Entity.ToListAsync();
-        }
         public virtual async Task<OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter)
         {
             OperationResult result = new OperationResult();
@@ -74,12 +65,20 @@ namespace NetMed.Persistence.Base
                 result.Message = "Ocurrio un error obteniendo los datos";
 
             }
-            return result; 
+            return result;
+        }
+        public virtual async Task<TEntity> GetEntityByIdAsync(int id)
+        {
+            return await Entity.FindAsync(id);
         }
         public virtual async Task<bool> Exists(Expression<Func<TEntity, bool>> filter)
         {
             //return await _context.Set<TEntity>().CountAsync(filter) > 0;
             return await Entity.AnyAsync(filter);
+        }
+        public virtual async Task<List<TEntity>> GetAllAsync()
+        {
+            return await Entity.ToListAsync();
         }
     }
 }
