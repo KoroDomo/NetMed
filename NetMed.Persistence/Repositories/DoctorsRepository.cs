@@ -7,17 +7,21 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using NetMed.Persistence.Interfaces;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 namespace NetMed.Persistence.Repositories
 {
     public class DoctorsRepository : BaseRepository<Doctors>, IDoctorsRepository
     {
+        private readonly IConfiguration _configuration;
         private readonly NetMedContext _context;
         private readonly ILogger<DoctorsRepository> _logger;
         public DoctorsRepository(NetMedContext context,
-            ILogger<DoctorsRepository> logger) : base(context)
+            ILogger<DoctorsRepository> logger,
+            IConfiguration configuration) : base(context)
         {
                 _context = context;
             _logger = logger;
+            _configuration = configuration;
         }
 
         public async Task<OperationResult> GetByAvailabilityModeAsync(int availabilityModeId)
@@ -226,9 +230,23 @@ namespace NetMed.Persistence.Repositories
 
         }
 
-        public override async Task<Doctors> GetEntityByIdAsync(int id)
+        public override async Task<OperationResult>GetEntityByIdAsync(int id)
         {
-            return await _context.Doctors.FindAsync(id) ?? throw new InvalidOperationException("Entity not found");
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                result.data = await _context.Doctors.FindAsync(id);
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+            }
+            return result;
+
+
         }
 
 

@@ -5,6 +5,7 @@ using NetMed.Domain.Base;
 using Microsoft.EntityFrameworkCore;
 using NetMed.Persistence.Interfaces;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace NetMed.Persistence.Repositories
 {
@@ -29,7 +30,7 @@ namespace NetMed.Persistence.Repositories
                     result.Message = "No se encontraron datos";
                     result.Success = false;
                 }
-            
+
                 result.data = await _context.Users.FindAsync(email);
                 result.Success = true;
             }
@@ -45,15 +46,15 @@ namespace NetMed.Persistence.Repositories
         public async Task<OperationResult> GetActiveUsersAsync(bool isActive = true)
         {
             OperationResult result = new OperationResult();
-            
+
             try
             {
-                if(result.data == null)
+                if (result.data == null)
                 {
                     result.Message = "No se encontraron datos";
                     result.Success = false;
                 }
-                
+
                 result.data = await _context.Users.Where(x => x.IsActive == isActive).ToListAsync();
                 result.Success = true;
             }
@@ -71,7 +72,7 @@ namespace NetMed.Persistence.Repositories
 
             try
             {
-                if(result.data == null)
+                if (result.data == null)
                 {
                     result.Message = "No se encontraron datos";
                     result.Success = false;
@@ -139,7 +140,7 @@ namespace NetMed.Persistence.Repositories
                     result.Success = false;
                 }
                 result.data = await _context.Users.Where(x => x.Email == email && x.PasswordHash == passwordHash).FirstOrDefaultAsync();
-        
+
                 result.Success = true;
             }
             catch (Exception ex)
@@ -155,7 +156,7 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-             result.data = await _context.Users.FindAsync(userId);
+                result.data = await _context.Users.FindAsync(userId);
                 if (result.data == null)
                 {
                     throw new InvalidOperationException("User not found");
@@ -169,7 +170,7 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error actualizando los datos.";
             }
-            
+
         }
 
         public async Task DeactivateUserAsync(int userId)
@@ -177,7 +178,7 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-            result.data = await _context.Users.FindAsync(userId);
+                result.data = await _context.Users.FindAsync(userId);
                 if (result.data == null)
                 {
                     throw new InvalidOperationException("User not found");
@@ -198,13 +199,13 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-              result.data = await _context.Users.FindAsync(userId);
+                result.data = await _context.Users.FindAsync(userId);
                 if (result.data == null)
                 {
                     throw new InvalidOperationException("User not found");
                 }
                 result.data.RoleID = roleId;
-                
+
                 result.data = await _context.SaveChangesAsync();
 
                 result.Success = true;
@@ -216,6 +217,42 @@ namespace NetMed.Persistence.Repositories
             }
         }
 
-    }
+        public override async Task<OperationResult> GetAllAsync(Expression<Func<Users, bool>> filter)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                result.data = await _context.Users.Where(filter).ToListAsync();
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+            }
+            return result;
 
+        }
+
+        public override async Task<OperationResult> GetEntityByIdAsync(int id)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                result.data = await _context.Users.FindAsync(id);
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+            }
+            return result;
+        }
+
+        public override async Task<bool> ExistsAsync(Expression<Func<Users, bool>> filter)
+        {
+            return await _context.Users.AnyAsync(filter);
+        }
+    }
 }

@@ -40,9 +40,20 @@ namespace NetMed.Persistence.Base
             return result;
         }
 
-        public virtual async Task<TEntity> GetEntityByIdAsync(int id)
+        public virtual async Task<OperationResult> GetEntityByIdAsync(int id)
         {
-            return await Entity.FindAsync(id) ?? throw new InvalidOperationException("Entity not found");
+            OperationResult result = new OperationResult();
+            try
+            {
+                result.data = await _context.Doctors.FindAsync(id);
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+            }
+            return result;
         }
 
 

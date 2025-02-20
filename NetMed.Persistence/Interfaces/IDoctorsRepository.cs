@@ -21,6 +21,6 @@ namespace NetMed.Persistence.Interfaces
         Task<OperationResult> GetDoctorsByConsultationFeeAsync(decimal minFee, decimal maxFee);
 
         Task<OperationResult> GetDoctorsWithExpiringLicenseAsync(DateOnly expirationDate);
-
+    
     }
 }
