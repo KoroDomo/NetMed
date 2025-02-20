@@ -24,9 +24,9 @@ namespace NetMed.Persistence.Repositories
             _logger = logger;
             _configuration = configuration;
         }
-        public override Task<List<DoctorAvailability>> GetAllAsync()
+        public async override Task<List<DoctorAvailability>> GetAllAsync()
         {
-            return base.GetAllAsync();
+            return await base.GetAllAsync();
         }
         public override async Task<OperationResult> SaveEntityAsync(DoctorAvailability entity)
         {
@@ -70,7 +70,7 @@ namespace NetMed.Persistence.Repositories
             var validationResult = EntityValidator.Validator(id, nameof(id));
             if (!validationResult.Success)
             {
-                Task.FromResult(false);
+                await Task.FromResult(false);
             }
             return await base.GetEntityByIdAsync(id);
         }

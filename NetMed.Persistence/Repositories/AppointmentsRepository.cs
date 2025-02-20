@@ -54,23 +54,23 @@ namespace NetMed.Persistence.Repositories
             }
             return await base.GetAllAsync(filter);
         }
-        public override Task<bool> ExistsAsync(Expression<Func<Appointments, bool>> filter)
+        public async override Task<bool> ExistsAsync(Expression<Func<Appointments, bool>> filter)
         {
             var validationResult = EntityValidator.Validator(filter, nameof(filter));
             if (!validationResult.Success)
             {
-                Task.FromResult(false);
+               await Task.FromResult(false);
             }
-            return  base.ExistsAsync(filter);
+            return await base.ExistsAsync(filter);
         }
-        public override Task<Appointments> GetEntityByIdAsync(int id)
+        public async override Task<Appointments> GetEntityByIdAsync(int id)
         {
             var validationResult = EntityValidator.Validator(id, nameof(id));
             if (!validationResult.Success)
             {
-                Task.FromResult(false);
+                await Task.FromResult(false);
             }
-            return base.GetEntityByIdAsync(id);
+            return await base.GetEntityByIdAsync(id);
         }
 
         public async Task<OperationResult> CreateAppointmentAsync(int PatientID, int DoctorID, DateTime AppointmentDate)
