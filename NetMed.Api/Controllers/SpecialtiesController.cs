@@ -22,7 +22,7 @@ namespace NetMed.Api.Controllers
 
             var specialties = await _specialtiesRepository.GetAllAsync(); // 22:14
 
-            return Ok();
+            return Ok(specialties);
         }
 
         // GET api/<SpecialtiesController>/5
