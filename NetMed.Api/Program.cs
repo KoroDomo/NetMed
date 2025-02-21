@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Repositories;
 using NetMed.Persistence.Repository;
 
 namespace NetMed.Api
@@ -16,6 +17,7 @@ namespace NetMed.Api
             builder.Services.AddDbContext<NetMedContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalAppointment")));
 
             builder.Services.AddScoped<IInsuranceProviderRepository, InsuranceProviderRepository>();
+            builder.Services.AddScoped<INetworkTypeRepository, NetworkTypeRepository>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

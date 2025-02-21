@@ -8,7 +8,6 @@ using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using System.Linq.Expressions;
-using System.Net;
 
 namespace NetMed.Persistence.Repositories
 {

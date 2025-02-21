@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace NetMed.Api.Controllers
 {
@@ -16,8 +15,8 @@ namespace NetMed.Api.Controllers
         {
             _InsuranceProviderRepository = insuranceProviderRepository;
         }
-        // GET: api/<InsuranceProviderController>
-        [HttpGet]
+        
+        [HttpGet("GetInsuranceProviders")]
         public async Task<IActionResult> Get()
         {
             var insurenceProviders = await _InsuranceProviderRepository.GetAllAsync();
@@ -25,29 +24,32 @@ namespace NetMed.Api.Controllers
             return Ok(insurenceProviders);
         }
 
-        // GET api/<InsuranceProviderController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("GetInsuranceProviderBy{id}")]
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            var insurenceProviders = await _InsuranceProviderRepository.GetEntityByIdAsync(id);
+
+            return Ok(insurenceProviders);
         }
 
-        // POST api/<InsuranceProviderController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+
+        [HttpPost("SaveInsuranceProvider")]
+        public async Task<IActionResult> Post([FromBody] InsuranceProvider insuranceProvider)
         {
+            var insurenceProviders = await _InsuranceProviderRepository.SaveEntityAsync(insuranceProvider);
+
+            return Ok(insurenceProviders);
         }
 
-        // PUT api/<InsuranceProviderController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+
+        [HttpPost("UpdateInsuranceProvider")]
+        public async Task<IActionResult> Put([FromBody] InsuranceProvider insuranceProvider)
         {
+            var insurenceProviders = await _InsuranceProviderRepository.UpdateEntityAsync(insuranceProvider);
+
+            return Ok(insurenceProviders);
         }
 
-        // DELETE api/<InsuranceProviderController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        
     }
 }
