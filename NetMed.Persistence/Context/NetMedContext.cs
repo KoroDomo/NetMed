@@ -14,7 +14,7 @@ namespace NetMed.Persistence.Context
 
         public DbSet<InsuranceProviders> InsuranceProviders { get; set; }
 
-        public DbSet<NetworkTypes> NetworkTypes { get; set; }
+        public DbSet<NetworkType> NetworkType { get; set; }
 
 
     }

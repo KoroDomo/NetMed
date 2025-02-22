@@ -11,7 +11,7 @@ using System.Linq.Expressions;
 
 namespace NetMed.Persistence.Repositories
 {
-    public class NetworkTypeRepository : BaseRepository<NetworkTypes, int>, INetworkTypeRepository
+    public class NetworkTypeRepository : BaseRepository<NetworkType, int>, INetworkTypeRepository
     {
         private readonly NetMedContext _context;
         private readonly ILogger<NetworkTypeRepository> _logger;
@@ -29,7 +29,7 @@ namespace NetMed.Persistence.Repositories
 
         }
 
-        public override async Task<OperationResult> SaveEntityAsync(NetworkTypes network)
+        public override async Task<OperationResult> SaveEntityAsync(NetworkType network)
         {
             try
             {
@@ -39,7 +39,7 @@ namespace NetMed.Persistence.Repositories
                     return _operations.SuccessResult(null, "NetworkTypeRepository.SaveEntityAsync");
                 }
 
-                _context.NetworkTypes.Add(network);
+                _context.NetworkType.Add(network);
                 await _context.SaveChangesAsync();
 
                 _logger.LogInformation("Network agregado exitosamente: " + network.ToString());
@@ -56,11 +56,11 @@ namespace NetMed.Persistence.Repositories
         {
             try
             {
-                var network = await _context.NetworkTypes
+                var network = await _context.NetworkType
                     .Where(n => n.Id == id)
                     .Select(n => new NetworkTypeModel()
                     {
-                        NetworkTypeId = n.Id,
+                        Id = n.Id,
                         Name = n.Name,
                         Description = n.Description,
                         CreatedAt = n.CreatedAt,
@@ -84,7 +84,7 @@ namespace NetMed.Persistence.Repositories
             }
         }
 
-        public override async Task<OperationResult> UpdateEntityAsync(NetworkTypes network)
+        public override async Task<OperationResult> UpdateEntityAsync(NetworkType network)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace NetMed.Persistence.Repositories
                     return _operations.SuccessResult(null, "NetworkTypeRepository.UpdateEntityAsync");
                 }
 
-                _context.NetworkTypes.Update(network);
+                _context.NetworkType.Update(network);
                 await _context.SaveChangesAsync();
 
                 _logger.LogInformation("Network actualizada exitosamente: " + network.ToString());
@@ -107,16 +107,16 @@ namespace NetMed.Persistence.Repositories
             }
         }
 
-       /* public override async Task<OperationResult> GetAllAsync()
+        public override async Task<OperationResult> GetAllAsync()
         {
             try
             {
-                var network = await _context.NetworkTypes
+                var network = await _context.NetworkType
                     .Where(n => n.IsActive)
                     .OrderByDescending(n => n.CreatedAt)
                     .Select(n => new NetworkTypeModel()
                     {
-                        NetworkTypeId = n.Id,
+                        Id = n.Id,
                         Name = n.Name,
                         Description = n.Description,
                         CreatedAt = n.CreatedAt,
@@ -138,18 +138,18 @@ namespace NetMed.Persistence.Repositories
                 _logger.LogError(ex, "Error al obtener el Network.");
                 return _operations.HandleException(ex, "NetworkTypeRepository.GetAllAsync");
             }
-        }*/
+        }
 
-        public override async Task<OperationResult> GetAllAsync(Expression<Func<NetworkTypes, bool>> filter)
+        public override async Task<OperationResult> GetAllAsync(Expression<Func<NetworkType, bool>> filter)
         {
             try
             {
-                var entities = await _context.NetworkTypes
+                var entities = await _context.NetworkType
                     .Where(filter)
                     .OrderByDescending(n => n.CreatedAt)
                     .Select(n => new NetworkTypeModel()
                     {
-                        NetworkTypeId = n.Id,
+                        Id = n.Id,
                         Name = n.Name,
                         Description = n.Description,
                         CreatedAt = n.CreatedAt,
@@ -177,14 +177,14 @@ namespace NetMed.Persistence.Repositories
         {
             try
             {
-                var entity = await _context.NetworkTypes.FindAsync(id);
+                var entity = await _context.NetworkType.FindAsync(id);
                 if (entity == null)
                 {
                     _logger.LogWarning($"No se encontró el Network con el ID: {id} para eliminar.");
                     return _operations.SuccessResult(null, "NetworkTypeRepository.DeleteNetworkTypeAsync");
                 }
 
-                _context.NetworkTypes.Remove(entity);
+                _context.NetworkType.Remove(entity);
                 await _context.SaveChangesAsync();
                 _logger.LogInformation("Network eliminado exitosamente: "+ entity.ToString());
                 return _operations.SuccessResult(null, "NetworkTypeRepository.DeleteNetworkTypeAsync");
@@ -200,16 +200,17 @@ namespace NetMed.Persistence.Repositories
         {
             try
             {
-                var networkTypes = await _context.NetworkTypes
+                var networkTypes = await _context.NetworkType
                     .Where(nt => nt.Id == providerId)
                     .Select(nt => new NetworkTypeModel()
                     {
-                        NetworkTypeId = nt.Id,
+                        Id = nt.Id,
                         Name = nt.Name,
                         Description = nt.Description,
                         CreatedAt = nt.CreatedAt,
                         UpdatedAt = nt.UpdatedAt,
                         IsActive = nt.IsActive,
+
                     }).ToListAsync();
 
                 if (networkTypes == null || !networkTypes.Any())

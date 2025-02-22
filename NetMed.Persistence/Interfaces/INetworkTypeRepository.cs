@@ -4,7 +4,7 @@ using NetMed.Domain.Repository;
 
 namespace NetMed.Persistence.Interfaces
 {
-    public interface INetworkTypeRepository : IBaseRepository<NetworkTypes>
+    public interface INetworkTypeRepository : IBaseRepository<NetworkType>
     {
         Task<OperationResult> DeleteNetworkTypeAsync(int id);
         Task<OperationResult> GetNetworkTypesByProviderAsync(int providerId);
