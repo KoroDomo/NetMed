@@ -78,7 +78,7 @@ namespace NetMed.Persistence.Base
         }
         public virtual async Task<List<TEntity>> GetAllAsync()
         {
-            return await Entity.ToListAsync();
+            return await Entity.ToListAsync();//<-------- Error Aqui
         }
     }
 }

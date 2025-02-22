@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NetMed.Domain.Entities
 {
-    public sealed class Specialties : BaseEntity<int>
+    [Table ("Specialties", Schema ="medical")]
+    public sealed class Specialties : BaseEntity<short>
     {
         [Column("SpecialtyID")]
         [Key]
-        public override int Id { get; set; }
+        public override short Id { get; set; }
         [Required]
         public required string SpecialtyName { get; set; }
 

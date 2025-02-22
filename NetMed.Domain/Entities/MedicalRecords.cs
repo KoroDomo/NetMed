@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NetMed.Domain.Entities
 {
+    [Table("MedicalRecords", Schema = "medical")]
     public sealed class MedicalRecords : DoctorRelatedEntity
     {
         [Column("RecordID")]

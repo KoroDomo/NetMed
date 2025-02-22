@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
+using NetMed.IOC;
 
 namespace NetMed.Api
 {
@@ -15,9 +16,7 @@ namespace NetMed.Api
 
             builder.Services.AddDbContext<NetMedContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("NetMedDB")));
 
-            builder.Services.AddScoped<ISpecialtiesRepository, SpecialtiesRepository>();
-            builder.Services.AddScoped<IMedicalRecordsRepository, MedicalRecordsRepository>();
-            builder.Services.AddScoped<IAvailabilityModesRepository, AvailabilityModesRepository>();
+            builder.Services.AddRepositories();
 
             // OJO Agregar capa de aplicacion mas adelante
             // Buscar forma de evitar duplicidad arriba

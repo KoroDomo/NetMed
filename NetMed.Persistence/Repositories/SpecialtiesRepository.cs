@@ -68,5 +68,6 @@ namespace NetMed.Persistence.Repositories
                 ? new OperationResult { Success = true, Data = specialty }
                 : new OperationResult { Success = false, Message = "Especialidad no encontrada" };
         }
+
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Repositories;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,11 +10,18 @@ namespace NetMed.Api.Controllers
     [ApiController]
     public class MedicalRecordsController : ControllerBase
     {
+        private readonly IMedicalRecordsRepository _medicalRecordsRepository;
+
+        public MedicalRecordsController(IMedicalRecordsRepository medicalRecordsRepository, ILogger<MedicalRecordsRepository> logger) 
+        {
+            _medicalRecordsRepository = medicalRecordsRepository;
+        }
         // GET: api/<MedicalRecordsController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            var medical = await _medicalRecordsRepository.GetAllAsync();
+            return Ok();
         }
 
         // GET api/<MedicalRecordsController>/5
