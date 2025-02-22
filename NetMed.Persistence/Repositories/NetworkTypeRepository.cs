@@ -11,7 +11,7 @@ using System.Linq.Expressions;
 
 namespace NetMed.Persistence.Repositories
 {
-    public class NetworkTypeRepository : BaseRepository<NetworkType, int>, INetworkTypeRepository
+    public class NetworkTypeRepository : BaseRepository<NetworkTypes, int>, INetworkTypeRepository
     {
         private readonly NetMedContext _context;
         private readonly ILogger<NetworkTypeRepository> _logger;
@@ -29,7 +29,7 @@ namespace NetMed.Persistence.Repositories
 
         }
 
-        public override async Task<OperationResult> SaveEntityAsync(NetworkType network)
+        public override async Task<OperationResult> SaveEntityAsync(NetworkTypes network)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace NetMed.Persistence.Repositories
             }
         }
 
-        public override async Task<OperationResult> UpdateEntityAsync(NetworkType network)
+        public override async Task<OperationResult> UpdateEntityAsync(NetworkTypes network)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace NetMed.Persistence.Repositories
             }
         }
 
-        public override async Task<OperationResult> GetAllAsync()
+       /* public override async Task<OperationResult> GetAllAsync()
         {
             try
             {
@@ -138,9 +138,9 @@ namespace NetMed.Persistence.Repositories
                 _logger.LogError(ex, "Error al obtener el Network.");
                 return _operations.HandleException(ex, "NetworkTypeRepository.GetAllAsync");
             }
-        }
+        }*/
 
-        public override async Task<OperationResult> GetAllAsync(Expression<Func<NetworkType, bool>> filter)
+        public override async Task<OperationResult> GetAllAsync(Expression<Func<NetworkTypes, bool>> filter)
         {
             try
             {

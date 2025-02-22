@@ -5,7 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NetMed.Domain.Entities
 {
-    public sealed class InsuranceProvider : PersonEntity
+    [Table("InsuranceProviders", Schema = "Insurance")]
+    public sealed class InsuranceProviders : PersonEntity
     {
         [Column("InsuranceProviderID")]
         [Key]
@@ -22,8 +23,8 @@ namespace NetMed.Domain.Entities
         public bool IsPreferred { get; set; }
         public int NetworkTypeID { get; set; }
         public string? CustomerSupportContact { get; set; }
-        
-        public List<string>? AcceptedRegions { get; set; }
+        public string? AcceptedRegions { get; set; }
         public decimal? MaxCoverageAmount { get; set; }
+        public bool IsActive { get; set; }
     }
 }

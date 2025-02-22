@@ -4,7 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NetMed.Domain.Entities
 {
-    public sealed class NetworkType : BaseEntity<int>
+    [Table("NetworkTypes")]
+    public sealed class NetworkTypes : BaseEntity<int>
     {
         [Column("NetworkTypeID")]
         [Key]

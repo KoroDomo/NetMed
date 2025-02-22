@@ -34,7 +34,7 @@ namespace NetMed.Api.Controllers
 
 
         [HttpPost("SaveInsuranceProvider")]
-        public async Task<IActionResult> Post([FromBody] InsuranceProvider insuranceProvider)
+        public async Task<IActionResult> Post([FromBody] InsuranceProviders insuranceProvider)
         {
             var insurenceProviders = await _InsuranceProviderRepository.SaveEntityAsync(insuranceProvider);
 
@@ -43,7 +43,7 @@ namespace NetMed.Api.Controllers
 
 
         [HttpPost("UpdateInsuranceProvider")]
-        public async Task<IActionResult> Put([FromBody] InsuranceProvider insuranceProvider)
+        public async Task<IActionResult> Put([FromBody] InsuranceProviders insuranceProvider)
         {
             var insurenceProviders = await _InsuranceProviderRepository.UpdateEntityAsync(insuranceProvider);
 

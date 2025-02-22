@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace NetMed.Persistence.Base
 {
-    public class BaseRepository<TEntity, TType> : IBaseRepository<TEntity, TType> where TEntity : class
+    public class BaseRepository<TEntity, TType> : IBaseRepository<TEntity> where TEntity : class
     {
         private readonly NetMedContext _context;
 
@@ -17,7 +17,7 @@ namespace NetMed.Persistence.Base
         private readonly ILogger<BaseRepository<TEntity, TType>> _logger;
         private readonly IConfiguration _configuration;
 
-        private DbSet<TEntity> _entity { get; set; }
+        private DbSet<TEntity> Entity { get; set; }
 
         public BaseRepository(NetMedContext context,
                              ILogger<BaseRepository<TEntity, TType>> logger,
@@ -26,7 +26,7 @@ namespace NetMed.Persistence.Base
             _context = context;
             _logger = logger;
             _configuration = configuration;
-            _entity = _context.Set<TEntity>();
+            Entity = _context.Set<TEntity>();
             _operations = new OperationValidator(_configuration);
         }
 
@@ -34,7 +34,7 @@ namespace NetMed.Persistence.Base
         {
             try
             {
-                return await _entity.AnyAsync(filter);
+                return await Entity.AnyAsync(filter);
             }
             catch (Exception ex)
             {
@@ -47,7 +47,7 @@ namespace NetMed.Persistence.Base
         {
             try
             {
-                var datos = await _entity.Where(filter).ToListAsync();
+                var datos = await Entity.Where(filter).ToListAsync();
                 return _operations.SuccessResult(datos, "BaseRepository.GetAllAsync");
             }
             catch (Exception ex)
@@ -60,7 +60,7 @@ namespace NetMed.Persistence.Base
         {
             try
             {
-                var datos = await _entity.ToListAsync();
+                var datos = await Entity.ToListAsync();
                 return _operations.SuccessResult(datos, "BaseRepository.GetAllAsync");
             }
             catch (Exception ex)
@@ -69,11 +69,11 @@ namespace NetMed.Persistence.Base
             }
         }
 
-        public virtual async Task<OperationResult> GetEntityByIdAsync(TType id)
+        public virtual async Task<OperationResult> GetEntityByIdAsync(int id)
         {
             try
             {
-                var entity = await _entity.FindAsync(id);
+                var entity = await Entity.FindAsync(id);
                 if (entity == null)
                 {
                     return _operations.SuccessResult(null, "BaseRepository.GetEntityByIdAsync");
@@ -91,12 +91,13 @@ namespace NetMed.Persistence.Base
         {
             try
             {
+
                 if (entity == null)
                 {
                     return _operations.SuccessResult(null, "La entidad no puede ser nula.");
                 }
 
-                _entity.Add(entity);
+                Entity.Add(entity);
                 await _context.SaveChangesAsync();
 
                 return _operations.SuccessResult(entity, "BaseRepository.SaveEntityAsync");
@@ -116,7 +117,7 @@ namespace NetMed.Persistence.Base
                     return _operations.SuccessResult(null, "La entidad no puede ser nula.");
                 }
 
-                _entity.Update(entity); 
+                Entity.Update(entity); 
                 await _context.SaveChangesAsync();
 
                 return _operations.SuccessResult(entity, "BaseRepository.UpdateEntityAsync");

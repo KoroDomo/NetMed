@@ -33,7 +33,7 @@ namespace NetMed.Api.Controllers
 
 
         [HttpPost("SaveNetworkTypeRepository")]
-        public async Task<IActionResult> Post([FromBody] NetworkType networks)
+        public async Task<IActionResult> Post([FromBody] NetworkTypes networks)
         {
             var networkTypeRepositorys = await _NetworkTypeRepository.SaveEntityAsync(networks);
 
@@ -42,7 +42,7 @@ namespace NetMed.Api.Controllers
 
 
         [HttpPost("UpdateNetworkTypeRepository")]
-        public async Task<IActionResult> Put([FromBody] NetworkType networks)
+        public async Task<IActionResult> Put([FromBody] NetworkTypes networks)
         {
             var networkTypeRepositorys = await _NetworkTypeRepository.UpdateEntityAsync(networks);
 

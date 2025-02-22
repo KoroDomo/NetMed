@@ -10,9 +10,9 @@ using NetMed.Persistence.Interfaces;
 using System.Linq.Expressions;
 
 
-namespace NetMed.Persistence.Repository
+namespace NetMed.Persistence.Repositories
 {
-    public class InsuranceProviderRepository : BaseRepository<InsuranceProvider, int>, IInsuranceProviderRepository
+    public class InsuranceProviderRepository : BaseRepository<InsuranceProviders, int>, IInsuranceProviderRepository
     {
         private readonly NetMedContext _context;
         private readonly ILogger<InsuranceProviderRepository> _logger;
@@ -42,7 +42,8 @@ namespace NetMed.Persistence.Repository
                     .Where(ip => ip.Id == insurenceProviderId)
                     .Select(ip => new InsuranceProviderModel()
                     {
-                        InsuranceProviderID = ip.Id,
+                        Id = ip.Id,
+                        Name = ip.Name,
                         ContactNumber = ip.PhoneNumber,
                         Email = ip.Email,
                         Website = ip.Website,
@@ -52,14 +53,11 @@ namespace NetMed.Persistence.Repository
                         Country = ip.Country,
                         ZipCode = ip.ZipCode,
                         CoverageDetails = ip.CoverageDetails,
-                        LogoUrl = ip.LogoUrl,
-                        IsPrefered = ip.IsPreferred,
+                        IsPreferred = ip.IsPreferred,
                         NetworkTypeID = ip.NetworkTypeID,
                         AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
-                        CreatedAt = ip.CreatedAt,
-                        UpdatedAt = ip.UpdatedAt,
-                        IsActive = ip.IsActive,
+                        MaxCoverageAmount = ip.MaxCoverageAmount
+
                     }).ToListAsync();
 
                 if (insuranceProvider == null)
@@ -80,7 +78,7 @@ namespace NetMed.Persistence.Repository
             }
         }
 
-        public async override Task<OperationResult> SaveEntityAsync(InsuranceProvider provider)
+        public async override Task<OperationResult> SaveEntityAsync(InsuranceProviders provider)
         {
             try
             {
@@ -113,7 +111,8 @@ namespace NetMed.Persistence.Repository
                     .OrderByDescending(ip => ip.CreatedAt)
                     .Select(ip => new InsuranceProviderModel()
                     {
-                        InsuranceProviderID = ip.Id,
+                        Id = ip.Id,
+                        Name = ip.Name,
                         ContactNumber = ip.PhoneNumber,
                         Email = ip.Email,
                         Website = ip.Website,
@@ -123,14 +122,11 @@ namespace NetMed.Persistence.Repository
                         Country = ip.Country,
                         ZipCode = ip.ZipCode,
                         CoverageDetails = ip.CoverageDetails,
-                        LogoUrl = ip.LogoUrl,
-                        IsPrefered = ip.IsPreferred,
+                        IsPreferred = ip.IsPreferred,
                         NetworkTypeID = ip.NetworkTypeID,
                         AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
-                        CreatedAt = ip.CreatedAt,
-                        UpdatedAt = ip.UpdatedAt,
-                        IsActive = ip.IsActive,
+                        MaxCoverageAmount = ip.MaxCoverageAmount
+
                     }).ToListAsync();
 
                 if (providers == null || !providers.Any())
@@ -147,7 +143,7 @@ namespace NetMed.Persistence.Repository
                 return _operations.HandleException(ex, "InsuranceProviderRepository.GetAllAsync" );
             }
         }
-        public async override Task<OperationResult> GetAllAsync(Expression<Func<InsuranceProvider, bool>> filter)
+        public async override Task<OperationResult> GetAllAsync(Expression<Func<InsuranceProviders, bool>> filter)
         {
             try
             {
@@ -156,7 +152,8 @@ namespace NetMed.Persistence.Repository
                     .OrderByDescending(ip => ip.CreatedAt)
                     .Select(ip => new InsuranceProviderModel()
                     {
-                        InsuranceProviderID = ip.Id,
+                        Id = ip.Id,
+                        Name = ip.Name,
                         ContactNumber = ip.PhoneNumber,
                         Email = ip.Email,
                         Website = ip.Website,
@@ -166,14 +163,11 @@ namespace NetMed.Persistence.Repository
                         Country = ip.Country,
                         ZipCode = ip.ZipCode,
                         CoverageDetails = ip.CoverageDetails,
-                        LogoUrl = ip.LogoUrl,
-                        IsPrefered = ip.IsPreferred,
+                        IsPreferred = ip.IsPreferred,
                         NetworkTypeID = ip.NetworkTypeID,
                         AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
-                        CreatedAt = ip.CreatedAt,
-                        UpdatedAt = ip.UpdatedAt,
-                        IsActive = ip.IsActive,
+                        MaxCoverageAmount = ip.MaxCoverageAmount
+
                     }).ToListAsync();
 
                 if (providers == null || !providers.Any())
@@ -191,7 +185,7 @@ namespace NetMed.Persistence.Repository
             }
         }
 
-        public async override Task<OperationResult> UpdateEntityAsync(InsuranceProvider entity)
+        public async override Task<OperationResult> UpdateEntityAsync(InsuranceProviders entity)
         {
             try
             {
@@ -244,7 +238,8 @@ namespace NetMed.Persistence.Repository
                     .Where(ip => ip.IsPreferred)
                     .Select(ip => new InsuranceProviderModel()
                     {
-                        InsuranceProviderID = ip.Id,
+                        Id = ip.Id,
+                        Name = ip.Name,
                         ContactNumber = ip.PhoneNumber,
                         Email = ip.Email,
                         Website = ip.Website,
@@ -254,14 +249,10 @@ namespace NetMed.Persistence.Repository
                         Country = ip.Country,
                         ZipCode = ip.ZipCode,
                         CoverageDetails = ip.CoverageDetails,
-                        LogoUrl = ip.LogoUrl,
-                        IsPrefered = ip.IsPreferred,
+                        IsPreferred = ip.IsPreferred,
                         NetworkTypeID = ip.NetworkTypeID,
                         AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
-                        CreatedAt = ip.CreatedAt,
-                        UpdatedAt = ip.UpdatedAt,
-                        IsActive = ip.IsActive,
+                        MaxCoverageAmount = ip.MaxCoverageAmount
                     }).ToListAsync();
 
                 if (providers == null || !providers.Any())
@@ -285,7 +276,8 @@ namespace NetMed.Persistence.Repository
                     .Where(ip => ip.IsActive)
                     .Select(ip => new InsuranceProviderModel()
                     {
-                        InsuranceProviderID = ip.Id,
+                        Id = ip.Id,
+                        Name = ip.Name,
                         ContactNumber = ip.PhoneNumber,
                         Email = ip.Email,
                         Website = ip.Website,
@@ -295,14 +287,10 @@ namespace NetMed.Persistence.Repository
                         Country = ip.Country,
                         ZipCode = ip.ZipCode,
                         CoverageDetails = ip.CoverageDetails,
-                        LogoUrl = ip.LogoUrl,
-                        IsPrefered = ip.IsPreferred,
+                        IsPreferred = ip.IsPreferred,
                         NetworkTypeID = ip.NetworkTypeID,
                         AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
-                        CreatedAt = ip.CreatedAt,
-                        UpdatedAt = ip.UpdatedAt,
-                        IsActive = ip.IsActive,
+                        MaxCoverageAmount = ip.MaxCoverageAmount
                     }).ToListAsync();
 
                 if (providers == null || !providers.Any())
@@ -327,7 +315,8 @@ namespace NetMed.Persistence.Repository
                     .Where(ip => ip.State == region || ip.City == region)
                     .Select(ip => new InsuranceProviderModel()
                     {
-                        InsuranceProviderID = ip.Id,
+                        Id = ip.Id,
+                        Name = ip.Name,
                         ContactNumber = ip.PhoneNumber,
                         Email = ip.Email,
                         Website = ip.Website,
@@ -337,14 +326,11 @@ namespace NetMed.Persistence.Repository
                         Country = ip.Country,
                         ZipCode = ip.ZipCode,
                         CoverageDetails = ip.CoverageDetails,
-                        LogoUrl = ip.LogoUrl,
-                        IsPrefered = ip.IsPreferred,
+                        IsPreferred = ip.IsPreferred,
                         NetworkTypeID = ip.NetworkTypeID,
                         AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
-                        CreatedAt = ip.CreatedAt,
-                        UpdatedAt = ip.UpdatedAt,
-                        IsActive = ip.IsActive,
+                        MaxCoverageAmount = ip.MaxCoverageAmount
+
                     }).ToListAsync();
 
                 if (providers == null || !providers.Any())
@@ -369,7 +355,8 @@ namespace NetMed.Persistence.Repository
                     .Where(ip => ip.MaxCoverageAmount <= maxCoverage)
                     .Select(ip => new InsuranceProviderModel()
                     {
-                        InsuranceProviderID = ip.Id,
+                        Id = ip.Id,
+                        Name = ip.Name,
                         ContactNumber = ip.PhoneNumber,
                         Email = ip.Email,
                         Website = ip.Website,
@@ -379,14 +366,11 @@ namespace NetMed.Persistence.Repository
                         Country = ip.Country,
                         ZipCode = ip.ZipCode,
                         CoverageDetails = ip.CoverageDetails,
-                        LogoUrl = ip.LogoUrl,
-                        IsPrefered = ip.IsPreferred,
+                        IsPreferred = ip.IsPreferred,
                         NetworkTypeID = ip.NetworkTypeID,
                         AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
-                        CreatedAt = ip.CreatedAt,
-                        UpdatedAt = ip.UpdatedAt,
-                        IsActive = ip.IsActive,
+                        MaxCoverageAmount = ip.MaxCoverageAmount
+
                     }).ToListAsync();
 
                 if (providers == null || !providers.Any())
