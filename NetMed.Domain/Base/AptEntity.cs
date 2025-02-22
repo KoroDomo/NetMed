@@ -11,6 +11,7 @@ namespace NetMed.Domain.Base
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; } = true;
+        public int AvailabilityModeId { get; set; }
 
 
     }

@@ -1,6 +1,7 @@
 ﻿
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
@@ -14,11 +15,15 @@ namespace NetMed.Persistence.Repositories
     {
         private readonly NetMedContext _context;
         private readonly ILogger<PatientsRepository> _logger;
+        private readonly IConfiguration _configuration;
         public PatientsRepository(NetMedContext context,
-            ILogger<PatientsRepository> logger) : base(context)
+            ILogger<PatientsRepository> logger,
+            IConfiguration configuration) 
+            : base(context)
         {
             _context = context;
             _logger = logger;
+            _configuration = configuration;
         }
 
         public async Task<OperationResult> GetByBloodTypeAsync(string bloodType)
@@ -252,7 +257,26 @@ namespace NetMed.Persistence.Repositories
         {
             return await _context.Patients.AnyAsync(filter);
         }
+
+        public override async Task<OperationResult> GetAllAsync()
+        {
+         OperationResult result = new OperationResult();
+            try
+            {
+                result.data = await _context.Patients.ToListAsync();
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                _logger.LogError(ex.Message);
+            }
+            return result;
+        }
+
     }
+
 
 
 

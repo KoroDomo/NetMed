@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
 
 
@@ -8,13 +9,13 @@ namespace NetMed.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DoctoresControlador : ControllerBase
+    public class DoctorsController : ControllerBase
     {
         private readonly IDoctorsRepository _doctorsRepository;
-        private readonly ILogger<DoctoresControlador> _logger;
+        private readonly ILogger<DoctorsController> _logger;
 
-        public DoctoresControlador(IDoctorsRepository doctorsRepository,
-            ILogger<DoctoresControlador> logger)
+        public DoctorsController(IDoctorsRepository doctorsRepository,
+            ILogger<DoctorsController> logger)
         {
             _doctorsRepository = doctorsRepository;
             _logger = logger;
@@ -33,28 +34,35 @@ namespace NetMed.Api.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var doctor = await _doctorsRepository.GetEntityByIdAsync(id);
-            if (doctor == null)
-            {
-                return NotFound();
-            }
             return Ok(doctor);
         }
-        
-        // POST api/<DoctoresControlador>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
 
-        // PUT api/<DoctoresControlador>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        //api/<DoctoresControlador>
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Doctors doctor)
         {
+            var doc = await _doctorsRepository.SaveEntityAsync(doctor);
+
+            if(doc.Success)
+            {
+                return Ok(doc);
+            }
+            else
+            {
+                return BadRequest(doc);
+            } 
+
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put([FromBody] Doctors doctor)
+        {
+            var doct = await _doctorsRepository.UpdateEntityAsync(doctor);
+            return Ok(doct);
         }
 
         // DELETE api/<DoctoresControlador>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete()
         {
         }
     }

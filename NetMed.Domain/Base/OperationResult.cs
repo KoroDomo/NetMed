@@ -1,4 +1,5 @@
 ﻿
+
 namespace NetMed.Domain.Base
 {
     public class OperationResult
@@ -14,5 +15,9 @@ namespace NetMed.Domain.Base
         public bool Success {get; set;}
         public dynamic? data { get; set; }
 
+        public static implicit operator OperationResult(List<object> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

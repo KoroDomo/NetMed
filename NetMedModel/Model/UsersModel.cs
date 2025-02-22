@@ -1,6 +1,4 @@
-﻿
-
-namespace NetMed.Model
+﻿namespace NetMedModel.Model
 {
     public class UsersModel
     {

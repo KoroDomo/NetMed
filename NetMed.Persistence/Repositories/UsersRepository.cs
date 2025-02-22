@@ -254,5 +254,29 @@ namespace NetMed.Persistence.Repositories
         {
             return await _context.Users.AnyAsync(filter);
         }
+
+        public override async Task<OperationResult> GetAllAsync()
+        {
+
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                  
+                var consult =await _context.Users.ToListAsync();
+
+                result.data = consult;
+
+           }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+               _logger.LogError("Error obteniendo los datos" + ex.Message.ToString());
+            }
+
+             return result;
+        }
+
     }
 }

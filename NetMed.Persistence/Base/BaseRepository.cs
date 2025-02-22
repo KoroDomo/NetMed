@@ -106,11 +106,9 @@ namespace NetMed.Persistence.Base
             }
             return result;
         }
-        public virtual async Task<List<OperationResult>> GetAllAsync()
+        public virtual async Task<OperationResult> GetAllAsync()
         {
             OperationResult result = new OperationResult();
-            List<OperationResult> results = new List<OperationResult>();
-
             try
             {
                 result.data = await Entity.ToListAsync();
@@ -118,12 +116,11 @@ namespace NetMed.Persistence.Base
             }
             catch (Exception ex)
             {
+                result.Message = ex.Message + "Error al llamar los datos";
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
             }
 
-            results.Add(result);
-            return results;
+            return result;
         }
     }
 }
