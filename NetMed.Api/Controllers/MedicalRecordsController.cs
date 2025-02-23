@@ -24,7 +24,7 @@ namespace NetMed.Api.Controllers
         }
 
         [HttpGet("GetMedicalRecordsById")]
-        public async Task<IActionResult> Get(short id)
+        public async Task<IActionResult> Get(int id)
         {
             var medical = await _medicalRecordsRepository.GetEntityByIdAsync(id);
             return Ok(medical);

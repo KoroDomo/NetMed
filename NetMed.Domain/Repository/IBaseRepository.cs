@@ -11,6 +11,7 @@ namespace NetMed.Domain.Repository
     public interface IBaseRepository<TEntity> where TEntity : class
     {
         Task<TEntity> GetEntityByIdAsync(short id);
+        Task<TEntity> GetEntityByIdAsync(int id);
         Task<OperationResult> UpdateEntityAsync(TEntity entity);  
         //Task DeleteEntityAsync(TEntity entity);
         Task<OperationResult> SaveEntityAsync(TEntity entity);    

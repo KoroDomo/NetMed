@@ -71,6 +71,10 @@ namespace NetMed.Persistence.Base
         {
             return await Entity.FindAsync(id);
         }
+        public virtual async Task<TEntity> GetEntityByIdAsync(int id)
+        {
+            return await Entity.FindAsync(id);
+        }
         public virtual async Task<bool> Exists(Expression<Func<TEntity, bool>> filter)
         {
             //return await _context.Set<TEntity>().CountAsync(filter) > 0;
