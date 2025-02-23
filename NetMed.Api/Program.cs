@@ -1,17 +1,38 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using NetMed.Persistence.Context;
+using NetMed.Persistence.Context.Interfaces;
+using NetMed.Persistence.Repositories;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddDbContext<NetmedContext>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalAppointment")));
+
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+
+builder.Services.AddScoped<IRolesRepository, RolesRepository>();
+
+builder.Services.AddScoped<IStatusRepository, StatusRepository>();
+
+
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+
+    app.UseSwagger();
+
+    app.UseSwaggerUI();
+
 }
 
 app.UseAuthorization();

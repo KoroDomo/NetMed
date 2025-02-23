@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NetMed.Domain.Entities
 {
+    [Table("Notifications", Schema = "system")]
+
     public sealed class Notification : BaseEntity<int>
     {
         [Column("NotificationID")]
@@ -12,5 +14,6 @@ namespace NetMed.Domain.Entities
         public int UserID { get; set; }
         public string Message { get; set; }
         public DateTime? SentAt { get; set; }
+
     }
 }

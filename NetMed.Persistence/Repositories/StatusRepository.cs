@@ -22,18 +22,17 @@ namespace NetMed.Persistence.Repositories
         private readonly IConfiguration _configuration;
 
         public StatusRepository(NetmedContext context,
-                                     ILogger<StatusRepository> logger,
-                                     IConfiguration configuration) : base(context)
+                               ILogger<StatusRepository> logger,
+                               IConfiguration configuration) : base(context,logger,configuration)
         {
-
-            this._context = context;
-            this._logger = logger;
-            this._configuration = configuration;
+            _context = context;
+            _logger = logger;
+            _configuration = configuration;
         }
+
         public override Task<Status> GetEntityByIdAsync(int statusID)
         {
             return base.GetEntityByIdAsync(statusID);
-
         }
 
         public override Task<OperationResult> SaveEntityAsync(Status entity)
@@ -48,7 +47,6 @@ namespace NetMed.Persistence.Repositories
 
         public override Task<OperationResult> UpdateEntityAsync(Status entity)
         {
-
             return base.UpdateEntityAsync(entity);
         }
 
@@ -57,147 +55,121 @@ namespace NetMed.Persistence.Repositories
             return base.GetAllAsync(filter);
         }
 
-
         public async Task<OperationResult> GetStatusByIdAsync(int statusId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(statusId, "No esta permitido valores negativos");
+            var validationResult = EntityValidator.ValidatePositiveNumber(statusId, _configuration["ErrorMessages:InvalidId"]);
 
             if (!validationResult.Success)
             {
-
+                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "statusId", statusId);
                 return validationResult;
-
             }
 
             try
             {
                 var status = await _context.statuses.FindAsync(statusId);
 
-                var notNullStatus = EntityValidator.ValidateNotNull(statusId, "La status no a sido encontrada");
-
+                var notNullStatus = EntityValidator.ValidateNotNull(status, _configuration["ErrorMessages:StatusNotFound"]);
 
                 if (!notNullStatus.Success)
                 {
-
+                    _logger.LogWarning(_configuration["ErrorMessages:StatusNotFound"], "statusId", statusId);
                     return notNullStatus;
-
                 }
-                else
-                {
-                    return new OperationResult { Success = true, Mesagge = "Status obtenido con éxito", Data = statusId };
 
-                }
+                _logger.LogInformation(_configuration["ErrorMessages:StatusRetrieved"], "statusId", statusId);
+                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:StatusRetrieved"], Data = status };
             }
             catch (Exception ex)
             {
-                await _context.SaveChangesAsync();
-                return new OperationResult { Success = false, Mesagge = "Error al obtener el status" };
-
+                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
             }
         }
 
         public async Task<OperationResult> CreateStatusAsync(Status status)
         {
-            var validationResult = EntityValidator.ValidateNotNull(status, "LA notificacion no puede ser creada");
-
+            var validationResult = EntityValidator.ValidateNotNull(status, _configuration["ErrorMessages:NullEntity"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "status", "Entidad nula");
                 return validationResult;
-
             }
 
             try
             {
+                _context.statuses.Add(status);
+                await _context.SaveChangesAsync();
 
-                {
-                    _context.statuses.Add(status);
-                    await _context.SaveChangesAsync();
-
-                    return new OperationResult { Success = true, Mesagge = "El Status se a creado con exito" };
-
-
-                };
+                _logger.LogInformation(_configuration["ErrorMessages:StatusCreated"], "statusId", status.Id);
+                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:StatusCreated"] };
             }
             catch (Exception ex)
             {
-
-                return new OperationResult { Success = false, Mesagge = "Problemas con crear el status" };
-
+                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
             }
-
         }
 
         public async Task<OperationResult> UpdateStatusAsync(Status status)
         {
-            var validationResult = EntityValidator.ValidateNotNull(status, "El status no se a encontrado");
-
+            var validationResult = EntityValidator.ValidateNotNull(status, _configuration["ErrorMessages:NullEntity"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "status", "Entidad nula");
                 return validationResult;
-
             }
 
             try
             {
+                _context.statuses.Update(status);
+                await _context.SaveChangesAsync();
 
-                {
-                    _context.statuses.Update(status);
-                    await _context.SaveChangesAsync();
-
-                    return new OperationResult { Success = true, Mesagge = "El status se actualizo con exito" };
-
-                };
+                _logger.LogInformation(_configuration["ErrorMessages:StatusUpdated"], "statusId", status.Id);
+                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:StatusUpdated"] };
             }
             catch (Exception ex)
             {
-
-                return new OperationResult { Success = false, Mesagge = "Problemas con actualizar el status" };
-
+                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
             }
-
         }
 
         public async Task<OperationResult> DeleteStatusAsync(int statusId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(statusId, "No esta permitido valores negativos");
+            var validationResult = EntityValidator.ValidatePositiveNumber(statusId, _configuration["ErrorMessages:InvalidId"]);
 
             if (!validationResult.Success)
             {
-
+                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "statusId", statusId);
                 return validationResult;
-
             }
 
             try
             {
                 var status = await _context.statuses.FindAsync(statusId);
 
-                var notNullStatus = EntityValidator.ValidateNotNull(status, "El status no a sido encontrada");
+                var notNullStatus = EntityValidator.ValidateNotNull(status, _configuration["ErrorMessages:StatusNotFound"]);
 
                 if (!notNullStatus.Success)
                 {
+                    _logger.LogWarning(_configuration["ErrorMessages:StatusNotFound"], "statusId", statusId);
                     return notNullStatus;
-                }; 
+                }
 
                 _context.statuses.Remove(status);
                 await _context.SaveChangesAsync();
 
-                return new OperationResult { Success = true, Mesagge = " eliminado con exito" };
-
+                _logger.LogInformation(_configuration["ErrorMessages:StatusDeleted"], "statusId", statusId);
+                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:StatusDeleted"] };
             }
             catch (Exception ex)
             {
-                return new OperationResult
-                {
-                    Success = false,
-                    Mesagge = "Surgieron problemas a la hora de eliminar el status"
-
-                };
-
+                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
             }
         }
     }
 }
-

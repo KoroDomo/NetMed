@@ -22,219 +22,155 @@ namespace NetMed.Persistence.Repositories
 
         public NotificationRepository(NetmedContext context,
                                      ILogger<NotificationRepository> logger,
-                                     IConfiguration configuration) : base(context)
+                                     IConfiguration configuration) : base(context,logger,configuration)
         {
-
-            this._context = context;
-            this._logger = logger;
-            this._configuration = configuration;
-        }
-
-        public override Task<Notification> GetEntityByIdAsync(int id)
-        {
-            return base.GetEntityByIdAsync(id);
-
-        }
-
-        public override Task<OperationResult> SaveEntityAsync(Notification entity)
-        {
-            return base.SaveEntityAsync(entity);
-        }
-
-        public override Task<List<Notification>> GetAllAsync()
-        {
-            return base.GetAllAsync();
-        }
-
-        public override Task<OperationResult> UpdateEntityAsync(Notification entity)
-        {
-
-            return base.UpdateEntityAsync(entity);
-        }
-
-        public override Task<OperationResult> GetAllAsync(Expression<Func<Notification, bool>> filter)
-        {
-            return base.GetAllAsync(filter);
+            _context = context;
+            _logger = logger;
+            _configuration = configuration;
         }
 
         public async Task<OperationResult> GetNotificationsByUserIdAsync(int userId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(userId, "No esta permitido valores negativos");
+            var validationResult = EntityValidator.ValidatePositiveNumber(userId, _configuration["ErrorMessages:InvalidId"]);
 
             if (!validationResult.Success)
             {
-
+                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "userId", userId);
                 return validationResult;
-
             }
 
             try
             {
-                var notification = await _context.Notifications.FindAsync(userId);
+                var notifications = await _context.Notifications
+                    .Where(n => n.UserID == userId)
+                    .ToListAsync();
 
-                var notNullNotification = EntityValidator.ValidateNotNull(notification, "La notificacion no a sido encontrada");
-
-
-                if (!notNullNotification.Success)
+                if (notifications == null || !notifications.Any())
                 {
-
-                    return notNullNotification;
-
+                    _logger.LogWarning(_configuration["ErrorMessages:NotificationNotFound"], "userId", userId);
+                    return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:NotificationNotFound"] };
                 }
-                else
-                {
-                    return new OperationResult { Success = true, Mesagge = "Notificación obtenida con éxito", Data = notification };
 
-                }
+                _logger.LogInformation(_configuration["ErrorMessages:NotificationRetrieved"], "userId", userId);
+                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:NotificationRetrieved"], Data = notifications };
             }
             catch (Exception ex)
             {
-                await _context.SaveChangesAsync();
-                return new OperationResult { Success = false, Mesagge = "Error al obtener la notificación con el usuario" };
-
+                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
             }
-
-
         }
 
         public async Task<OperationResult> GetNotificationByIdAsync(int notificationId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(notificationId, "No esta permitido valores negativos");
+            var validationResult = EntityValidator.ValidatePositiveNumber(notificationId, _configuration["ErrorMessages:InvalidId"]);
 
             if (!validationResult.Success)
             {
-
+                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "notificationId", notificationId);
                 return validationResult;
-
             }
 
             try
             {
                 var notification = await _context.Notifications.FindAsync(notificationId);
 
-                var notNullNotification = EntityValidator.ValidateNotNull(notificationId, "La notificacion no a sido encontrada");
-
- 
-                if (!notNullNotification.Success)
+                if (notification == null)
                 {
-
-                    return notNullNotification;
-   
+                    _logger.LogWarning(_configuration["ErrorMessages:NotificationNotFound"], "notificationId", notificationId);
+                    return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:NotificationNotFound"] };
                 }
-                else
-                {
-                    return new OperationResult {Success = true, Mesagge = "Notificación obtenida con éxito", Data = notificationId };
 
-                }
+                _logger.LogInformation(_configuration["ErrorMessages:NotificationRetrieved"], "notificationId", notificationId);
+                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:NotificationRetrieved"], Data = notification };
             }
             catch (Exception ex)
             {
-                await _context.SaveChangesAsync();
-                return new OperationResult { Success = false, Mesagge = "Error al obtener la notificación" };
-              
+                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
             }
         }
+
         public async Task<OperationResult> CreateNotificationAsync(Notification notification)
         {
-            var validationResult = EntityValidator.ValidateNotNull(notification, "LA notificacion no puede ser creada");
-
+            var validationResult = EntityValidator.ValidateNotNull(notification, _configuration["ErrorMessages:NullEntity"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "notification", "Entidad nula");
                 return validationResult;
-
             }
 
             try
             {
+                _context.Notifications.Add(notification);
+                await _context.SaveChangesAsync();
 
-                {
-                    _context.Notifications.Add(notification);
-                    await _context.SaveChangesAsync();
-
-                    return new OperationResult { Success = true, Mesagge = "La notificacion se a creado con exito" };
-
-
-                };
+                _logger.LogInformation(_configuration["ErrorMessages:NotificationCreated"], "notificationId", notification.Id);
+                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:NotificationCreated"] };
             }
             catch (Exception ex)
             {
-
-                return new OperationResult { Success = false, Mesagge = "Problemas con crear la notificacion" };
-
+                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
             }
-
         }
 
         public async Task<OperationResult> UpdateNotificationAsync(Notification notification)
         {
-            var validationResult = EntityValidator.ValidateNotNull(notification, "La notificacion no se a encontrado");
-
+            var validationResult = EntityValidator.ValidateNotNull(notification, _configuration["ErrorMessages:NullEntity"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "notification", "Entidad nula");
                 return validationResult;
-
             }
 
             try
             {
+                _context.Notifications.Update(notification);
+                await _context.SaveChangesAsync();
 
-                {
-                    _context.Notifications.Update(notification);
-                    await _context.SaveChangesAsync();
-
-                    return new OperationResult {Success = true, Mesagge = "La notificacion se actualizo con exito" };
-
-                };
+                _logger.LogInformation(_configuration["ErrorMessages:NotificationUpdated"], "notificationId", notification.Id);
+                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:NotificationUpdated"] };
             }
             catch (Exception ex)
             {
-
-                return new OperationResult {Success = false, Mesagge = "Problemas con actualizar la notificacion" };
-              
+                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
             }
-
-            
         }
 
         public async Task<OperationResult> DeleteNotificationAsync(int notificationId)
         {
-
-            var validationResult = EntityValidator.ValidatePositiveNumber(notificationId, "No esta permitido valores negativos");
+            var validationResult = EntityValidator.ValidatePositiveNumber(notificationId, _configuration["ErrorMessages:InvalidId"]);
 
             if (!validationResult.Success)
             {
-
+                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "notificationId", notificationId);
                 return validationResult;
-
             }
 
             try
             {
                 var notification = await _context.Notifications.FindAsync(notificationId);
 
-                var notNullNotification = EntityValidator.ValidateNotNull(notification, "La notificacion no a sido encontrada");
-
-                if (!notNullNotification.Success)
+                if (notification == null)
                 {
-                    return notNullNotification;
-                };
+                    _logger.LogWarning(_configuration["ErrorMessages:NotificationNotFound"], "notificationId", notificationId);
+                    return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:NotificationNotFound"] };
+                }
 
                 _context.Notifications.Remove(notification);
                 await _context.SaveChangesAsync();
 
-                return new OperationResult { Success = true, Mesagge = "Mensaje eliminado con exito" };
-
+                _logger.LogInformation(_configuration["ErrorMessages:NotificationDeleted"], "notificationId", notificationId);
+                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:NotificationDeleted"] };
             }
             catch (Exception ex)
             {
-                return new OperationResult
-                {
-                    Success = false,
-                    Mesagge = "Surgieron problemas a la hora de eliminar la notificacion"
-
-                };
+                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
             }
         }
     }

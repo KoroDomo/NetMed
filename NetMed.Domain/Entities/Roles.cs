@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NetMed.Domain.Entities
 {
+    [Table("Roles", Schema = "system")]
     public sealed class Roles : BaseEntity<int>
     {
         [Column("RoleID")]

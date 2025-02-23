@@ -14,27 +14,22 @@ namespace NetMed.Persistence.Repositories
 {
     public class RolesRepository : BaseRepository<Roles>, IRolesRepository
     {
-        OperationResult result = new OperationResult();
-
         private readonly NetmedContext _context;
         private readonly ILogger<RolesRepository> _logger;
         private readonly IConfiguration _configuration;
 
         public RolesRepository(NetmedContext context,
-                                     ILogger<RolesRepository> logger,
-                                     IConfiguration configuration) : base(context)
+                               ILogger<RolesRepository> logger,
+                               IConfiguration configuration) : base(context, logger, configuration)
         {
-
-
-            this._context = context;
-            this._logger = logger;
-            this._configuration = configuration;
-
+            _context = context;
+            _logger = logger;
+            _configuration = configuration;
         }
+
         public override Task<Roles> GetEntityByIdAsync(int id)
         {
             return base.GetEntityByIdAsync(id);
-
         }
 
         public override Task<OperationResult> SaveEntityAsync(Roles entity)
@@ -49,7 +44,6 @@ namespace NetMed.Persistence.Repositories
 
         public override Task<OperationResult> UpdateEntityAsync(Roles entity)
         {
-
             return base.UpdateEntityAsync(entity);
         }
 
@@ -60,143 +54,118 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> GetRoleByIdAsync(int roleId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(roleId, "No esta permitido valores negativos");
+            var validationResult = EntityValidator.ValidatePositiveNumber(roleId, _configuration["ErrorMessages:InvalidId"]);
 
             if (!validationResult.Success)
             {
-
+                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "roleId", roleId);
                 return validationResult;
-
             }
 
             try
             {
-                var roles = await _context.Roles.FindAsync(roleId);
+                var role = await _context.Roles.FindAsync(roleId);
 
-                var notNullRoles = EntityValidator.ValidateNotNull(roleId, "El rol no a sido encontrada");
+                var notNullRole = EntityValidator.ValidateNotNull(role, _configuration["ErrorMessages:RoleNotFound"]);
 
-
-                if (!notNullRoles.Success)
+                if (!notNullRole.Success)
                 {
-
-                    return notNullRoles;
-
+                    _logger.LogWarning(_configuration["ErrorMessages:RoleNotFound"], "roleId", roleId);
+                    return notNullRole;
                 }
-                else
-                {
-                    return new OperationResult { Success = true, Mesagge = "Rol obtenido con éxito", Data = roleId };
 
-                }
+                _logger.LogInformation(_configuration["ErrorMessages:RoleRetrieved"], "roleId", roleId);
+                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:RoleRetrieved"], Data = role };
             }
             catch (Exception ex)
             {
-                await _context.SaveChangesAsync();
-                return new OperationResult { Success = false, Mesagge = "Error al obtener el rol" };
-
+                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
             }
-
         }
 
         public async Task<OperationResult> CreateRoleAsync(Roles roles)
         {
-            var validationResult = EntityValidator.ValidateNotNull(roles, "El rol no puede ser creado");
-
+            var validationResult = EntityValidator.ValidateNotNull(roles, _configuration["ErrorMessages:NullEntity"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "roles", "Entidad nula");
                 return validationResult;
-
             }
 
             try
             {
+                _context.Roles.Add(roles);
+                await _context.SaveChangesAsync();
 
-                {
-                    _context.Roles.Add(roles);
-                    await _context.SaveChangesAsync();
-
-                    return new OperationResult { Success = true, Mesagge = "El rol se a creado con exito" };
-
-
-                };
+                _logger.LogInformation(_configuration["ErrorMessages:RoleCreated"], "roleId", roles.Id);
+                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:RoleCreated"] };
             }
             catch (Exception ex)
             {
-
-                return new OperationResult { Success = false, Mesagge = "Problemas con crear el rol" };
-
+                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
             }
-
         }
 
         public async Task<OperationResult> UpdateRoleAsync(Roles roles)
         {
-            var validationResult = EntityValidator.ValidateNotNull(roles, "El rol no se a encontrado");
-
+            var validationResult = EntityValidator.ValidateNotNull(roles, _configuration["ErrorMessages:NullEntity"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "roles", "Entidad nula");
                 return validationResult;
-
             }
 
             try
             {
+                _context.Roles.Update(roles);
+                await _context.SaveChangesAsync();
 
-                {
-                    _context.Roles.Update(roles);
-                    await _context.SaveChangesAsync();
-
-                    return new OperationResult { Success = true, Mesagge = "El rol se actualizo con exito" };
-
-                };
+                _logger.LogInformation(_configuration["ErrorMessages:RoleUpdated"], "roleId", roles.Id);
+                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:RoleUpdated"] };
             }
             catch (Exception ex)
             {
-
-                return new OperationResult { Success = false, Mesagge = "Problemas con actualizar el rol" };
-
+                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
             }
-
         }
 
         public async Task<OperationResult> DeleteRoleAsync(int rolesId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(rolesId, "No esta permitido valores negativos");
+            var validationResult = EntityValidator.ValidatePositiveNumber(rolesId, _configuration["ErrorMessages:InvalidId"]);
 
             if (!validationResult.Success)
             {
-
+                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "rolesId", rolesId);
                 return validationResult;
-
             }
 
             try
             {
-                var roles = await _context.Roles.FindAsync(rolesId);
+                var role = await _context.Roles.FindAsync(rolesId);
 
-                var notNullRol = EntityValidator.ValidateNotNull(roles, "El rol no se a encontrado");
+                var notNullRole = EntityValidator.ValidateNotNull(role, _configuration["ErrorMessages:RoleNotFound"]);
 
-                if (!notNullRol.Success)
+                if (!notNullRole.Success)
                 {
-                    return notNullRol;
-                };
+                    _logger.LogWarning(_configuration["ErrorMessages:RoleNotFound"], "rolesId", rolesId);
+                    return notNullRole;
+                }
 
-                _context.Roles.Remove(roles);
+                _context.Roles.Remove(role);
                 await _context.SaveChangesAsync();
 
-                return new OperationResult { Success = true, Mesagge = " eliminado con exito" };
-
+                _logger.LogInformation(_configuration["ErrorMessages:RoleDeleted"], "rolesId", rolesId);
+                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:RoleDeleted"] };
             }
             catch (Exception ex)
             {
-                return new OperationResult
-                {
-                    Success = false,
-                    Mesagge = "Surgieron problemas a la hora de eliminar el rol"
-
-                };
-
+                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
             }
         }
     }
