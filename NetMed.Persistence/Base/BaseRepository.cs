@@ -9,9 +9,10 @@ namespace NetMed.Persistence.Base
     public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         private readonly NetMedContext _context;
+
         private DbSet<TEntity> Entity { get; set; }  
 
-        protected BaseRepository(NetMedContext context) 
+        public BaseRepository(NetMedContext context) 
         {
             _context = context;
             Entity = _context.Set<TEntity>();
@@ -25,7 +26,7 @@ namespace NetMed.Persistence.Base
             OperationResult result = new OperationResult();
             try
             {
-               var datos = Entity.Where(filter).ToListAsync();
+               var datos = await Entity.Where(filter).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -53,7 +54,7 @@ namespace NetMed.Persistence.Base
                Entity.Add(entity); 
                await _context.SaveChangesAsync();
             }
-            catch (Exception ex) 
+            catch (Exception) 
             {
                 result.Success = false;
                 result.Message = "Ocurrio un error al guardar los datos";

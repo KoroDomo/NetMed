@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using NetMed.Domain.Entities;
+using NetMed.Persistence.Interfaces;
 
 namespace NetMed.Api.Controllers
 {
@@ -8,36 +8,35 @@ namespace NetMed.Api.Controllers
     [ApiController]
     public class DoctorAvailabilityController : ControllerBase
     {
-        // GET: api/<DoctorAvailabilityController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        private readonly IDoctorAvailabilityRepository _doctorAvailabilityRepository;
 
-        // GET api/<DoctorAvailabilityController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        public DoctorAvailabilityController(IDoctorAvailabilityRepository doctorAvailabilityRepository, ILogger<DoctorAvailability> logger ) 
         {
-            return "value";
+           _doctorAvailabilityRepository = doctorAvailabilityRepository;
+        }  
+        [HttpGet("GetDoctorAvailability")]
+        public async Task<IActionResult> Get()
+        {
+            var doctorAvailability = await _doctorAvailabilityRepository.GetAllAsync();
+            return Ok(doctorAvailability);
         }
-
-        // POST api/<DoctorAvailabilityController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpGet("GetAvailabilityById")]
+        public async Task<IActionResult> Get(int id)
         {
+            var doctorAvailability = await _doctorAvailabilityRepository.GetEntityByIdAsync(id);
+            return Ok(doctorAvailability);
         }
-
-        // PUT api/<DoctorAvailabilityController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("SaveDoctorAvailability")]
+        public async Task<IActionResult> Post([FromBody] DoctorAvailability doctorAvaility)
         {
+            var doctorAvailability = await _doctorAvailabilityRepository.SaveEntityAsync(doctorAvaility);
+            return Ok(doctorAvailability);
         }
-
-        // DELETE api/<DoctorAvailabilityController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("UpdateDoctorAvailability")]
+        public async Task<IActionResult> Put([FromBody] DoctorAvailability doctorAvaility)
         {
+            var doctorAvailability = await _doctorAvailabilityRepository.SaveEntityAsync(doctorAvaility);
+            return Ok(doctorAvailability);
         }
     }
 }

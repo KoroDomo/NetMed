@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
-using NetMed.Model.Models;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
@@ -30,21 +29,48 @@ namespace NetMed.Persistence.Repositories
         }
         public override async Task<OperationResult> SaveEntityAsync(DoctorAvailability entity)
         {
+            OperationResult result = new OperationResult();
             var validationResult = EntityValidator.Validator(entity, nameof(entity));
             if (!validationResult.Success)
             {
                 return validationResult;
             }
-            return await base.SaveEntityAsync(entity);
+            try
+            {
+                await base.SaveEntityAsync(entity);
+                return new OperationResult { Success = true, Message = "Datos Guardados con exito" };
+            }
+
+            catch (Exception ex)
+            {
+                result.Message = _configuration["DoctorAvailabilityRepositoryError: SaveEntityAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+            
         }
         public async override Task<OperationResult> UpdateEntityAsync(DoctorAvailability entity)
         {
+            OperationResult result = new OperationResult();
             var validationResult = EntityValidator.Validator(entity, nameof(entity));
             if (!validationResult.Success)
             {
                 return validationResult;
             }
-            return await base.UpdateEntityAsync(entity);
+            try
+            {
+                await base.UpdateEntityAsync(entity);
+                return new OperationResult { Success = true, Message = "Datos Actualizados con exito" };
+            }
+
+            catch (Exception ex)
+            {
+                result.Message = _configuration["DoctorAvailabilityRepositoryError: UpdateEntityAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
         public override Task<bool> ExistsAsync(Expression<Func<DoctorAvailability, bool>> filter)
         {
@@ -97,7 +123,7 @@ namespace NetMed.Persistence.Repositories
                     StartTime = StartTime,
                     EndTime = EndTime
                 };
-                _context.DoctorAvailabilities.Add(newAvailability);
+                _context.DoctorAvailability.Add(newAvailability);
                 await _context.SaveChangesAsync();
 
                 return new OperationResult { Success = true, Message = "Disponibilidad establecidad correctamente." };
@@ -124,7 +150,7 @@ namespace NetMed.Persistence.Repositories
             }
             try
             {
-                var availability = await _context.DoctorAvailabilities
+                var availability = await _context.DoctorAvailability
                     .Where(a => a.DoctorID == DoctorID && a.AvailableDate == AvailableDate)
                     .FirstOrDefaultAsync();
 
@@ -162,7 +188,7 @@ namespace NetMed.Persistence.Repositories
             }
             try
             {
-                var availability = await _context.DoctorAvailabilities.FindAsync(AvailabilityID);
+                var availability = await _context.DoctorAvailability.FindAsync(AvailabilityID);
 
                 if (availability == null)
                 {
@@ -189,7 +215,7 @@ namespace NetMed.Persistence.Repositories
         //Metodo para verificar si los datos existen antes de actualizar
         private async Task<bool> Existingavailability(int AvailabilityID, int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
         {
-            return await _context.DoctorAvailabilities.AnyAsync(a =>
+            return await _context.DoctorAvailability.AnyAsync(a =>
                 a.Id != AvailabilityID &&
                 a.DoctorID == DoctorID &&
                 a.AvailableDate == AvailableDate &&
@@ -204,13 +230,13 @@ namespace NetMed.Persistence.Repositories
 
             try
             {
-                var availability = await _context.DoctorAvailabilities.FindAsync(AvailabilityID);
+                var availability = await _context.DoctorAvailability.FindAsync(AvailabilityID);
 
                 if (availability == null)
                 {
                     return new OperationResult { Success = false, Message = "Disponibilidad no encontrada" };
                 }
-                _context.DoctorAvailabilities.Remove(availability);
+                _context.DoctorAvailability.Remove(availability);
                 await _context.SaveChangesAsync();
 
                 return new OperationResult { Success = true, Message = "Disponibilidad eliminada con exito" };
@@ -230,7 +256,7 @@ namespace NetMed.Persistence.Repositories
 
             try
             {
-                var overlappingAvailability = await _context.DoctorAvailabilities.AnyAsync(a =>
+                var overlappingAvailability = await _context.DoctorAvailability.AnyAsync(a =>
                     a.DoctorID == DoctorID &&
                     a.AvailableDate == AvailableDate &&
                     a.StartTime < EndTime &&
@@ -253,7 +279,7 @@ namespace NetMed.Persistence.Repositories
 
             try
             {
-                var availability = await _context.DoctorAvailabilities.FirstOrDefaultAsync(a =>
+                var availability = await _context.DoctorAvailability.FirstOrDefaultAsync(a =>
                    a.DoctorID == DoctorID &&
                    a.AvailableDate == AvailableDate &&
                    a.StartTime == StartTime &&
@@ -268,7 +294,7 @@ namespace NetMed.Persistence.Repositories
                         StartTime = StartTime,
                         EndTime = EndTime
                     };
-                    _context.DoctorAvailabilities.Add(availability);
+                    _context.DoctorAvailability.Add(availability);
                 }
                 else
                 {

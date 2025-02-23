@@ -23,27 +23,68 @@ namespace NetMed.Persistence.Repositories
             _logger = logger;
             _configuration = configuration;
         }
-        public override async Task<OperationResult> SaveEntityAsync(Appointments entity)
+        public override async  Task<OperationResult> SaveEntityAsync(Appointments entity)
         {
+            OperationResult result = new OperationResult();
             var validationResult = EntityValidator.Validator(entity, nameof(entity));
             if (!validationResult.Success)
             {
                 return validationResult;
             }
-            return await base.SaveEntityAsync(entity);
+            try
+            {
+                await base.SaveEntityAsync(entity);
+                return new OperationResult { Success = true, Message = "Datos Guardados con exito" };
+            }
+
+            catch (Exception ex)
+            {
+                result.Message = _configuration["AppointmentsRepositoryError: SaveEntityAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+            
         }
         public override async Task<OperationResult> UpdateEntityAsync(Appointments entity)
         {
+            OperationResult result = new OperationResult();
+
             var validationResult = EntityValidator.Validator(entity, nameof(entity));
             if (!validationResult.Success)
             {
                 return validationResult;
             }
-            return await base.UpdateEntityAsync(entity);
+            try
+            {
+                await base.UpdateEntityAsync(entity);
+                return new OperationResult { Success = true, Message = "Datos Actualizados con exito" };
+            }
+
+            catch (Exception ex)
+            {
+                result.Message = _configuration["AppointmentsRepositoryError: UpdateEntityAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
         public override async Task<List<Appointments>> GetAllAsync()
         {
+            OperationResult result = new OperationResult();
+            try
+            {
+              return await base.GetAllAsync();
+
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["AppointmentsRepositoryError: GetAllAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
             return await base.GetAllAsync();
+            
         }
         public override async Task<OperationResult> GetAllAsync(Expression<Func<Appointments, bool>> filter)
         {
@@ -108,7 +149,6 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-
         public async Task<OperationResult> GetAppointmentByIdAsync(int AppointmentID)
         {
             OperationResult result = new OperationResult();
@@ -222,7 +262,6 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-
         public async Task<OperationResult> GetAppointmentsByDateAsync(DateTime AppointmentDate)
         {
             OperationResult result = new OperationResult();
@@ -245,7 +284,6 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-
         public async Task<OperationResult> CancelAppointmentAsync(int AppointmentID)
         {
             OperationResult result = new OperationResult();
@@ -273,7 +311,6 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-
         public async Task<OperationResult> GetAppointmentsByDoctorAndDateAsync(int DoctorID, DateTime AppointmentDate)
         {
             OperationResult result = new OperationResult();

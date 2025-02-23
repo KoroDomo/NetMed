@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace NetMed.Api.Controllers
 {
@@ -16,36 +15,29 @@ namespace NetMed.Api.Controllers
         {
             _appointmentsRespository = appointmentsRespository;
         }
-        // GET: api/<AppointmentController>
-        [HttpGet]
+        [HttpGet("GetAppointment")]
         public async Task<IActionResult> Get()
         {
-            return Ok();
+            var appointments = await _appointmentsRespository.GetAllAsync();
+            return Ok(appointments);
         }
-
-        // GET api/<AppointmentController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("GetAppointmentById")]
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            var appointments = await _appointmentsRespository.GetEntityByIdAsync(id);
+            return Ok(appointments);
         }
-
-        // POST api/<AppointmentController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("SaveAppointement")]
+        public async Task<IActionResult> Post([FromBody] Appointments appointment)
         {
+            var appointments = await _appointmentsRespository.SaveEntityAsync(appointment);
+            return Ok(appointments);
         }
-
-        // PUT api/<AppointmentController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("UpdateAppointment")]
+        public async Task<IActionResult> Put([FromBody] Appointments appointment)
         {
-        }
-
-        // DELETE api/<AppointmentController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var appointments = await _appointmentsRespository.UpdateEntityAsync(appointment);
+            return Ok(appointments);
         }
     }
 }

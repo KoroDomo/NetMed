@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NetMed.Domain.Entities
 {
+    [Table("Appointments", Schema = "appointments")]
     public sealed class Appointments : DoctorRelatedEntity
     {
         [Column("AppointmentID")]
