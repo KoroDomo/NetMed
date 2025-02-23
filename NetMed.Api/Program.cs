@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using NetMed.Persistence.Context;
-using NetMed.IOC;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
+using NetMed.IOC.Dependencias;
 
 namespace NetMed.Api
 {

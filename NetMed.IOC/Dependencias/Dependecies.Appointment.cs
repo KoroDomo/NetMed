@@ -2,7 +2,7 @@
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
 
-namespace NetMed.IOC
+namespace NetMed.IOC.Dependencias
 {
     public static class ServiceCollectionExtensions
     {
