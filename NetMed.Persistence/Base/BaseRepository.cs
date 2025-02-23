@@ -67,7 +67,7 @@ namespace NetMed.Persistence.Base
             }
             return result;
         }
-        public virtual async Task<TEntity> GetEntityByIdAsync(int id)
+        public virtual async Task<TEntity> GetEntityByIdAsync(short id)
         {
             return await Entity.FindAsync(id);
         }
@@ -78,7 +78,7 @@ namespace NetMed.Persistence.Base
         }
         public virtual async Task<List<TEntity>> GetAllAsync()
         {
-            return await Entity.ToListAsync();//<-------- Error Aqui
+            return await Entity.ToListAsync();
         }
     }
 }

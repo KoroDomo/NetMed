@@ -44,13 +44,13 @@ namespace NetMed.Persistence.Repositories
                 return new OperationResult { Success = false, Message = "El nombre del Modo de Disponibilidad esta vacio" };
             }
 
-            var exists = await _context.AvailabilityModes.AnyAsync(m => m.AvailabilityModeName == availabilityModeName);
+            var exists = await _context.AvailabilityModes.AnyAsync(m => m.AvailabilityMode == availabilityModeName);
             return new OperationResult { Success = exists, Message = exists ? "El Modo de Disponibilidad existe" : "El Modo de Disponibilidad no existe" };
         }
         public async Task<OperationResult> GetByNameAsync(string availabilityModeName)
         {
             var mode = await _context.AvailabilityModes
-                .FirstOrDefaultAsync(m => m.AvailabilityModeName == availabilityModeName);
+                .FirstOrDefaultAsync(m => m.AvailabilityMode == availabilityModeName);
 
             return mode != null
                 ? new OperationResult { Success = true, Data = mode }

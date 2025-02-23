@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace NetMed.Domain.Base
 {
     public abstract class AptEntity
@@ -10,6 +12,7 @@ namespace NetMed.Domain.Base
        }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+        [NotMapped]
         public bool IsActive { get; set; } = true;
 
 

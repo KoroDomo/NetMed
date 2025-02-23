@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace NetMed.Api.Controllers
 {
@@ -16,37 +15,34 @@ namespace NetMed.Api.Controllers
         {
             _medicalRecordsRepository = medicalRecordsRepository;
         }
-        // GET: api/<MedicalRecordsController>
-        [HttpGet]
+
+        [HttpGet("GetMedicalRecords")]
         public async Task<IActionResult> Get()
         {
             var medical = await _medicalRecordsRepository.GetAllAsync();
-            return Ok();
+            return Ok(medical);
         }
 
-        // GET api/<MedicalRecordsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("GetMedicalRecordsById")]
+        public async Task<IActionResult> Get(short id)
         {
-            return "value";
+            var medical = await _medicalRecordsRepository.GetEntityByIdAsync(id);
+            return Ok(medical);
         }
 
-        // POST api/<MedicalRecordsController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("SaveMedicalRecords")]
+        public async Task<IActionResult> Post([FromBody] MedicalRecords record)
         {
+            var records = await _medicalRecordsRepository.SaveEntityAsync(record);
+            return Ok(records);
         }
 
-        // PUT api/<MedicalRecordsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("UpdateMedicalRecords")]
+        public async Task<IActionResult> Put([FromBody] MedicalRecords record)
         {
+            var records = await _medicalRecordsRepository.SaveEntityAsync(record);
+            return Ok(records);
         }
 
-        // DELETE api/<MedicalRecordsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

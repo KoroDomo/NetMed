@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using NetMed.Domain.Entities;
+using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Repositories;
 
 namespace NetMed.Api.Controllers
 {
@@ -8,36 +9,43 @@ namespace NetMed.Api.Controllers
     [ApiController]
     public class AvailabilityModesController : ControllerBase
     {
-        // GET: api/<AvailabilityModesController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IAvailabilityModesRepository _availabilityModesRepository;
+
+        public AvailabilityModesController(IAvailabilityModesRepository availabilityModesRepository, ILogger<AvailabilityModesRepository> logger)
         {
-            return new string[] { "value1", "value2" };
+            _availabilityModesRepository = availabilityModesRepository;
         }
 
-        // GET api/<AvailabilityModesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("GetAvailabilityModes")]
+        public async Task<IActionResult> Get()
         {
-            return "value";
+            var availability = await _availabilityModesRepository.GetAllAsync();
+            return Ok(availability);
         }
 
-        // POST api/<AvailabilityModesController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpGet("GetAvailabilityModeById")]
+        public async Task<IActionResult> Get(short id)
         {
+            var availability = await _availabilityModesRepository.GetEntityByIdAsync(id);
+            return Ok(availability);
         }
 
-        // PUT api/<AvailabilityModesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+
+        [HttpPost("SaveAvailabilityModes")]
+        public async Task<IActionResult> Post([FromBody] AvailabilityModes availability )
         {
+            var availabilities = await _availabilityModesRepository.SaveEntityAsync(availability);
+            return Ok(availabilities);
         }
 
-        // DELETE api/<AvailabilityModesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+     
+        [HttpPost("UpdateAvailabilityModes")]
+        public async Task<IActionResult> Put([FromBody] AvailabilityModes availability)
         {
+            var availabilities = await _availabilityModesRepository.UpdateEntityAsync(availability);
+            return Ok(availabilities);
+            
         }
+
     }
 }

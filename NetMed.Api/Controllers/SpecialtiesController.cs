@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace NetMed.Api.Controllers
 {
@@ -10,44 +9,40 @@ namespace NetMed.Api.Controllers
     public class SpecialtiesController : ControllerBase
     {
         private readonly ISpecialtiesRepository _specialtiesRepository;
-        // OJOCrear abstraccion para ILogger
         public SpecialtiesController(ISpecialtiesRepository specialtiesRepostiroy, ILogger<SpecialtiesController> logger) 
         {
             _specialtiesRepository = specialtiesRepostiroy;
         }
-        // GET: api/<SpecialtiesController>
-        [HttpGet]
+
+        [HttpGet("GetSpecialties")]
         public async Task<IActionResult> Get()
         {
 
-            var specialties = await _specialtiesRepository.GetAllAsync(); // 22:14
+            var specialties = await _specialtiesRepository.GetAllAsync();
 
             return Ok(specialties);
         }
 
-        // GET api/<SpecialtiesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("GetSpecialtyById")]
+        public async Task<IActionResult> Get(short id)
         {
-            return "value";
+            var specialties = await _specialtiesRepository.GetEntityByIdAsync(id);
+            return Ok(specialties);
         }
 
-        // POST api/<SpecialtiesController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("SaveSpecialty")]
+        public async Task<IActionResult> Post([FromBody] Specialties specialty)
         {
+            var specialties = await _specialtiesRepository.SaveEntityAsync(specialty);
+            return Ok(specialties);
         }
 
-        // PUT api/<SpecialtiesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("UpdateSpecialty")]
+        public async Task<IActionResult> Put([FromBody] Specialties specialty)
         {
+            var specialties = await _specialtiesRepository.UpdateEntityAsync(specialty);
+            return Ok(specialties);
         }
 
-        // DELETE api/<SpecialtiesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

@@ -11,7 +11,7 @@ namespace NetMed.Domain.Entities
         [Key]
         public override short Id { get; set; }
         [Required]
-        public required string AvailabilityModeName { get; set; }
+        public required string AvailabilityMode { get; set; }
 
         // Metodo para activar el modo de disponibilidad
         public void Activate()
