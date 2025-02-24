@@ -3,12 +3,18 @@ using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
 using NetMed.IOC;
+using NetMed.IOC.Dependecies;
+using NetMed.IOC.Dependecies.Medical.AvailabilityModes;
+using NetMed.IOC.Dependecies.Medical.MedicalRecords;
+using NetMed.IOC.Dependecies.Medical.Specialties;
 
 namespace NetMed.Api
 {
     public class Program
     {
         public static void Main(string[] args)
+
+            //Proximo: Integracion de Capa de Business Layer con Capa de API
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -16,11 +22,10 @@ namespace NetMed.Api
 
             builder.Services.AddDbContext<NetMedContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("NetMedDB")));
 
-            builder.Services.AddRepositories();
-
-            // OJO Agregar capa de aplicacion mas adelante
-            // Buscar forma de evitar duplicidad arriba
-
+            builder.Services.AddSpecialtiesDependency();
+            builder.Services.AddMedicalRecordsDependency();
+            builder.Services.AddAvailabilityModesDependency();
+            //builder.Services.AddRepositories();
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

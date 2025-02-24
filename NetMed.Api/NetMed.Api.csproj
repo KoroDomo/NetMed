@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NetMed.IOC\NetMed.IOC.csproj" />
-    <ProjectReference Include="..\NetMed.Persistence\NetMed.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
