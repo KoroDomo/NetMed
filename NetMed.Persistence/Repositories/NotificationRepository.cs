@@ -9,8 +9,6 @@ using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Context.Interfaces;
 using NetMed.Persistence.Interfaces;
-using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
 
 namespace NetMed.Persistence.Repositories
 {
@@ -29,13 +27,37 @@ namespace NetMed.Persistence.Repositories
             _configuration = configuration;
         }
 
-        public async Task<OperationResult> GetNotificationsByUserIdAsync(int userId)
+        public override async Task<OperationResult> SaveEntityAsync(Notification notification)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(userId, _configuration["ErrorMessages:InvalidId"]);
+            var validationResult = EntityValidator.ValidateNotNull(notification, "La entidad Notificaciones no puede ser nula");
 
             if (!validationResult.Success)
             {
-                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "userId", userId);
+                return validationResult;
+            }
+
+            try
+            {
+                await _context.Notifications.AddAsync(notification);
+                await _context.SaveChangesAsync();
+
+                return new OperationResult { Success = true, Message = "Notificación creada con éxito", Data = notification };
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult
+                { Success = false, Message = "Error con la base de datos" };
+            }
+        }
+
+
+
+        public async Task<OperationResult> GetNotificationsByUserIdAsync(int userId)
+        {
+            var validationResult = EntityValidator.ValidatePositiveNumber(userId, "El ID proporcionado no es válido");
+
+            if (!validationResult.Success)
+            {
                 return validationResult;
             }
 
@@ -47,27 +69,23 @@ namespace NetMed.Persistence.Repositories
 
                 if (notifications == null || !notifications.Any())
                 {
-                    _logger.LogWarning(_configuration["ErrorMessages:NotificationNotFound"], "userId", userId);
-                    return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:NotificationNotFound"] };
+                    return new OperationResult { Success = false, Message = "UserId no valido", Data = userId };
                 }
 
-                _logger.LogInformation(_configuration["ErrorMessages:NotificationRetrieved"], "userId", userId);
-                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:NotificationRetrieved"], Data = notifications };
+                return new OperationResult { Success = true, Message = "Notificaciones encontradas con exito", Data = notifications };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
-                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
+                return new OperationResult { Success = false, Message = "Error en la base de datos" };
             }
         }
 
         public async Task<OperationResult> GetNotificationByIdAsync(int notificationId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(notificationId, _configuration["ErrorMessages:InvalidId"]);
+            var validationResult = EntityValidator.ValidatePositiveNumber(notificationId, "El ID proporcionado no es válido");
 
             if (!validationResult.Success)
             {
-                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "notificationId", notificationId);
                 return validationResult;
             }
 
@@ -77,52 +95,46 @@ namespace NetMed.Persistence.Repositories
 
                 if (notification == null)
                 {
-                    _logger.LogWarning(_configuration["ErrorMessages:NotificationNotFound"], "notificationId", notificationId);
-                    return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:NotificationNotFound"] };
+                    return new OperationResult { Success = false, Message = "ID no valido" };
                 }
 
-                _logger.LogInformation(_configuration["ErrorMessages:NotificationRetrieved"], "notificationId", notificationId);
-                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:NotificationRetrieved"], Data = notification };
+                return new OperationResult { Success = true, Message = "Notificacion encontrada con exito", Data = notification };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
-                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
+                return new OperationResult { Success = false, Message = "Error con la base de datos"};
             }
         }
 
         public async Task<OperationResult> CreateNotificationAsync(Notification notification)
         {
-            var validationResult = EntityValidator.ValidateNotNull(notification, _configuration["ErrorMessages:NullEntity"]);
+            var validationResult = EntityValidator.ValidateNotNull(notification, "La entidad Notificaciones no puede ser nula");
 
             if (!validationResult.Success)
             {
-                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "notification", "Entidad nula");
                 return validationResult;
             }
 
             try
             {
-                _context.Notifications.Add(notification);
+                await _context.Notifications.AddAsync(notification);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_configuration["ErrorMessages:NotificationCreated"], "notificationId", notification.Id);
-                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:NotificationCreated"] };
+                return new OperationResult { Success = true, Message = "Notificación creada con éxito", Data = notification };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
-                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
+                return new OperationResult
+                { Success = false, Message = "Error con la base de datos" };
             }
         }
 
         public async Task<OperationResult> UpdateNotificationAsync(Notification notification)
         {
-            var validationResult = EntityValidator.ValidateNotNull(notification, _configuration["ErrorMessages:NullEntity"]);
+            var validationResult = EntityValidator.ValidateNotNull(notification, "La entidad no puede ser nula");
 
             if (!validationResult.Success)
             {
-                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "notification", "Entidad nula");
                 return validationResult;
             }
 
@@ -131,23 +143,20 @@ namespace NetMed.Persistence.Repositories
                 _context.Notifications.Update(notification);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_configuration["ErrorMessages:NotificationUpdated"], "notificationId", notification.Id);
-                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:NotificationUpdated"] };
+                return new OperationResult { Success = true, Message = "Notificación actualizada con éxito", Data = notification };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
-                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
+                return new OperationResult { Success = false, Message = "Error con la base de datos" };
             }
         }
 
         public async Task<OperationResult> DeleteNotificationAsync(int notificationId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(notificationId, _configuration["ErrorMessages:InvalidId"]);
+            var validationResult = EntityValidator.ValidatePositiveNumber(notificationId, "El ID proporcionado no es válido");
 
             if (!validationResult.Success)
             {
-                _logger.LogWarning(_configuration["ErrorMessages:ValidationFailed"], "notificationId", notificationId);
                 return validationResult;
             }
 
@@ -157,20 +166,18 @@ namespace NetMed.Persistence.Repositories
 
                 if (notification == null)
                 {
-                    _logger.LogWarning(_configuration["ErrorMessages:NotificationNotFound"], "notificationId", notificationId);
-                    return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:NotificationNotFound"] };
+                    return new OperationResult { Success = false, Message = "No se encontró la notificación", Data = notification };
                 }
 
                 _context.Notifications.Remove(notification);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_configuration["ErrorMessages:NotificationDeleted"], "notificationId", notificationId);
-                return new OperationResult { Success = true, Mesagge = _configuration["ErrorMessages:NotificationDeleted"] };
+                return new OperationResult { Success = true, Message = "Notificación eliminada con éxito",Data = notification };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
-                return new OperationResult { Success = false, Mesagge = _configuration["ErrorMessages:GeneralError"] };
+                return new OperationResult { Success = false, Message = "Error con la base de datos" };
             }
         }
     }

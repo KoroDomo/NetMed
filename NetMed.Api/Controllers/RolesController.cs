@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Context.Interfaces;
 using NetMed.Persistence.Repositories;
+using System.Data;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace NetMed.Api.Controllers
@@ -25,122 +26,44 @@ namespace NetMed.Api.Controllers
             [HttpGet("GetAllRoles")]
             public async Task<IActionResult> GetAllRoles()
             {
-                try
-                {
-                    var roles = await _rolesRepository.GetAllAsync();
-                    return Ok(roles);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error al obtener todos los roles.");
-                    return StatusCode(500, "Ocurrió un error interno al obtener los roles.");
-                }
+
+                var rolesList = await _rolesRepository.GetAllAsync();
+                return Ok(rolesList);
             }
 
             [HttpGet("GetRoleById")]
-            public async Task<IActionResult> GetRoleById(int id)
+            public async Task<IActionResult> GetRoleById(int rolesID)
             {
-                try
-                {
-                    var role = await _rolesRepository.GetEntityByIdAsync(id);
-
-                    if (role == null)
-                    {
-                        _logger.LogWarning($"Rol con ID {id} no encontrado.");
-                        return NotFound();
-                    }
-
-                    return Ok(role);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, $"Error al obtener el rol con ID {id}.");
-                    return StatusCode(500, "Ocurrió un error interno al obtener el rol.");
-                }
+                var roles = await _rolesRepository.GetRoleByIdAsync(rolesID);
+                return Ok(roles);
             }
+            
 
             [HttpPost("CreateRole")]
-            public async Task<IActionResult> CreateRole([FromBody] Roles role)
+            public async Task<IActionResult> Post([FromBody] Roles role)
             {
-                try
-                {
-                    if (role == null)
-                    {
-                        _logger.LogWarning("Intento de crear un rol con datos nulos.");
-                        return BadRequest("El rol no puede ser nulo.");
-                    }
 
-                    var result = await _rolesRepository.SaveEntityAsync(role);
+                var roles = await _rolesRepository.CreateRoleAsync(role);
+                return Ok(roles);
 
-                    if (!result.Success)
-                    {
-                        _logger.LogWarning($"Error al crear el rol: {result.Mesagge}");
-                        return BadRequest(result.Mesagge);
-                    }
-
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error al crear el rol.");
-                    return StatusCode(500, "Ocurrió un error interno al crear el rol.");
-                }
             }
 
             [HttpPut("UpdateRole")]
-            public async Task<IActionResult> UpdateRole([FromBody] Roles role)
+            public async Task<IActionResult> Put([FromBody] Roles role)
             {
-                try
-                {
-                    if (role == null)
-                    {
-                        _logger.LogWarning("Intento de actualizar un rol con datos nulos.");
-                        return BadRequest("El rol no puede ser nulo.");
-                    }
 
-                    var result = await _rolesRepository.UpdateEntityAsync(role);
 
-                    if (!result.Success)
-                    {
-                        _logger.LogWarning($"Error al actualizar el rol: {result.Mesagge}");
-                        return BadRequest(result.Mesagge);
-                    }
+                var roles = await _rolesRepository.UpdateRoleAsync(role);
+                return Ok(roles);
 
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error al actualizar el rol.");
-                    return StatusCode(500, "Ocurrió un error interno al actualizar el rol.");
-                }
+
             }
 
             [HttpDelete("DeleteRole")]
-            public async Task<IActionResult> DeleteRole([FromBody] Roles role)
+            public async Task<IActionResult> DeleteRole([FromBody] int roleId)
             {
-                try
-                {
-                    if (role == null)
-                    {
-                        _logger.LogWarning("Intento de eliminar un rol con datos nulos.");
-                        return BadRequest("El rol no puede ser nulo.");
-                    }
-
-                    var result = await _rolesRepository.DeleteEntityAsync(role);
-
-                    if (!result.Success)
-                    {
-                        _logger.LogWarning($"Error al eliminar el rol: {result.Mesagge}");
-                        return BadRequest(result.Mesagge);
-                    }
-
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error al eliminar el rol.");
-                    return StatusCode(500, "Ocurrió un error interno al eliminar el rol.");
-                }
+                var roles = await _rolesRepository.DeleteRoleAsync(roleId);
+                return Ok(roles);
             }
         }
     }

@@ -6,6 +6,7 @@ using NetMed.Domain.Base;
 using NetMed.Domain.Repository;
 using NetMed.Persistence.Context;
 using System.Linq.Expressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NetMed.Persistence.Base
 {
@@ -60,13 +61,13 @@ namespace NetMed.Persistence.Base
                 var datos = await Entity.Where(filter).ToListAsync();
                 result.Data = datos;
                 result.Success = true;
-                result.Mesagge = _configuration["ErrorMessages:EntityRetrieved"];
+                result.Message = _configuration["ErrorMessages:EntityRetrieved"];
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
                 result.Success = false;
-                result.Mesagge = _configuration["ErrorMessages:GeneralError"];
+                result.Message = _configuration["ErrorMessages:GeneralError"];
             }
 
             return result;
@@ -104,16 +105,14 @@ namespace NetMed.Persistence.Base
                 await _context.SaveChangesAsync();
 
                 result.Success = true;
-                
-
-                result.Mesagge = _configuration["SuccessMesagge:EntityCreated"];
-                _logger.LogInformation(_configuration["ErrorMessages:EntityCreated"], "entity", entity);
+                result.Message = "Entidad creada con éxito";
+                result.Data = entity;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
                 result.Success = false;
-                result.Mesagge = _configuration["ErrorMessages:GeneralError"];
+                result.Message = "Error al procesar la solicitud";
+                result.Data = entity;
             }
 
             return result;
@@ -129,14 +128,13 @@ namespace NetMed.Persistence.Base
                 await _context.SaveChangesAsync();
 
                 result.Success = true;
-                result.Mesagge = _configuration["ErrorMessages:EntityUpdated"];
-                _logger.LogInformation(_configuration["ErrorMessages:EntityUpdated"], "entity", entity);
+                result.Message = "Actualizacion exitosa";
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
                 result.Success = false;
-                result.Mesagge = _configuration["ErrorMessages:GeneralError"];
+                result.Message = _configuration["ErrorMessages:GeneralError"];
             }
 
             return result;
@@ -152,14 +150,14 @@ namespace NetMed.Persistence.Base
                 await _context.SaveChangesAsync();
 
                 result.Success = true;
-                result.Mesagge = _configuration["ErrorMessages:EntityDeleted"];
+                result.Message = _configuration["ErrorMessages:EntityDeleted"];
                 _logger.LogInformation(_configuration["ErrorMessages:EntityDeleted"], "entity", entity);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
                 result.Success = false;
-                result.Mesagge = _configuration["ErrorMessages:GeneralError"];
+                result.Message = _configuration["ErrorMessages:GeneralError"];
             }
 
             return result;

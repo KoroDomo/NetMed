@@ -15,7 +15,7 @@ namespace NetMed.Persistence.Interfaces
             if (entity == null)
             {
                 result.Success = false;
-                result.Mesagge = errorMessage;
+                result.Message = errorMessage;
             }
             else 
             {
@@ -36,7 +36,7 @@ namespace NetMed.Persistence.Interfaces
             if (number < 0)
             { 
                 result.Success = false ;
-                result.Mesagge = errorMessage;
+                result.Message = errorMessage;
             }
             else
             {
