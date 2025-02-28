@@ -35,7 +35,7 @@ namespace NetMed.Api.Controllers
         [HttpPost("UpdateDoctorAvailability")]
         public async Task<IActionResult> Put([FromBody] DoctorAvailability doctorAvaility)
         {
-            var doctorAvailability = await _doctorAvailabilityRepository.SaveEntityAsync(doctorAvaility);
+            var doctorAvailability = await _doctorAvailabilityRepository.UpdateEntityAsync(doctorAvaility);
             return Ok(doctorAvailability);
         }
     }
