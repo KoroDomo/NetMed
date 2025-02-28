@@ -11,10 +11,8 @@
         public string? Bio { get; set; }
         public decimal ConsultationFee { get; set; }
         public required string ClinicAddress { get; set; }
-        public int AvailabilityModeId { get; set; }
+        public required int AvailabilityModeId { get; set; }
         public DateOnly LicenseExpirationDate { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
         public bool IsActive { get; set; }
 
     }

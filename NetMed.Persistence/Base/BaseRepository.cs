@@ -64,6 +64,8 @@ namespace NetMed.Persistence.Base
             {
                 Entity.Add(entity);
                 await _context.SaveChangesAsync();
+                result.Message = "Datos guardados correctamente";
+                result.Success = true;
             }
             catch (Exception ex)
             {
@@ -80,6 +82,8 @@ namespace NetMed.Persistence.Base
             {
                 Entity.Update(entity);
                 await _context.SaveChangesAsync();
+                result.data = entity;
+                result.Success = true;
             }
             catch (Exception ex)
             {
@@ -122,5 +126,27 @@ namespace NetMed.Persistence.Base
 
             return result;
         }
+
+        public virtual async Task<OperationResult> DeleteEntityAsync(TEntity entity)
+        {
+            OperationResult result = new OperationResult() { Success = true };
+            try
+            {
+                Entity.Remove(entity);
+                await _context.SaveChangesAsync();
+                result.data = entity;
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error borrando los datos.";
+
+            }
+
+            return result;
+        }
+
+      
     }
 }

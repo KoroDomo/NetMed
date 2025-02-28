@@ -6,10 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using NetMed.Persistence.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace NetMed.Persistence.Repositories
 {
-    public class UsersRepository : BaseRepository<Users>, IUsersRepository
+    public class UsersRepository : BaseRepository<UsersModel>, IUsersRepository
     {
         private readonly NetMedContext _context;
         private readonly ILogger<UsersRepository> _logger;
@@ -25,14 +27,19 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                if (result.data == null)
                 {
-                    result.Message = "No se encontraron datos";
-                    result.Success = false;
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                    if (user == null)
+                    {
+                        result.Message = "No se encontraron datos";
+                        result.Success = false;
+                    }
+                    else
+                    {
+                        result.data = user;
+                        result.Success = true;
+                    }
                 }
-
-                result.data = await _context.Users.FindAsync(email);
-                result.Success = true;
             }
             catch (Exception ex)
             {
@@ -40,7 +47,6 @@ namespace NetMed.Persistence.Repositories
                 result.Message = ex.Message + "Ocurrio un error al buscar los datos";
             }
             return result;
-
         }
 
         public async Task<OperationResult> GetActiveUsersAsync(bool isActive = true)
@@ -49,14 +55,17 @@ namespace NetMed.Persistence.Repositories
 
             try
             {
-                if (result.data == null)
+                var users = await _context.Users.Where(x => x.IsActive == isActive).ToListAsync();
+                if (users == null)
                 {
                     result.Message = "No se encontraron datos";
                     result.Success = false;
                 }
-
-                result.data = await _context.Users.Where(x => x.IsActive == isActive).ToListAsync();
-                result.Success = true;
+                else
+                {
+                    result.data = users;
+                    result.Success = true;
+                }
             }
             catch (Exception ex)
             {
@@ -66,7 +75,7 @@ namespace NetMed.Persistence.Repositories
             return result;
         }
 
-        public async Task<OperationResult> GetByRoleAsync(int roleID)
+        public async Task<OperationResult> GetByRoleByIDAsync(int roleID)
         {
             OperationResult result = new OperationResult();
 
@@ -119,7 +128,7 @@ namespace NetMed.Persistence.Repositories
                     result.Message = "No se encontraron datos";
                     result.Success = false;
                 }
-                result.data = await _context.Users.Where(x => x.RegisterDate >= startDate && x.RegisterDate <= endDate).FirstOrDefaultAsync();
+                result.data = await _context.Users.Where(x => x.CreatedAt >= startDate && x.CreatedAt <= endDate).FirstOrDefaultAsync();
                 result.Success = true;
             }
             catch (Exception ex)
@@ -129,7 +138,30 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-        public async Task<bool> ValidateCredentialsAsync(string email, string passwordHash)
+
+        public async Task<OperationResult> GetPhoneNumberAsync(string phoneNumber)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                if (result.data == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }
+                result.data = await _context.Users.Where(x => x.PhoneNumber == phoneNumber).FirstOrDefaultAsync();
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+            }
+            return result;
+        }
+
+        public async Task<OperationResult> GetAddressAsync(string address)
         {
             OperationResult result = new OperationResult();
             try
@@ -139,85 +171,39 @@ namespace NetMed.Persistence.Repositories
                     result.Message = "No se encontraron datos";
                     result.Success = false;
                 }
-                result.data = await _context.Users.Where(x => x.Email == email && x.PasswordHash == passwordHash).FirstOrDefaultAsync();
-
+                result.data = await _context.Users.Where(x => x.Address == address).FirstOrDefaultAsync();
                 result.Success = true;
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
             }
-            return await _context.Users.FindAsync(email, passwordHash) != null;
+            return result;
         }
 
-        public async Task UpdatePasswordAsync(int userId, string newPasswordHash)
+        public async Task<OperationResult> GetUserPassword(string password)
         {
             OperationResult result = new OperationResult();
             try
             {
-                result.data = await _context.Users.FindAsync(userId);
                 if (result.data == null)
                 {
-                    throw new InvalidOperationException("User not found");
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
                 }
-                result.data.PasswordHash = newPasswordHash;
-                result.data = await _context.SaveChangesAsync();
+                result.data = await _context.Users.Where(x => x.Password == password).FirstOrDefaultAsync();
                 result.Success = true;
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error actualizando los datos.";
+                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
             }
-
+            return result;
         }
 
-        public async Task DeactivateUserAsync(int userId)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                result.data = await _context.Users.FindAsync(userId);
-                if (result.data == null)
-                {
-                    throw new InvalidOperationException("User not found");
-                }
-                result.data.IsActive = false;
-                result.data = await _context.SaveChangesAsync();
-                result.Success = true;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error actualizando los datos.";
-            }
-        }
-
-        public async Task AssignRoleAsync(int userId, int roleId)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                result.data = await _context.Users.FindAsync(userId);
-                if (result.data == null)
-                {
-                    throw new InvalidOperationException("User not found");
-                }
-                result.data.RoleID = roleId;
-
-                result.data = await _context.SaveChangesAsync();
-
-                result.Success = true;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error actualizando los datos.";
-            }
-        }
-
-        public override async Task<OperationResult> GetAllAsync(Expression<Func<Users, bool>> filter)
+        public override async Task<OperationResult> GetAllAsync(Expression<Func<UsersModel, bool>> filter)
         {
             OperationResult result = new OperationResult();
             try
@@ -239,6 +225,11 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
+                if (result.data == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }
                 result.data = await _context.Users.FindAsync(id);
                 result.Success = true;
             }
@@ -250,7 +241,7 @@ namespace NetMed.Persistence.Repositories
             return result;
         }
 
-        public override async Task<bool> ExistsAsync(Expression<Func<Users, bool>> filter)
+        public override async Task<bool> ExistsAsync(Expression<Func<UsersModel, bool>> filter)
         {
             return await _context.Users.AnyAsync(filter);
         }
@@ -259,23 +250,65 @@ namespace NetMed.Persistence.Repositories
         {
 
             OperationResult result = new OperationResult();
-
             try
             {
-                  
-                var consult =await _context.Users.ToListAsync();
+
+                var consult = await _context.Users.ToListAsync();
 
                 result.data = consult;
 
-           }
+            }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
-               _logger.LogError("Error obteniendo los datos" + ex.Message.ToString());
+                _logger.LogError("Error obteniendo los datos" + ex.Message.ToString());
             }
 
-             return result;
+            return result;
+        }
+
+        public override async Task<OperationResult> SaveEntityAsync(UsersModel users)
+        {
+            OperationResult result = new OperationResult();
+            try
+
+            {
+                if (users == null)
+                {
+                    result.Success = false;
+                    result.Message = "User data is null.";
+                    return result;
+                }
+                _context.Users.Add(users);
+                await _context.SaveChangesAsync();
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message + " Ocurrio un error guardando los datos.";
+                result.Success = false;
+                _logger.LogError(ex, " error while saving user. ");
+            }
+
+            return result;
+        }
+
+        public override async Task<OperationResult> UpdateEntityAsync(UsersModel entity)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                _context.Users.Update(entity);
+                await _context.SaveChangesAsync();
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message + " Ocurrio un error actualizando los datos.";
+                result.Success = false;
+            }
+            return result;
         }
 
     }

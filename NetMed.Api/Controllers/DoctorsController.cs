@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Numerics;
+using Microsoft.AspNetCore.Mvc;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
+using Microsoft.Extensions.Logging;
+using NetMed.Persistence.Repositories;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -22,15 +25,15 @@ namespace NetMed.Api.Controllers
         }
 
         // GET: api/<DoctoresControlador>
-        [HttpGet]
+        [HttpGet("GetDoctors")]
         public async Task<IActionResult> Get()
         {
-            var doctors = await _doctorsRepository.GetAllAsync();
-            return Ok(doctors);
+            var doc = await _doctorsRepository.GetAllAsync();
+            return Ok(doc);
         }
 
         // GET api/<DoctoresControlador>/5
-        [HttpGet("{id}")]
+        [HttpGet("GetDoctorsById")]
         public async Task<IActionResult> Get(int id)
         {
             var doctor = await _doctorsRepository.GetEntityByIdAsync(id);
@@ -38,22 +41,15 @@ namespace NetMed.Api.Controllers
         }
 
         //api/<DoctoresControlador>
-        [HttpPost]
+        [HttpPost("SaveDoctor")]
         public async Task<IActionResult> Post([FromBody] Doctors doctor)
         {
-            var doc = await _doctorsRepository.SaveEntityAsync(doctor);
-
-            if(doc.Success)
-            {
+           
+                var doc = await _doctorsRepository.SaveEntityAsync(doctor);
                 return Ok(doc);
-            }
-            else
-            {
-                return BadRequest(doc);
-            } 
-
+            
         }
-        [HttpPut("{id}")]
+        [HttpPut("UpdateDoctor")]
         public async Task<IActionResult> Put([FromBody] Doctors doctor)
         {
             var doct = await _doctorsRepository.UpdateEntityAsync(doctor);
@@ -61,9 +57,11 @@ namespace NetMed.Api.Controllers
         }
 
         // DELETE api/<DoctoresControlador>/5
-        [HttpDelete("{id}")]
-        public void Delete()
+        [HttpDelete("Delete")]
+        public async Task<IActionResult>  DeleteAsync(Doctors doctors)
         {
+            var doc = await _doctorsRepository.DeleteEntityAsync(doctors);
+            return Ok(doc);
         }
     }
 }

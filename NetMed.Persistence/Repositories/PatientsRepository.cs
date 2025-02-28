@@ -183,40 +183,49 @@ namespace NetMed.Persistence.Repositories
                 result.Message = ex.Message + "Ocurrio un error al buscar los datos";
             }
             return result;
-            }
-            public override async Task<OperationResult> SaveEntityAsync(Patients entity)
+        }
+        public override async Task<OperationResult> SaveEntityAsync(Patients patients)
         {
-            //Agregar las validaciones necesarias
+           
             OperationResult result = new OperationResult();
             try
             {
-                _context.Patients.Add(entity);
-                _context.SaveChanges();
+                if (patients == null)
+                {
+                    result.Success = false;
+                    result.Message = "User data is null.";
+                    return result;
+                }
+                _context.Patients.Add(patients);
+                await _context.SaveChangesAsync();
+                result.Success = true;
             }
             catch (Exception ex)
             {
                 result.Message = ex.Message + " Ocurrio un error guardando los datos.";
                 result.Success = false;
+                _logger.LogError(ex, " error while saving patient.");
             }
-            return await Task.FromResult(result);
+            return result;
         }
 
 
-        public override async Task<OperationResult> UpdateEntityAsync(Patients entity)
+        public override async Task<OperationResult> UpdateEntityAsync(Patients patients)
         {
 
             OperationResult result = new OperationResult();
             try
             {
-                _context.Patients.Update(entity);
-                _context.SaveChanges();
+                _context.Patients.Update(patients);
+                 await _context.SaveChangesAsync();
+                result.Success = true;
             }
             catch (Exception ex)
             {
                 result.Message = ex.Message + " Ocurrio un error actualizando los datos.";
                 result.Success = false;
             }
-            return await Task.FromResult(result);
+            return result;
         }
 
         public override async Task<OperationResult> GetAllAsync(Expression<Func<Patients, bool>> filter)
@@ -241,7 +250,7 @@ namespace NetMed.Persistence.Repositories
 
             try
             {
-                result.data = await _context.Doctors.FindAsync(id);
+                result.data = await _context.Patients.FindAsync(id);
                 result.Success = true;
             }
             catch (Exception ex)

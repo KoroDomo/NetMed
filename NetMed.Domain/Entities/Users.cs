@@ -5,20 +5,19 @@ using System.ComponentModel.DataAnnotations;
 namespace NetMed.Domain.Entities
 {
 
-    [Table("Users" , Schema = "users")]
-    public sealed class Users : PersonEntity
+    [Table("Users", Schema = "users")]
+    public sealed class UsersModel : PersonEntity
     {
-      
-
-        
         [Key]
         [Required]
-        public override int Id { get; set; }
+        public override int UserID { get; set; }
         public required string FirstName { get; set; }
-        public required string LastName { get; set; }
+
+        [Required]
         public required string Password { get; set; }
         public int RoleID { get; set; }
-        public DateTime RegisterDate { get; set; }
-        public required string PasswordHash { get; set; }
+        
+
+
     }
 }

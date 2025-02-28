@@ -13,10 +13,8 @@ namespace NetMed.Persistence.Interfaces
         Task<OperationResult> GetBySpecialtyAsync(int specialtyId);
 
         Task<OperationResult> GetByLicenseNumberAsync(string licenseNumber);
-
-        Task<OperationResult> GetActiveDoctorsAsync(bool isActive = true);
       
-
+      
         Task<OperationResult> GetDoctorsByExperienceAsync(int minYears, int maxYears);
 
         Task<OperationResult> GetDoctorsByConsultationFeeAsync(decimal minFee, decimal maxFee);

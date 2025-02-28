@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NetMed.Persistence.Interfaces;
 using NetMed.Domain.Entities;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using NetMed.Persistence.Repositories;
 
 namespace NetMed.Api.Controllers
 {
@@ -12,7 +11,7 @@ namespace NetMed.Api.Controllers
     {
         private readonly ILogger<UsersController> _logger;
         private readonly IUsersRepository _userRepository;
-
+            
         public UsersController(IUsersRepository usersRepository,
             ILogger<UsersController> logger)
         {
@@ -21,7 +20,8 @@ namespace NetMed.Api.Controllers
         }
 
         // GET: api/<UsersController>
-        [HttpGet]
+        [HttpGet("GetUsers")]
+
         public async Task<IActionResult> Get()
         {
             var user = await _userRepository.GetAllAsync();
@@ -29,7 +29,7 @@ namespace NetMed.Api.Controllers
         }
 
         // GET api/<UsersController>/5
-        [HttpGet("{id}")]
+        [HttpGet("GetUserById")]
         public async Task<IActionResult> Get(int id)
         {
             var users = await _userRepository.GetEntityByIdAsync(id);
@@ -38,32 +38,27 @@ namespace NetMed.Api.Controllers
 
         // POST api/<UsersController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Users users)
+        public async Task<IActionResult> Post([FromBody] UsersModel users)
         {
-            var user = await _userRepository.SaveEntityAsync(users);
 
-            if(user.Success)
-            {
-                return Ok(user);
-            }
-            else
-            {
-                return BadRequest(user);
-            }
+            var result = await _userRepository.SaveEntityAsync(users);
+            return Ok(users);
+
         }
-
-        // PUT api/<UsersController>/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromBody] Users users)
+            // PUT api/<UsersController>/5
+            [HttpPut("Update")]
+        public async Task<IActionResult> Put([FromBody] UsersModel users)
         {
             var use = await _userRepository.GetAllAsync();
             return Ok(use);
         }
 
         // DELETE api/<UsersController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("Delete")]
+        public async Task<IActionResult> DeleteAsync(UsersModel users)
         {
+            var usuario = await _userRepository.DeleteEntityAsync(users);
+            return Ok(usuario);
         }
     }
 }

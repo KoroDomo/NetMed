@@ -13,7 +13,7 @@ namespace NetMed.Persistence.Context
 
          public   DbSet<Patients> Patients { get; set; }
 
-         public   DbSet<Users> Users { get; set; }
+         public   DbSet<UsersModel> Users { get; set; }
 
      }         
 }
