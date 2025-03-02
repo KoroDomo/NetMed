@@ -29,7 +29,7 @@ namespace NetMed.Api.Controllers
         }
 
         // GET api/<UsersController>/5
-        [HttpGet("GetUserById")]
+        [HttpGet("GetUserById/{id}")]
         public async Task<IActionResult> Get(int id)
         {
             var users = await _userRepository.GetEntityByIdAsync(id);
@@ -38,7 +38,7 @@ namespace NetMed.Api.Controllers
 
         // POST api/<UsersController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] UsersModel users)
+        public async Task<IActionResult> Post([FromBody] Users users)
         {
 
             var result = await _userRepository.SaveEntityAsync(users);
@@ -46,16 +46,16 @@ namespace NetMed.Api.Controllers
 
         }
             // PUT api/<UsersController>/5
-            [HttpPut("Update")]
-        public async Task<IActionResult> Put([FromBody] UsersModel users)
+            [HttpPut("Update/{id}")]
+        public async Task<IActionResult> Put([FromBody] Users users)
         {
             var use = await _userRepository.GetAllAsync();
             return Ok(use);
         }
 
         // DELETE api/<UsersController>/5
-        [HttpDelete("Delete")]
-        public async Task<IActionResult> DeleteAsync(UsersModel users)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> DeleteAsync(Users users)
         {
             var usuario = await _userRepository.DeleteEntityAsync(users);
             return Ok(usuario);

@@ -33,7 +33,7 @@ namespace NetMed.Api.Controllers
         }
 
         // GET api/<DoctoresControlador>/5
-        [HttpGet("GetDoctorsById")]
+        [HttpGet("GetDoctorsById/{id}")]
         public async Task<IActionResult> Get(int id)
         {
             var doctor = await _doctorsRepository.GetEntityByIdAsync(id);
@@ -44,12 +44,12 @@ namespace NetMed.Api.Controllers
         [HttpPost("SaveDoctor")]
         public async Task<IActionResult> Post([FromBody] Doctors doctor)
         {
-           
-                var doc = await _doctorsRepository.SaveEntityAsync(doctor);
-                return Ok(doc);
-            
+
+            var doc = await _doctorsRepository.SaveEntityAsync(doctor);
+            return Ok(doc);
+
         }
-        [HttpPut("UpdateDoctor")]
+        [HttpPut("UpdateDoctor/{id}")]
         public async Task<IActionResult> Put([FromBody] Doctors doctor)
         {
             var doct = await _doctorsRepository.UpdateEntityAsync(doctor);
@@ -57,7 +57,7 @@ namespace NetMed.Api.Controllers
         }
 
         // DELETE api/<DoctoresControlador>/5
-        [HttpDelete("Delete")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult>  DeleteAsync(Doctors doctors)
         {
             var doc = await _doctorsRepository.DeleteEntityAsync(doctors);

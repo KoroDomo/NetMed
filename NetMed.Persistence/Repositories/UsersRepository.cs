@@ -11,7 +11,7 @@ using System.Net;
 
 namespace NetMed.Persistence.Repositories
 {
-    public class UsersRepository : BaseRepository<UsersModel>, IUsersRepository
+    public class UsersRepository : BaseRepository<Users>, IUsersRepository
     {
         private readonly NetMedContext _context;
         private readonly ILogger<UsersRepository> _logger;
@@ -203,7 +203,7 @@ namespace NetMed.Persistence.Repositories
             return result;
         }
 
-        public override async Task<OperationResult> GetAllAsync(Expression<Func<UsersModel, bool>> filter)
+        public override async Task<OperationResult> GetAllAsync(Expression<Func<Users, bool>> filter)
         {
             OperationResult result = new OperationResult();
             try
@@ -241,7 +241,7 @@ namespace NetMed.Persistence.Repositories
             return result;
         }
 
-        public override async Task<bool> ExistsAsync(Expression<Func<UsersModel, bool>> filter)
+        public override async Task<bool> ExistsAsync(Expression<Func<Users, bool>> filter)
         {
             return await _context.Users.AnyAsync(filter);
         }
@@ -268,7 +268,7 @@ namespace NetMed.Persistence.Repositories
             return result;
         }
 
-        public override async Task<OperationResult> SaveEntityAsync(UsersModel users)
+        public override async Task<OperationResult> SaveEntityAsync(Users users)
         {
             OperationResult result = new OperationResult();
             try
@@ -294,7 +294,7 @@ namespace NetMed.Persistence.Repositories
             return result;
         }
 
-        public override async Task<OperationResult> UpdateEntityAsync(UsersModel entity)
+        public override async Task<OperationResult> UpdateEntityAsync(Users entity)
         {
             OperationResult result = new OperationResult();
             try

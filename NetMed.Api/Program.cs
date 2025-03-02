@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
+using NetMed.IOC.Dependencies;
+using NetMed.IOC;
 
 
 namespace NetMed.Api
@@ -16,11 +18,8 @@ namespace NetMed.Api
             builder.Services.AddDbContext<NetMedContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalAppointment")));
 
-            builder.Services.AddScoped<IDoctorsRepository, DoctorsRepository>();
-
-            builder.Services.AddScoped<IPatientsRepository, PatientsRepository>();
-
-            builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+            // Register application services
+            builder.Services.RegisterServices();
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -28,7 +27,7 @@ namespace NetMed.Api
             builder.Services.AddEndpointsApiExplorer();
 
             builder.Services.AddSwaggerGen();
-        
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -45,4 +44,5 @@ namespace NetMed.Api
             app.Run();
         }
     }
+    
 }

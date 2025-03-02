@@ -23,8 +23,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NetMed.Infraestructure\NetMed.Infraestructure.csproj" />
+    <ProjectReference Include="..\NetMed.IOC\NetMed.IOC.csproj" />
     <ProjectReference Include="..\NetMed.Persistence\NetMed.Persistence.csproj" />
-    <ProjectReference Include="..\NetMedModel\NetMedModel.csproj" />
   </ItemGroup>
 
 </Project>

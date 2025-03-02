@@ -6,11 +6,11 @@ namespace NetMed.Domain.Entities
 {
 
     [Table("Users", Schema = "users")]
-    public sealed class UsersModel : PersonEntity
+    public sealed class Users : PersonEntity
     {
         [Key]
         [Required]
-        public override int UserID { get; set; }
+        public override int UserId { get; set; }
         public required string FirstName { get; set; }
 
         [Required]

@@ -10,7 +10,7 @@ namespace NetMed.Domain.Entities
     {
         [Column("PatientID")]
         [Key]
-        public override int UserID{ get; set; }
+        public override int UserId{ get; set; }
         [Required]
         public DateOnly DateOfBirth { get; set; }
         [Required]

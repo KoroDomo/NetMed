@@ -20,7 +20,7 @@ namespace NetMed.Api.Controllers
             _logger = logger;
         }
         // GET: api/<PatientsController>
-        [HttpGet]
+        [HttpGet("GetPatients")]
         public async Task<IActionResult> Get()
         {
            var patients = await _patientsRepository.GetAllAsync();
@@ -28,7 +28,7 @@ namespace NetMed.Api.Controllers
         }
 
         // GET api/<PatientsController>/5
-        [HttpGet("{id}")]
+        [HttpGet("GetPatientsById/{id}")]
         public async Task<IActionResult> Get(int id)
         {
             var patient = await _patientsRepository.GetEntityByIdAsync(id);
@@ -37,7 +37,7 @@ namespace NetMed.Api.Controllers
 
 
         // POST api/<PatientsController>
-        [HttpPost]
+        [HttpPost("SavePatients")]
         public async Task<IActionResult> Post([FromBody] Patients patients)
         {
             var pacient = await _patientsRepository.SaveEntityAsync(patients);
@@ -45,7 +45,7 @@ namespace NetMed.Api.Controllers
         }
 
         // PUT api/<PatientsController>/5
-        [HttpPut("{id}")]
+        [HttpPut("UpdatePatient/{id}")]
         public async Task<IActionResult> Put([FromBody] Patients patients)
 
         {
@@ -54,7 +54,7 @@ namespace NetMed.Api.Controllers
         }
 
         // DELETE api/<PatientsController>/5
-        [HttpDelete("{id}")]
+        [HttpDelete("DeletePatient/{id}")]
         public void Delete(int id)
         {
         }

@@ -1,0 +1,130 @@
+﻿
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using NetMed.Application.Contracts;
+using NetMed.Application.Dtos.UsersDto;
+using NetMed.Domain.Base;
+using NetMed.Domain.Entities;
+using NetMed.Persistence.Interfaces;
+
+namespace NetMed.Application.Services
+{
+   public class UsersService : IUsersServices
+    {
+        private readonly IUsersRepository _usersRepository;
+        public UsersService(IUsersRepository usersRepository,
+            ILogger<UsersService> logger,
+            IConfiguration configuration)
+        {
+            this._usersRepository = usersRepository;
+        }
+
+        public async Task<OperationResult> Add(AddUserDto dto)
+        {
+                OperationResult result = new OperationResult();
+            try
+            {
+                var user = new Users
+                {
+                    FirstName = dto.FirstName,
+                    RoleID = dto.RoleID,
+                    LastName = dto.LastName,
+                    Email = dto.Email,
+                    Password = dto.Password,
+                };
+                result = await _usersRepository.SaveEntityAsync(user);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error agregando el usuario.";
+            }
+            return result;
+        }
+
+        public async Task<OperationResult> Delete(DeleteUserDto dto)
+        {
+           OperationResult result = new OperationResult();
+            try
+            {
+                var user = new Users
+                {
+                    UserId = dto.UserId,
+                    FirstName = dto.FirstName,
+                    RoleID = dto.RoleID,
+                    LastName = dto.LastName,
+                    Email = dto.Email,
+                    Password = dto.Password,
+                };
+                result = await _usersRepository.DeleteEntityAsync(user);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error eliminando el usuario.";
+            }
+            return result;
+        }
+
+  
+
+        public async Task<OperationResult> GetById(int id)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                var user = await _usersRepository.GetEntityByIdAsync(id);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+            }
+            return result;
+        }
+
+       
+
+        public async Task<OperationResult> GetAllData()
+        {
+           OperationResult result = new OperationResult();
+            try
+            {
+                result = await _usersRepository.GetAllAsync();
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+            }
+            return result;
+        }
+
+    
+        public async Task<OperationResult> Update(UpdateUserDto dto)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                var user = new Users
+                {
+                    UserId = dto.UserId,
+                    FirstName = dto.FirstName,
+                    RoleID = dto.RoleID,
+                    LastName = dto.LastName,
+                    Email = dto.Email,
+                    Password = dto.Password,
+                };
+                result = await _usersRepository.UpdateEntityAsync(user);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error actualizando el usuario.";
+            }
+            return result;
+        }
+
+    
+    }
+}

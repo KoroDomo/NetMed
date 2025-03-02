@@ -12,7 +12,7 @@
         public required string EmergencyContactPhone { get; set; }
         public required string BloodType { get; set; }
         public string? Allergies { get; set; }
-        public int? InsuranceProviderID { get; set; } // Nullable por si no tiene seguro
+        public int? InsuranceProviderID { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public bool IsActive { get; set; }
