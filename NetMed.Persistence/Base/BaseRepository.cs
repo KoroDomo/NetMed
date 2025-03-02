@@ -9,11 +9,11 @@ namespace NetMed.Persistence.Base
     public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         private readonly NetMedContext _context;
-        private DbSet<TEntity> Entity { get; set; } 
+        private DbSet<TEntity> _entity { get; set; } 
         public BaseRepository(NetMedContext context)
         {
             _context = context;
-            Entity = _context.Set<TEntity>();  
+            _entity = _context.Set<TEntity>();  
         }
         public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)
         {
@@ -21,7 +21,7 @@ namespace NetMed.Persistence.Base
 
             try
             {
-                Entity.Add(entity);
+                _entity.Add(entity);
                 await _context.SaveChangesAsync();
                 result.Success = true;
             }
@@ -38,7 +38,7 @@ namespace NetMed.Persistence.Base
 
             try
             {
-                Entity.Update(entity);
+                _entity.Update(entity);
                 await _context.SaveChangesAsync();
                 result.Success = true;
             }
@@ -55,7 +55,7 @@ namespace NetMed.Persistence.Base
 
             try
             {
-                var datos = await Entity.Where(filter).ToListAsync();
+                var datos = await _entity.Where(filter).ToListAsync();
                 result.Success = true;
                 result.Data = datos;
             }
@@ -69,20 +69,39 @@ namespace NetMed.Persistence.Base
         }
         public virtual async Task<TEntity> GetEntityByIdAsync(short id)
         {
-            return await Entity.FindAsync(id);
+            return await _entity.FindAsync(id);
         }
         public virtual async Task<TEntity> GetEntityByIdAsync(int id)
         {
-            return await Entity.FindAsync(id);
+            return await _entity.FindAsync(id);
         }
         public virtual async Task<bool> Exists(Expression<Func<TEntity, bool>> filter)
         {
             //return await _context.Set<TEntity>().CountAsync(filter) > 0;
-            return await Entity.AnyAsync(filter);
+            return await _entity.AnyAsync(filter);
         }
         public virtual async Task<List<TEntity>> GetAllAsync()
         {
-            return await Entity.ToListAsync();
+            return await _entity.ToListAsync();
+        }
+
+        public virtual async Task<OperationResult> GetAll()
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var datos = await _entity.ToListAsync();
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+
+                result.Success = false;
+                result.Message = "Ocurrio un error obteniendo los datos";
+            }
+
+            return result;
         }
     }
 }

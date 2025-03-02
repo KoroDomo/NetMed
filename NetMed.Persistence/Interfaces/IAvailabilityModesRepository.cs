@@ -7,7 +7,6 @@ namespace NetMed.Persistence.Interfaces
     public interface IAvailabilityModesRepository : IBaseRepository<AvailabilityModes>
     {
         Task<OperationResult> GetByNameAsync(string availabilityModeName);
-        Task<OperationResult> ExistsByNameAsync(string availabilityModeName);
     }
 }
 

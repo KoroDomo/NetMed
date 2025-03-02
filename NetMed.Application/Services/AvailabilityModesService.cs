@@ -5,6 +5,7 @@ using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
 using NetMed.Persistence.Interfaces;
 
+
 namespace NetMed.Application.Services
 {
     public class AvailabilityModesService : IAvailabilityModesService
@@ -21,9 +22,15 @@ namespace NetMed.Application.Services
             _logger = logger;
             _configuration = configuration;
         }
-        public Task<OperationResult> GetAll()
+        public async Task<OperationResult> GetAll()
         {
-            throw new NotImplementedException();
+            var availability = await _availabilityModesRepository.GetAllAsync();
+            return new OperationResult
+            {
+                Success = true,
+                Message = "Modos de Disponibilidad encontrado.",
+                Data = availability
+            };
         }
 
         public Task<OperationResult> GetById(int Id)

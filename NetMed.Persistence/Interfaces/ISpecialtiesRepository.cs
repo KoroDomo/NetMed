@@ -6,6 +6,5 @@ namespace NetMed.Persistence.Interfaces
     public interface ISpecialtiesRepository : IBaseRepository<Specialties>
     {
         Task<OperationResult> GetByNameAsync(string specialtyName);
-        Task<OperationResult> ExistsByNameAsync(string specialtyName);
     }
 }

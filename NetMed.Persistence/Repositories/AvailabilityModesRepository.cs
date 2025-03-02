@@ -23,38 +23,99 @@ namespace NetMed.Persistence.Repositories
         }
         public override async Task<OperationResult> SaveEntityAsync(AvailabilityModes entity)
         {
-            var validation = EntityValidator.ValidateNotNull(entity, "Modo de Disponibilidad");
-            if (!validation.Success) return validation;
-
-            await base.SaveEntityAsync(entity);
-            return new OperationResult { Success = true, Message = "Modo de Disponibilidad guardado" };
+            OperationResult result = new OperationResult();
+            try
+            {
+                if (entity == null)
+                {
+                    result.Success = false;
+                    result.Message = "El Modo de Disponibilidad no puede ser nulo";
+                    return result;
+                }
+                if (string.IsNullOrEmpty(entity.AvailabilityMode))
+                {
+                    result.Success = false;
+                    result.Message = "El nombre del Modo de Disponibilidad no puede ser nulo";
+                    return result;
+                }
+                if (await base.Exists(amode => amode.AvailabilityMode == entity.AvailabilityMode ))
+                {
+                    result.Success = false;
+                    result.Message = "El Modo de Disponibilidad ya existe";
+                    return result;
+                }
+                await base.SaveEntityAsync(entity);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ocurrio un error obteniendo el Modo de Disponibilidad";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
         public override async Task<OperationResult> UpdateEntityAsync(AvailabilityModes entity)
         {
-            var validation = EntityValidator.ValidateNotNull(entity, "Modo de Disponibilidad");
-            if (!validation.Success) return validation;
-
-            await base.UpdateEntityAsync(entity);
-            return new OperationResult { Success = true, Message = "Modo de Disponibilidad actualizado" };
-        }
-        public async Task<OperationResult> ExistsByNameAsync(string availabilityModeName)
-        {
-            if (string.IsNullOrWhiteSpace(availabilityModeName))
+            OperationResult result = new OperationResult();
+            try
             {
-                return new OperationResult { Success = false, Message = "El nombre del Modo de Disponibilidad esta vacio" };
+                if (entity == null)
+                {
+                    result.Success = false;
+                    result.Message = "El Modo de Disponibilidad no puede ser nulo";
+                    return result;
+                }
+                if (string.IsNullOrEmpty(entity.AvailabilityMode))
+                {
+                    result.Success = false;
+                    result.Message = "El nombre del Modo de Disponibilidad no puede ser nulo";
+                    return result;
+                }
+                if (entity.AvailabilityMode.Length > 15)
+                {
+                    result.Success = false;
+                    result.Message = "El nombre del Modo de Disponibilidad no puede tener mas de 15 caracteres";
+                    return result;
+                }
+                if (await base.Exists(amode => amode.AvailabilityMode == entity.AvailabilityMode))
+                {
+                    result.Success = false;
+                    result.Message = "El Modo de Disponibilidad ya existe";
+                    return result;
+                }
+                await base.UpdateEntityAsync(entity);
             }
-
-            var exists = await _context.AvailabilityModes.AnyAsync(m => m.AvailabilityMode == availabilityModeName);
-            return new OperationResult { Success = exists, Message = exists ? "El Modo de Disponibilidad existe" : "El Modo de Disponibilidad no existe" };
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ocurrio un error obteniendo el Modo de Disponibilidad";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
+
         public async Task<OperationResult> GetByNameAsync(string availabilityModeName)
         {
-            var mode = await _context.AvailabilityModes
-                .FirstOrDefaultAsync(m => m.AvailabilityMode == availabilityModeName);
-
-            return mode != null
-                ? new OperationResult { Success = true, Data = mode }
-                : new OperationResult { Success = false, Message = "El Modo de Disponibilidad no fue encontrado" };
+            OperationResult result = new OperationResult();
+            try
+            {
+                var availabilityMode = await _context.AvailabilityModes.FirstOrDefaultAsync
+                    (amode => amode.AvailabilityMode == availabilityModeName);
+                if (availabilityMode == null)
+                {
+                    result.Success = false;
+                    result.Message = "El Modo de Disponibilidad no existe";
+                    return result;
+                }
+                result.Data = availabilityMode;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ocurrio un error obteniendo el Modo de Disponibilidad";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
     }
 }
