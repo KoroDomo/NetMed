@@ -9,7 +9,6 @@ using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using System.Linq.Expressions;
 
-
 namespace NetMed.Persistence.Repositories
 {
     public class InsuranceProviderRepository : BaseRepository<InsuranceProviders, int>, IInsuranceProviderRepository
@@ -207,26 +206,27 @@ namespace NetMed.Persistence.Repositories
             }
         }
 
-        public async Task<OperationResult> DeleteInsuranceProviderAsync(int id)
+        public async Task<OperationResult> RemoveInsuranceProviderAsync(int id)
         {
             try
             {
                 var entity = await _context.InsuranceProviders.FindAsync(id);
+
                 if (entity == null)
                 {
                     _logger.LogWarning($"No se encontró el insuranceProvider con el ID: {id} para eliminar.");
-                    return _operations.SuccessResult(null, $"InsuranceProviderRepository.DeleteInsuranceProviderAsync.");
+                    return _operations.SuccessResult(null, $"InsuranceProviderRepository.RemoveInsuranceProviderAsync.");
                 }
 
                 _context.InsuranceProviders.Remove(entity);
                 await _context.SaveChangesAsync();
                 _logger.LogInformation("Provider eliminado exitosamente: " + entity.ToString());
-                return _operations.SuccessResult(null, "InsuranceProviderRepository.DeleteInsuranceProviderAsync.");
+                return _operations.SuccessResult(null, "InsuranceProviderRepository.RemoveInsuranceProviderAsync.");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error al eliminar el Provider con el ID: {id}");
-                return _operations.HandleException(ex, "InsuranceProviderRepository.DeleteInsuranceProviderAsync.");
+                return _operations.HandleException(ex, "InsuranceProviderRepository.RemoveInsuranceProviderAsync.");
             }
         }
 

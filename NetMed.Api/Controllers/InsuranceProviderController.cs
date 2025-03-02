@@ -8,18 +8,18 @@ namespace NetMed.Api.Controllers
     [ApiController]
     public class InsuranceProviderController : ControllerBase
     {
-        public IInsuranceProviderRepository _InsuranceProviderRepository;
+        public IInsuranceProviderRepository _insuranceProviderService;
 
         public InsuranceProviderController(IInsuranceProviderRepository insuranceProviderRepository,
                                            ILogger<InsuranceProviderController> logger) 
         {
-            _InsuranceProviderRepository = insuranceProviderRepository;
+            _insuranceProviderService = insuranceProviderRepository;
         }
         
         [HttpGet("GetInsuranceProviders")]
         public async Task<IActionResult> Get()
         {
-            var insurenceProviders = await _InsuranceProviderRepository.GetAllAsync();
+            var insurenceProviders = await _insuranceProviderService.GetAllAsync();
 
             return Ok(insurenceProviders);
         }
@@ -27,7 +27,7 @@ namespace NetMed.Api.Controllers
         [HttpGet("GetInsuranceProviderBy{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var insurenceProviders = await _InsuranceProviderRepository.GetEntityByIdAsync(id);
+            var insurenceProviders = await _insuranceProviderService.GetEntityByIdAsync(id);
 
             return Ok(insurenceProviders);
         }
@@ -36,7 +36,7 @@ namespace NetMed.Api.Controllers
         [HttpPost("SaveInsuranceProvider")]
         public async Task<IActionResult> Post([FromBody] InsuranceProviders insuranceProvider)
         {
-            var insurenceProviders = await _InsuranceProviderRepository.SaveEntityAsync(insuranceProvider);
+            var insurenceProviders = await _insuranceProviderService.SaveEntityAsync(insuranceProvider);
 
             return Ok(insurenceProviders);
         }
@@ -45,7 +45,7 @@ namespace NetMed.Api.Controllers
         [HttpPost("UpdateInsuranceProvider")]
         public async Task<IActionResult> Put([FromBody] InsuranceProviders insuranceProvider)
         {
-            var insurenceProviders = await _InsuranceProviderRepository.UpdateEntityAsync(insuranceProvider);
+            var insurenceProviders = await _insuranceProviderService.UpdateEntityAsync(insuranceProvider);
 
             return Ok(insurenceProviders);
         }

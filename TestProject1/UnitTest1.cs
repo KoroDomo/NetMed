@@ -1,5 +1,4 @@
-﻿
-namespace NetMed.Persistence.Test
+﻿namespace TestProject1
 {
     public class UnitTest1
     {

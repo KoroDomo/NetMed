@@ -1,17 +1,8 @@
-﻿using NetMed.Domain.Base;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-
-namespace NetMed.Domain.Entities
+﻿
+namespace NetMed.Application.Dtos.InsuranceProvider
 {
-    [Table("InsuranceProviders", Schema = "Insurance")]
-    public sealed class InsuranceProviders : PersonEntity
+    public class InsuranceProviderDto : DtoBase
     {
-        [Column("InsuranceProviderID")]
-        [Key]
-        public override int Id { get; set; }
-        [Column("ContactNumber")] 
         public new string PhoneNumber { get; set; }
         public string Name { get; set; }
         public string? Website { get; set; }
@@ -20,12 +11,12 @@ namespace NetMed.Domain.Entities
         public string? Country { get; set; }
         public string? ZipCode { get; set; }
         public string CoverageDetails { get; set; }
-        public string? LogoUrl { get; set; }
         public bool IsPreferred { get; set; }
         public int NetworkTypeID { get; set; }
         public string? CustomerSupportContact { get; set; }
         public string? AcceptedRegions { get; set; }
         public decimal? MaxCoverageAmount { get; set; }
-        
+        public string Email { get; set; }
+        public string Address { get; set; }
     }
 }

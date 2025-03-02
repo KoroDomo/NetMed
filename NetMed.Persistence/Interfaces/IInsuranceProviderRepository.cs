@@ -6,7 +6,7 @@ namespace NetMed.Persistence.Interfaces
 {
     public interface IInsuranceProviderRepository : IBaseRepository<InsuranceProviders>
     {
-        Task<OperationResult> DeleteInsuranceProviderAsync(int id);
+        Task<OperationResult> RemoveInsuranceProviderAsync(int id);
         Task<OperationResult> GetPreferredInsuranceProvidersAsync();
         Task<OperationResult> GetActiveInsuranceProvidersAsync();
         Task<OperationResult> GetInsuranceProvidersByRegionAsync(string region);

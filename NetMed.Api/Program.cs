@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NetMed.Persistence.Context;
-using NetMed.IOC;
+using NetMed.IOC.Dependencies;
+
 namespace NetMed.Api
 {
     public class Program
@@ -13,7 +14,9 @@ namespace NetMed.Api
 
             builder.Services.AddDbContext<NetMedContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalAppointment")));
 
-            builder.Services.AddRepositories();
+            builder.Services.AddInsuranceProviderDependency();
+            builder.Services.AddNetworkTypeDependency();
+            //builder.Services.AddRepositories();
             
 
             builder.Services.AddControllers();
