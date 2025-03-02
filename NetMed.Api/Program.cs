@@ -14,7 +14,7 @@ namespace NetMed.Api
 
             builder.Services.AddDbContext<NetMedContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalAppointment")));  
 
-            builder.Services.AddRepositories();
+            builder.Services.AddDependencies();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

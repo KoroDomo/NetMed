@@ -182,7 +182,7 @@ namespace NetMed.Persistence.Repositories
             {
                 return new OperationResult { Success = false, Message = "La hora de inicio debe ser anterior a la hora de finalización." };
             }
-            if (await Existingavailability(AvailabilityID, DoctorID, AvailableDate, StartTime, EndTime))
+            if (await ExistingAvailability(AvailabilityID, DoctorID, AvailableDate, StartTime, EndTime))
             {
                 return new OperationResult { Success = false, Message = "El rango de tiempo seleccionado se superpone con una disponibilidad existente." };
             }
@@ -213,7 +213,7 @@ namespace NetMed.Persistence.Repositories
             return result;
         }
         //Metodo para verificar si los datos existen antes de actualizar
-        private async Task<bool> Existingavailability(int AvailabilityID, int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
+        private async Task<bool> ExistingAvailability(int AvailabilityID, int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
         {
             return await _context.DoctorAvailability.AnyAsync(a =>
                 a.Id != AvailabilityID &&

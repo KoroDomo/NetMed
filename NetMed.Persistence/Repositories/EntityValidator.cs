@@ -4,7 +4,7 @@ namespace NetMed.Persistence.Validators
 {
     public static class EntityValidator
     {
-        public static OperationResult Validator<T>(T entity, string entityName)
+        public static OperationResult Validator<TEntity>(TEntity entity, string entityName)
         {
             var result = new OperationResult();
 

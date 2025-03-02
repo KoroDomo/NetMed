@@ -1,11 +1,12 @@
 ﻿
 namespace NetMed.Persistence.Test
 {
-    public class UnitTest1
+    public class UnitTestAppointments
     {
         [Fact]
         public void Test1()
         {
+
 
         }
     }

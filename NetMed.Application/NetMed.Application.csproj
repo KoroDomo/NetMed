@@ -12,9 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Dtos\" />
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\NetMed.Persistence\NetMed.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

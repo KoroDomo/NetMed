@@ -16,6 +16,6 @@ namespace NetMed.Domain.Repository
         Task<List<TEntity>> GetAllAsync();
         Task<OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter);
         Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> filter);
-        
+        Task<OperationResult>RemoveEntityAsync(int Id);
     }
 }

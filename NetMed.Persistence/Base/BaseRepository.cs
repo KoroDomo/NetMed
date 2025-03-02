@@ -28,7 +28,7 @@ namespace NetMed.Persistence.Base
             {
                var datos = await Entity.Where(filter).ToListAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 result.Success = false;
                 result.Message = "Ocurrio un error al obtener los datos";
@@ -70,7 +70,7 @@ namespace NetMed.Persistence.Base
                Entity.Update(entity);
                await _context.SaveChangesAsync();   
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 result.Success = false;
                 result.Message = "Ocurrio un error al actualizar los datos";
@@ -78,5 +78,21 @@ namespace NetMed.Persistence.Base
             return result;    
         }
 
+        public virtual async Task<OperationResult> RemoveEntityAsync(int Id)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                Entity.Remove(en);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+                result.Message = "Ocurrio un error al desactivar los datos";
+            }
+            return result;
+            
+        }
     }
 }
