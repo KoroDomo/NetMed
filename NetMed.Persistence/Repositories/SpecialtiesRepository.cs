@@ -181,27 +181,33 @@ namespace NetMed.Persistence.Repositories
         }
         */
 
-        public override async Task<Specialties> GetEntityByIdAsync(short Id)
+        public override async Task<OperationResult> GetEntityByIdAsync(int Id)
         {
             OperationResult result = new OperationResult();
-            var specialty = await _context.Specialties.FirstOrDefaultAsync(s => s.Id == Id);
+            
             try
             {
-                if (specialty == null)
-                {
-                    result.Success = false;
-                    result.Message = "No se encontró la especialidad";
-                    return specialty;
-                }
-                return specialty;
+                result.Data = await (from specialty in _context.Specialties
+                                     where specialty.Id == Id
+                                     && specialty.IsActive == true
+                                     select new SpecialtiesModel()
+                                     {
+                                         SpecialtyID = specialty.Id,
+                                         SpecialtyName = specialty.SpecialtyName,
+                                         IsActive = specialty.IsActive,
+                                         CreatedAt = specialty.CreatedAt,
+                                         UpdatedAt = specialty.UpdatedAt,
+
+                                     }).AsNoTracking()
+                               .FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = "Ocurrio un error obteniendo la especialidad";
+                result.Message = "Ocurrio un error obteniendo el Record Medico";
                 _logger.LogError(result.Message, ex.ToString());
-                return null;
             }
+            return result;
         }
     }
 }

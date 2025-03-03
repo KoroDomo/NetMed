@@ -6,6 +6,5 @@ namespace NetMed.Application.Dtos.MedicalRecords
     {
         public int PatientId { get; set; }
         public int DoctorID { get; set; }
-        public DateTime DateOfVisit { get; set; }
     }
 }

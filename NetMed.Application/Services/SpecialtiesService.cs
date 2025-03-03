@@ -53,26 +53,25 @@ namespace NetMed.Application.Services
             try
             {
                 var specialties = await _specialtiesRepository.GetEntityByIdAsync(Id);
-                if (specialties == null)
+                if (!specialties.Success)
                 {
                     result.Success = false;
-                    result.Message = "No se encontró la especialidad";
+                    result.Message = specialties.Message;
                     return result;
                 }
-                result.Success = true;
-                result.Data = specialties;
-                return result;
+                result.Data = specialties.Data;
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message;
-                _logger.LogError("", ex.ToString());
-                return result;
+                result.Message = "Error obteniendo la Especialidad";
+                _logger.LogError(result.Message, ex.ToString());
             }
+            return result;
         }
-        
-        public async Task<OperationResult> Remove(RemoveSpecialtiesDto dto)
+
+
+        public Task<OperationResult> Remove(RemoveSpecialtiesDto dto)
         {
             throw new NotImplementedException();
         }
@@ -83,31 +82,60 @@ namespace NetMed.Application.Services
 
             try
             {
-                Specialties specialty = new()
+                Specialties specialty = new Specialties()
                 {
                     SpecialtyName = dto.SpecialtyName,
-                    IsActive = dto.IsActive
+                    IsActive = true,
+                    
                 };
 
-                var specialties = await _specialtiesRepository.SaveEntityAsync(specialty);
-                result.Success = true;
-                return result;
+                var s = await _specialtiesRepository.SaveEntityAsync(specialty);
+
+                result.Success = s.Success;
+                result.Message = s.Message;
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message;
-                _logger.LogError("", ex.ToString());
-                return result;
+                result.Message = "Error guardando la Especialidad";
+                _logger.LogError(result.Message, ex.ToString());
             }
 
             return result;
         }
 
-        public Task<OperationResult> Update(UpdateSpecialtiesDto dto)
+        public async Task<OperationResult> Update(UpdateSpecialtiesDto dto)
         {
-                
-            throw new NotImplementedException();
+
+            OperationResult result = new OperationResult();
+            try
+            {
+                var resultGetById = await _specialtiesRepository.GetEntityByIdAsync(dto.SpecialtyID);
+
+                if (!resultGetById.Success)
+                {
+                    result.Success = resultGetById.Success;
+                    result.Message = resultGetById.Message;
+                    return result;
+                }
+
+                Specialties? specialty = new Specialties()
+                {
+                    Id = (short)dto.SpecialtyID,
+                    SpecialtyName = dto.SpecialtyName,
+                    IsActive = dto.IsActive
+                };
+                var s = await _specialtiesRepository.UpdateEntityAsync(specialty);
+                result.Success = s.Success;
+                result.Message = s.Message;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Error actualizando la Especialidad";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result; 
         }
     }
 }

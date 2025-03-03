@@ -66,14 +66,38 @@ namespace NetMed.Persistence.Base
 
             }
             return result;
-        }
-        public virtual async Task<TEntity> GetEntityByIdAsync(short id)
+        }/*
+        public virtual async Task<OperationResult> GetEntityByIdAsync(int id)
         {
-            return await _entity.FindAsync(id);
-        }
-        public virtual async Task<TEntity> GetEntityByIdAsync(int id)
+            OperationResult result = new OperationResult();
+            try
+            {
+                var entity = await _entity.FindAsync(id);
+                result.Data = entity;
+            }
+            catch (Exception ex)
+            {
+
+                result.Success = false;
+                result.Message = "Ocurrio un error obteniendo los datos";
+            }
+            return result;
+        }*/
+        public virtual async Task<OperationResult> GetEntityByIdAsync(int id)
         {
-            return await _entity.FindAsync(id);
+            OperationResult result = new OperationResult();
+            try
+            {
+                var entity = await _entity.FindAsync(id);
+                result.Data = entity;
+            }
+            catch (Exception ex)
+            {
+
+                result.Success = false;
+                result.Message = "Ocurrio un error obteniendo los datos";
+            }
+            return result;
         }
         public virtual async Task<bool> Exists(Expression<Func<TEntity, bool>> filter)
         {
