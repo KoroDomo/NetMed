@@ -10,12 +10,11 @@ namespace NetMed.Domain.Repository
     /// <typeparam name="TType">El tipo de dato del primary key para realizar consulta</typeparam>
     public interface IBaseRepository<TEntity> where TEntity : class
     {
-        Task<TEntity> GetEntityByIdAsync(int id);
+        Task<OperationResult> GetEntityByIdAsync(int Id);
         Task<OperationResult> UpdateEntityAsync(TEntity entity);  
-        Task<OperationResult> SaveEntityAsync(TEntity entity);    
-        Task<List<TEntity>> GetAllAsync();
+        Task<OperationResult> SaveEntityAsync(TEntity entity);
+        Task<OperationResult> GetAllAsync();
         Task<OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter);
         Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> filter);
-        Task<OperationResult>RemoveEntityAsync(int Id);
     }
 }

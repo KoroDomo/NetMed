@@ -55,18 +55,7 @@ namespace NetMed.Application.Services
         }
         public async Task<OperationResult> Remove(RemoveAppointmentsDto TDto)
         {
-            OperationResult operationResult = new OperationResult();
-            try
-            {
-                var appointments = await _appointmentsRespository.RemoveAsync();
-            }
-            catch (Exception ex)
-            {
-                operationResult.Message = _configuration["AppointmentsServiceError: GetById"];
-                operationResult.Success = false;
-                _logger.LogError(operationResult.Message, ex.ToString());
-            }
-            return operationResult;
+            throw new NotImplementedException();
         }
 
         public Task<OperationResult> Save(SaveAppointmentsDto TDto)

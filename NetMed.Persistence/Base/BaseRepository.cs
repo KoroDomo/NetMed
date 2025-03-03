@@ -36,14 +36,35 @@ namespace NetMed.Persistence.Base
             return result;
             
         }
-        public virtual async Task<List<TEntity>> GetAllAsync()
+        public virtual async Task<OperationResult> GetAllAsync()
         {
-            return await Entity.ToListAsync();
+            OperationResult result = new OperationResult();
+            try
+            {
+               await Entity.ToListAsync();
+            } 
+            catch (Exception)
+            {
+                result.Success = false;
+                result.Message = "Ocurrio un error al obtener los datos";
+            }
+            return result;
+           
         }
 
-        public virtual async Task<TEntity> GetEntityByIdAsync(int id)
+        public virtual async Task<OperationResult> GetEntityByIdAsync(int Id)
         {
-           return await Entity.FindAsync(id);
+            OperationResult result = new OperationResult();
+            try
+            {
+                await Entity.FindAsync(Id);
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+                result.Message = "Ocurrio un error al obtener los datos por ID";
+            }
+            return result;
         }
 
         public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)
@@ -76,23 +97,6 @@ namespace NetMed.Persistence.Base
                 result.Message = "Ocurrio un error al actualizar los datos";
             }
             return result;    
-        }
-
-        public virtual async Task<OperationResult> RemoveEntityAsync(int Id)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                Entity.Remove(en);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                result.Success = false;
-                result.Message = "Ocurrio un error al desactivar los datos";
-            }
-            return result;
-            
         }
     }
 }

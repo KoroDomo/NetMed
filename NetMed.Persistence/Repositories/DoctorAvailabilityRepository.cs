@@ -23,7 +23,7 @@ namespace NetMed.Persistence.Repositories
             _logger = logger;
             _configuration = configuration;
         }
-        public async override Task<List<DoctorAvailability>> GetAllAsync()
+        public async override Task<OperationResult> GetAllAsync()
         {
             return await base.GetAllAsync();
         }
@@ -90,7 +90,7 @@ namespace NetMed.Persistence.Repositories
             }
             return await base.GetAllAsync(filter);
         }
-        public async override Task<DoctorAvailability> GetEntityByIdAsync(int id)
+        public async override Task<OperationResult> GetEntityByIdAsync(int id)
         {
 
             var validationResult = EntityValidator.Validator(id, nameof(id));

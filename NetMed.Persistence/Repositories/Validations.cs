@@ -18,7 +18,7 @@ namespace NetMed.Persistence.Repositories
             result.Success = true;
             return result;
         }
-        public static OperationResult IsInt<TEntity>(TEntity entity, string entityName)
+        public static OperationResult IsInt<TEntity>(TEntity entity)
         {
             var result = new OperationResult();
 
@@ -27,14 +27,14 @@ namespace NetMed.Persistence.Repositories
                 if (intValue <= 0)
                 {
                     result.Success = false;
-                    result.Message = $"{entityName} debe ser mayor que cero";
+                    result.Message = "El Id debe ser mayor que cero";
                     return result;
                 }
             }
             result.Success = true;
             return result;
         }
-        public static OperationResult CheckDate<TEntity>(TEntity entity, string entityName)
+        public static OperationResult CheckDate<TEntity>(TEntity entity)
         {
             var result = new OperationResult();
 
@@ -47,14 +47,14 @@ namespace NetMed.Persistence.Repositories
             result.Success = true;
             return result;
         }
-        public static OperationResult Exists<TEntity>(TEntity entity, string entityName, Func<TEntity, bool> searchFunction)
+        public static async Task<OperationResult> ExistsEntity<TEntity>(TEntity entity, Func<TEntity, Task<bool>> searchFunction)
         {
             var result = new OperationResult();
 
-            if (searchFunction(entity))
+            if (await searchFunction(entity))
             {
                 result.Success = false;
-                result.Message = $"{entityName} ya existe en el sistema";
+                result.Message = $"Ya existe este registro en el sistema";
                 return result;
             }
             result.Success = true;
