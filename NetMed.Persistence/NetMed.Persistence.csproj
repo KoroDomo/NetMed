@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NetMed.Domain\NetMed.Domain.csproj" />
+    <ProjectReference Include="..\NetMed.Infraestructure\NetMed.Infraestructure.csproj" />
   </ItemGroup>
 
 </Project>

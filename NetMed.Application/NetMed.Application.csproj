@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NetMed.Persistence\NetMed.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>

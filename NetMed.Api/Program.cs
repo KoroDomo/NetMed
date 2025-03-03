@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using NetMed.IOC.Dependencies;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Context.Interfaces;
 using NetMed.Persistence.Repositories;
@@ -17,6 +18,9 @@ builder.Services.AddScoped<IRolesRepository, RolesRepository>();
 
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 
+builder.Services.AddNotificationDependency();
+builder.Services.AddRolesDependency();
+builder.Services.AddStatusDependency();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

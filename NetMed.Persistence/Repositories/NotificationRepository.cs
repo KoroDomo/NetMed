@@ -41,10 +41,12 @@ namespace NetMed.Persistence.Repositories
                 await _context.Notifications.AddAsync(notification);
                 await _context.SaveChangesAsync();
 
-                return new OperationResult { Success = true, Message = "Notificación creada con éxito", Data = notification };
+                var error = _configuration[$"ErrorMessages:NotificationFound"];
+                return new OperationResult { Success = true, Message = error , Data = notification };
             }
             catch (Exception ex)
             {
+                var error = _configuration[$"Messages:Error:NotificationRepository.SaveEntityAsync"];
                 return new OperationResult
                 { Success = false, Message = "Error con la base de datos" };
             }
@@ -71,7 +73,7 @@ namespace NetMed.Persistence.Repositories
                 {
                     return new OperationResult { Success = false, Message = "UserId no valido", Data = userId };
                 }
-
+                
                 return new OperationResult { Success = true, Message = "Notificaciones encontradas con exito", Data = notifications };
             }
             catch (Exception ex)
