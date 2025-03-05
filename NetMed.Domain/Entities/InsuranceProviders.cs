@@ -27,9 +27,6 @@ namespace NetMed.Domain.Entities
         public string? AcceptedRegions { get; set; }
         public decimal? MaxCoverageAmount { get; set; }
 
-        public static implicit operator InsuranceProviders(List<NetMed.Application.Dtos.InsuranceProvider.InsuranceProviderDto> v)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
