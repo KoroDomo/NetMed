@@ -3,11 +3,11 @@ using NetMed.Persistence.Interfaces;
 
 namespace NetMed.Persistence.Validators
 {
-    public class CustomLogger<TEntity> : ICustomLogger where TEntity : class 
+    public class CustomLogger: ICustomLogger
     {
-        private readonly ILogger<TEntity> _logger;
+        private readonly ILogger<CustomLogger> _logger;
 
-        public CustomLogger(ILogger<TEntity> logger)
+        public CustomLogger(ILogger<CustomLogger> logger)
         {
             _logger = logger;
         }

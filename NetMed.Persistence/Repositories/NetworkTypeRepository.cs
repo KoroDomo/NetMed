@@ -15,12 +15,12 @@ namespace NetMed.Persistence.Repositories
     public class NetworkTypeRepository : BaseRepository<NetworkType>, INetworkTypeRepository
     {
         private readonly NetMedContext _context;
-        private readonly CustomLogger<NetworkTypeRepository> _logger;
+        private readonly ICustomLogger _logger;
         private readonly IConfiguration _configuration;
         private readonly NetworkTypeValidator _operations;
 
         public NetworkTypeRepository(NetMedContext context,
-                                     CustomLogger<NetworkTypeRepository> logger,
+                                     ICustomLogger logger,
                                      IConfiguration configuration) : base(context, logger, configuration)
         {
             _context = context;

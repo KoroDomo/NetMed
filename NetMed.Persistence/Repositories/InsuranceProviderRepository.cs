@@ -14,12 +14,12 @@ namespace NetMed.Persistence.Repositories
     public class InsuranceProviderRepository : BaseRepository<InsuranceProviders>, IInsuranceProviderRepository
     {
         private readonly NetMedContext _context;
-        private readonly CustomLogger<InsuranceProviderRepository> _logger;
+        private readonly ICustomLogger _logger;
         private readonly IConfiguration _configuration;
         private readonly InsuranceProviderValidator _operations;
         
         public InsuranceProviderRepository(NetMedContext context,
-                                           CustomLogger<InsuranceProviderRepository> logger,
+                                           ICustomLogger logger,
                                            IConfiguration configuration) : base(context, logger,configuration )
         {
             _context = context;

@@ -1,7 +1,7 @@
 ﻿
 namespace NetMed.Application.Dtos.InsuranceProvider
 {
-    public class SaveInsuranceProviderDto : NetworkTypeDto
+    public class SaveInsuranceProviderDto : InsuranceProviderDto
     {
         
     }

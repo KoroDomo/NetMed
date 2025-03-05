@@ -3,6 +3,7 @@ using NetMed.Application.Contracts;
 using NetMed.Application.Services;
 using NetMed.Persistence.Repositories;
 using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Validators;
 
 namespace NetMed.IOC.Dependencies
 {
@@ -12,6 +13,8 @@ namespace NetMed.IOC.Dependencies
         {
             services.AddScoped<IInsuranceProviderRepository, InsuranceProviderRepository>();
             services.AddTransient<IInsuranceProviderService, InsuranceProviderService>();
+
+            
         }
     }
 }

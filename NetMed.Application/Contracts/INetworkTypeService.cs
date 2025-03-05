@@ -6,7 +6,7 @@ namespace NetMed.Application.Contracts
 {
     public interface INetworkTypeService:IBaseService<SaveNetworkTypeDto, UpdateNetworkTypeDto, RemoveNetworkTypeDto>
     {
-        Task<OperationResult> GetNetworkTypeAsync();
+        
 
     }
 }

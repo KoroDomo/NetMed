@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Validators;
 
 namespace NetMed.Api.Controllers
 {
@@ -11,7 +12,7 @@ namespace NetMed.Api.Controllers
         public IInsuranceProviderRepository _insuranceProviderService;
 
         public InsuranceProviderController(IInsuranceProviderRepository insuranceProviderRepository,
-                                           ILogger<InsuranceProviderController> logger) 
+                                           ICustomLogger logger) 
         {
             _insuranceProviderService = insuranceProviderRepository;
         }

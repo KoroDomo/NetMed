@@ -1,57 +1,156 @@
-﻿
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.InsuranceProvider;
 using NetMed.Domain.Base;
+using NetMed.Domain.Entities;
+using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
+using NetMed.Persistence.Validators;
 
 namespace NetMed.Application.Services
 {
 
     public class NetworktypeService : INetworkTypeService
     {
+        private readonly NetMedContext _context;
         private readonly INetworkTypeRepository _networkTypeRepository;
-        private readonly ILogger<NetworktypeService> _logger;
+        private readonly ICustomLogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly OperationValidator _operations;
-        public NetworktypeService(INetworkTypeRepository repository,
-                                  ILogger<NetworktypeService> logger, IConfiguration configuration)
+        private readonly NetworkTypeValidator _operations;
+        public NetworktypeService(NetMedContext context,
+                                  INetworkTypeRepository repository,
+                                  ICustomLogger logger, IConfiguration configuration)
         {
+            _context = context;
             _networkTypeRepository = repository;
             _logger = logger;
             _configuration = configuration;
-            _operations = new OperationValidator(_configuration);
+            _operations = new NetworkTypeValidator(_configuration);
         }
-        public Task<OperationResult> GetAll()
+        public async Task<OperationResult> GetAll()
         {
-            throw new NotImplementedException();
+            OperationResult operationR = new OperationResult();
+            try
+            {
+
+                var networks = await _context.NetworkType
+                    .Select(n => new NetworkTypeDto()
+                    {
+                        Name = n.Name,
+                        Description = n.Description,
+                        ChangeDate = n.UpdatedAt
+                        
+                    }).ToListAsync();
+
+                operationR = _operations.isNull(networks);
+
+                if (operationR.Success == false)
+                {
+                    _logger.LogWarning($"No se encontraron los networks.");
+                    return operationR;
+                }
+
+                return _operations.SuccessResult(networks, "NetworktypeService.GetAll");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error al obtener el Providers.");
+
+                return _operations.HandleException(ex, "NetworktypeService.GetAll");
+            }
         }
 
-        public Task<OperationResult> GetById(int id)
+        public async Task<OperationResult> GetById(int id)
         {
-            throw new NotImplementedException();
+            OperationResult operationR = new OperationResult();
+            try
+            {
+
+                var networks = await _context.NetworkType
+                    .Where(ip => ip.Id == id)
+                    .OrderByDescending(ip => ip.CreatedAt)
+                    .Select(n => new NetworkTypeDto()
+                    {
+                        Name = n.Name,
+                        Description = n.Description,
+                        ChangeDate = n.UpdatedAt
+
+                    }).ToListAsync();
+
+                operationR = _operations.isNull(networks);
+
+                if (operationR.Success == false)
+                {
+                    _logger.LogWarning($"No se encontró el network con el ID: {id}");
+                    return operationR;
+                }
+
+                return _operations.SuccessResult(networks, "NetworktypeService.GetById");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error al obtener el Providers.");
+
+                return _operations.HandleException(ex, "NetworktypeService.GetById");
+            }
+        }
+        public async Task<OperationResult> Remove(int id)
+        {
+            try
+            {
+                var networks = await _networkTypeRepository.RemoveNetworkTypeAsync(id);
+                return _operations.SuccessResult(networks, "NetworktypeService:Remove");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error en el servicio al remover el Network.");
+                return _operations.HandleException(ex, "NetworktypeService:Remove");
+            }
         }
 
-        public Task<OperationResult> GetNetworkTypeAsync()
+        public async Task<OperationResult> Save(SaveNetworkTypeDto dto)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var network = new NetworkType
+                {
+                    Name = dto.Name,
+                    Description = dto.Description,
+                    UpdatedAt = dto.ChangeDate
+                };
+
+                var networks = await _networkTypeRepository.SaveEntityAsync(network);
+                return _operations.SuccessResult(networks, "NetworktypeService:Save");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error en el servicio al guardar el Network.");
+                return _operations.HandleException(ex, "NetworktypeService:Save");
+            }
         }
 
-        public Task<OperationResult> Remove(RemoveNetworkTypeDto dto)
+        public async Task<OperationResult> Update(UpdateNetworkTypeDto dto)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var network = new NetworkType
+                {
+                    Name = dto.Name,
+                    Description = dto.Description,
+                    UpdatedAt = dto.ChangeDate
+                };
 
-        public Task<OperationResult> Save(SaveNetworkTypeDto dto)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<OperationResult> Update(UpdateNetworkTypeDto dto)
-        {
-            throw new NotImplementedException();
+                var networks = await _networkTypeRepository.UpdateEntityAsync(network);
+                return _operations.SuccessResult(networks, "NetworktypeService:Update");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error en el servicio al guardar el Network.");
+                return _operations.HandleException(ex, "NetworktypeService:Update");
+            }
         }
     }
 }

@@ -9,6 +9,6 @@ namespace NetMed.Application.Base
         Task<OperationResult> GetById(int id);
         Task<OperationResult> Save(TDtoAdd dto);
         Task<OperationResult> Update(TDtoUpdate dto);
-        Task<OperationResult> Remove(TDtoRemove dto);
+        Task<OperationResult> Remove(int dto);
     }
 }
