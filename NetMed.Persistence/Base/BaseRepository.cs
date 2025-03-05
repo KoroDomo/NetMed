@@ -1,26 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Repository;
 using NetMed.Persistence.Context;
+using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Validators;
 using System.Linq.Expressions;
 
 namespace NetMed.Persistence.Base
 {
-    public class BaseRepository<TEntity, TType> : IBaseRepository<TEntity> where TEntity : class
+    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         private readonly NetMedContext _context;
-
         private readonly OperationValidator _operations;
-
-        private readonly ILogger<BaseRepository<TEntity, TType>> _logger;
+        private readonly ICustomLogger _logger;
         private readonly IConfiguration _configuration;
 
         private DbSet<TEntity> Entity { get; set; }
 
         public BaseRepository(NetMedContext context,
-                             ILogger<BaseRepository<TEntity, TType>> logger,
+                             ICustomLogger logger,
                              IConfiguration configuration)
         {
             _context = context;

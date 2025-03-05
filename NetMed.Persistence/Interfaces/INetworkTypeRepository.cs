@@ -6,7 +6,7 @@ namespace NetMed.Persistence.Interfaces
 {
     public interface INetworkTypeRepository : IBaseRepository<NetworkType>
     {
-        Task<OperationResult> DeleteNetworkTypeAsync(int id);
-        Task<OperationResult> GetNetworkTypesByProviderAsync(int providerId);
+        Task<OperationResult> RemoveNetworkTypeAsync(int id);
+        Task<OperationResult> GetNetworkTypeById(int networkTypeId);
     }
 }

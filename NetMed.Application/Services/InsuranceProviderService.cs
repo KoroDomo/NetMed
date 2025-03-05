@@ -5,8 +5,8 @@ using NetMed.Application.Contracts;
 using NetMed.Domain.Base;
 using NetMed.Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using NetMed.Model.Models;
 using NetMed.Persistence.Context;
+using NetMed.Persistence.Validators;
 
 namespace NetMed.Application.Services
 {
@@ -16,7 +16,7 @@ namespace NetMed.Application.Services
         private readonly IInsuranceProviderRepository _insuranceProviderRepository;
         private readonly ILogger<InsuranceProviderService> _logger;
         private readonly IConfiguration _configuration;
-        private readonly OperationValidator _operations;
+        private readonly InsuranceProviderValidator _operations;
         public InsuranceProviderService(NetMedContext context,
                                         IInsuranceProviderRepository repository, 
                                         ILogger<InsuranceProviderService> logger, IConfiguration configuration)
@@ -25,7 +25,7 @@ namespace NetMed.Application.Services
             _insuranceProviderRepository = repository;
             _logger = logger;
             _configuration = configuration;
-            _operations = new OperationValidator(_configuration);
+            _operations = new InsuranceProviderValidator(_configuration);
         }
 
         public async Task<OperationResult> GetAll()
@@ -45,6 +45,7 @@ namespace NetMed.Application.Services
 
         public async Task<OperationResult> GetById(int id)
         {
+            OperationResult operationR = new OperationResult();
             try
             {
                 var providers = await _context.InsuranceProviders
@@ -65,12 +66,14 @@ namespace NetMed.Application.Services
                         NetworkTypeID = ip.NetworkTypeID,
                         AcceptedRegions = ip.AcceptedRegions,
                         MaxCoverageAmount = ip.MaxCoverageAmount
-
                     }).ToListAsync();
 
-                if (providers == null || !providers.Any())
+                operationR = _operations.isNull(providers);
+
+                if (operationR.Success == false)
                 {
-                    return _operations.SuccessResult(null, "InsuranceProviderService.GetById");
+                    _logger.LogWarning($"No se encontró el insuranceProvider con el ID: {id} ");
+                    return operationR;
                 }
 
                 return _operations.SuccessResult(providers, "InsuranceProviderService.GetById");
