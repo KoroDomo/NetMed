@@ -73,17 +73,16 @@ namespace NetMed.Persistence.Repositories
             result.Success = true;
             return result;
         }
-        public static OperationResult PatientExists(int PatientID, Func<int, bool> searchFunction)
+        public static async Task<OperationResult> PatientExists(int PatientID, Func<int, Task<bool>>searchFunction)
         {
             var result = new OperationResult();
 
-            if (!searchFunction(PatientID))
+            if (!await searchFunction(PatientID))
             {
                 result.Success = false;
                 result.Message = "El paciente no existe en el sistema";
                 return result;
             }
-
             result.Success = true;
             return result;
         }
@@ -114,15 +113,14 @@ namespace NetMed.Persistence.Repositories
             result.Success = true;
             return result;
         }
-        public static OperationResult DoctorAvailability(int doctorId, DateTime appointmentDate, Func<int, DateTime, bool> availabilityFunction)
+        public static OperationResult Time(TimeOnly StartTime, TimeOnly EndTime) 
         {
             var result = new OperationResult();
 
-            if (!availabilityFunction(doctorId, appointmentDate))
+            if (StartTime >= EndTime)
             {
                 result.Success = false;
-                result.Message = "El médico no está disponible para esta fecha y hora";
-                return result;
+                result.Message = "La hora de inicio debe ser anterior a la hora de finalización.";
             }
             result.Success = true;
             return result;

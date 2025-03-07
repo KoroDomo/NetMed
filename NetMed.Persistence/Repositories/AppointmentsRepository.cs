@@ -28,26 +28,17 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = Validations.IsNullOrWhiteSpace(entity, nameof(entity));
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
 
                 result = Validations.AppointmentExists(entity.PatientID, entity.AppointmentDate, (patientId, appointmentDate) =>
                 {
                     return _context.Appointments.Any(a => a.PatientID == patientId && a.AppointmentDate == appointmentDate);
                 });
-
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
 
                 result = Validations.CheckDate(entity.AppointmentDate);
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 await base.SaveEntityAsync(entity);
                 result.Success = true;
                 result.Message = "Datos Guardados con exito"; 
@@ -67,10 +58,8 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = Validations.IsNullOrWhiteSpace(entity, nameof(entity));
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 await base.UpdateEntityAsync(entity);
                 result.Success = true;
                 result.Message = "Datos Actualizados con exito";
@@ -99,8 +88,7 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 _logger.LogError(result.Message, ex.ToString());
             }
-            return result;
-            
+            return result;          
         }
         public override async Task<OperationResult> GetAllAsync(Expression<Func<Appointments, bool>> filter)
         {
@@ -108,10 +96,8 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = Validations.IsNullOrWhiteSpace(filter, nameof(filter));
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 await base.GetAllAsync(filter);
                 result.Success = true;
                 result.Message = "Datos Obtenidos con exito";
@@ -124,7 +110,7 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-        public async override Task<bool> ExistsAsync(Expression<Func<Appointments, bool>> filter)
+        public async override Task<OperationResult> ExistsAsync(Expression<Func<Appointments, bool>> filter)
         {
             OperationResult result = new OperationResult();
             try
@@ -139,7 +125,7 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 _logger.LogError(result.Message, ex.ToString());
             }
-            return true;
+            return result; ;
         }
         public async override Task<OperationResult> GetEntityByIdAsync(int Id)
         {
@@ -147,25 +133,16 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = Validations.IsNullOrWhiteSpace(Id, nameof(Id));
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 result = Validations.IsInt(Id);
-                if (!result.Success)
-                {
-                    return result;
-                }
-             
+                if (!result.Success) return result;
+    
                 result = await Validations.ExistsEntity(Id,async (id) =>
                 {
                     return await _context.Appointments.AnyAsync(a => a.Id == id);
                 });
-
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
 
                 await base.GetEntityByIdAsync(Id);
                 result.Success = true;
@@ -186,40 +163,32 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = Validations.IsNullOrWhiteSpace(PatientID, nameof(PatientID));
-                if (!result.Success)
-                {
-                    return result;
-                }
-                result = Validations.IsNullOrWhiteSpace(DoctorID, nameof(DoctorID));
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 result = Validations.IsInt(PatientID);
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
+                result = Validations.IsNullOrWhiteSpace(DoctorID, nameof(DoctorID));
+                if (!result.Success) return result;
+
                 result = Validations.IsInt(DoctorID);
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 result = Validations.AppointmentExists(PatientID, AppointmentDate, (patientId, appointmentDate) =>
                 {
                     return _context.Appointments.Any(a => a.PatientID == patientId && a.AppointmentDate == appointmentDate);
                 });
-
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
 
                 result = Validations.CheckDate(AppointmentDate);
-                if (!result.Success)
+                if (!result.Success) return result;
+
+                result = await Validations.PatientExists(PatientID, async (id) =>
                 {
-                    return result;
-                }
+                    return await _context.Appointments.AnyAsync(p => p.Id == id);
+                });
+                if (!result.Success) return result;
+
                 var newAppointment = new Appointments 
                 {
                     PatientID = PatientID,
@@ -246,15 +215,11 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = Validations.IsNullOrWhiteSpace(PatientID, nameof(PatientID));
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 result = Validations.IsInt(PatientID);
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 var appointments = await _context.Appointments.Where(a => a.PatientID == PatientID).ToListAsync();
                 result.Success = true;
                 result.Message = "Cita encontrada con exito";
@@ -273,15 +238,11 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = Validations.IsNullOrWhiteSpace(DoctorID, nameof(DoctorID));
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+               
                 result = Validations.IsInt(DoctorID);
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 var appointments = await _context.Appointments.Where(a => a.DoctorID == DoctorID).ToListAsync();
                 result.Success = true;
                 result.Message = "Cita encontrada con exito";
@@ -300,15 +261,11 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = Validations.IsNullOrWhiteSpace(StatusID, nameof(StatusID));
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 result = Validations.IsInt(StatusID);
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 var appointments = await _context.Appointments.Where(a => a.StatusID == StatusID).ToListAsync();
 
                 return new OperationResult { Success = true, Data = appointments };
@@ -324,15 +281,16 @@ namespace NetMed.Persistence.Repositories
         public async Task<OperationResult> GetAppointmentsByDateAsync(DateTime AppointmentDate)
         {
             OperationResult result = new OperationResult();
-
             try
             {
                 result = Validations.IsNullOrWhiteSpace(AppointmentDate, nameof(AppointmentDate));
-                if (!result.Success)
-                {
-                    return result;
-                }
-                var appointments = await _context.Appointments.Where(a => a.AppointmentDate == AppointmentDate).ToListAsync();
+                if (!result.Success) return result;
+
+                result = Validations.CheckDate(AppointmentDate);
+                if (!result.Success) return result;
+
+               var appointments = await _context.Appointments.Where(a => a.AppointmentDate == AppointmentDate).ToListAsync();
+
                 result.Success = true;
                 result.Message = "Lista de todas las citas en esta fecha";
             }
@@ -350,18 +308,15 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = Validations.IsNullOrWhiteSpace(AppointmentID, nameof(AppointmentID));
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 result = Validations.IsInt(AppointmentID);
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 var appointments = await _context.Appointments.FindAsync(AppointmentID);
                 appointments.StatusID = 2;
                 await _context.SaveChangesAsync();
+
                 result.Success = true;
                 result.Message = "Cita cancelada con exito.";
             }
@@ -380,20 +335,14 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = Validations.IsNullOrWhiteSpace(DoctorID, nameof(DoctorID));
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 result = Validations.IsInt(DoctorID);
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 result = Validations.CheckDate(AppointmentDate);
-                if (!result.Success)
-                {
-                    return result;
-                }
+                if (!result.Success) return result;
+
                 var appointments = await _context.Appointments.Where(a => a.DoctorID == DoctorID && a.AppointmentDate == AppointmentDate).ToListAsync();
                 result.Success = true;
                 result.Message = "Cita encontrada exictosamente";

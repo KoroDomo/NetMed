@@ -17,9 +17,19 @@ namespace NetMed.Persistence.Base
             _context = context;
             Entity = _context.Set<TEntity>();
         }
-        public virtual async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> filter)
+        public virtual async Task<OperationResult> ExistsAsync(Expression<Func<TEntity, bool>> filter)
         {
-            return await Entity.AnyAsync(filter);
+            OperationResult result = new OperationResult();
+            try
+            {
+               await Entity.AnyAsync(filter);
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+                result.Message = "Ocurrio un error al obtener los datos";
+            }
+            return result;
         }
         public virtual async Task<OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter)
         {
