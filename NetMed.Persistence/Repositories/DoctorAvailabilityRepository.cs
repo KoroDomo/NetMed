@@ -140,6 +140,36 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
+
+        public async override Task<OperationResult> RemoveAsync(int Id)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                result = Validations.IsInt(Id);
+                if (!result.Success) return result;
+
+                result = Validations.IsNullOrWhiteSpace(Id, nameof(Id));
+                if (!result.Success) return result;
+
+                result = await Validations.ExistsEntity(Id, async (id) =>
+                {
+                    return await _context.DoctorAvailability.AnyAsync(a => a.Id == id);
+                });
+                if (!result.Success) return result;
+
+                await base.RemoveAsync(Id);
+                result.Success = true;
+                result.Message = "Datos desactivados con exito";
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["DoctorAvailabilityRepositoryError: RemoveAsync"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
         public async Task<OperationResult> SetAvailabilityAsync(int DoctorID, DateOnly AvailableDate, TimeOnly StartTime, TimeOnly EndTime)
         {
             OperationResult result = new OperationResult();

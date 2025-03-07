@@ -1,11 +1,11 @@
-﻿
-
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using NetMed.Application.Dtos.Appointments;
+using NetMed.Application.Dtos.DoctorAvailability;
 using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
+using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Repositories;
 
 namespace NetMed.Application.Services
 {
@@ -21,29 +21,115 @@ namespace NetMed.Application.Services
             _logger = logger;
             _configuration = configuration;
         }
-        public Task<OperationResult> GetAll()
+        public async Task<OperationResult> GetAll()
         {
-            throw new NotImplementedException();
-        }
+            OperationResult result = new OperationResult();
+            try
+            {
+                var doctorAvailability = await _doctorAvailabilityRepository.GetAllAsync();
 
-        public Task<OperationResult> GetById(int Id)
-        {
-            throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["DoctorAvailabilityServiceError: GetAll"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
-
-        public Task<OperationResult> Remove(RemoveAppointmentsDto TDto)
+        public async Task<OperationResult> GetById(int Id)
         {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult();
+            try
+            {
+                result = Validations.IsInt(Id);
+                if (!result.Success) return result;
+
+                result = Validations.IsNullOrWhiteSpace(Id, nameof(Id));
+                if (!result.Success) return result;
+
+                var doctorAvailability = await _doctorAvailabilityRepository.GetEntityByIdAsync(Id);
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["DoctorAvailabilityServiceError: GetById"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
-
-        public Task<OperationResult> Save(SaveAppointmentsDto TDto)
+        public async Task<OperationResult> Remove(int Id)
         {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult();
+            try
+            {
+                result = Validations.IsNullOrWhiteSpace(Id, nameof(Id));
+                if (!result.Success) return result;
+
+                result = Validations.IsInt(Id);
+                if (!result.Success) return result;
+
+                var doctorAvailability = await _doctorAvailabilityRepository.RemoveAsync(Id);
+                result.Success = true;
+                result.Message = "Datos desactivados con exito";
+            }
+            catch (Exception ex)
+            {
+
+                result.Message = _configuration["DoctorAvailabilityServiceError: Remove"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
-
-        public Task<OperationResult> Update(UpdateAppointmentsDto TDto)
+        public async Task<OperationResult> Save(SaveDoctorAvailabilityDto TDto)
         {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult();
+            try
+            {
+                var doctorAvailability = new DoctorAvailability
+                {
+                    DoctorID = TDto.DoctorID,                    
+                    AvailableDate = TDto.AvailableDate,
+                    StartTime = TDto.StartTime,
+                    EndTime = TDto.EndTime
+                };
+                await _doctorAvailabilityRepository.SaveEntityAsync(doctorAvailability);
+                result.Success = true;
+                result.Message = "Datos guardados cone exito";
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["DoctorAvailabilityServiceError: Save"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+        public async Task<OperationResult> Update(UpdateDoctorAvailabilityDto TDto)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                var doctorAvailability = new DoctorAvailability
+                {
+                    Id = TDto.AvailabilityID,
+                    DoctorID = TDto.DoctorID,
+                    AvailableDate = TDto.AvailableDate,
+                    StartTime = TDto.StartTime,
+                    EndTime = TDto.EndTime
+                };
+                await _doctorAvailabilityRepository.UpdateEntityAsync(doctorAvailability);
+                result.Success = true;
+                result.Message = "Datos actualizados cone exito";
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["DoctorAvailabilityServiceError: Save"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
     }
 }

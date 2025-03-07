@@ -108,5 +108,25 @@ namespace NetMed.Persistence.Base
             }
             return result;    
         }
+
+        public virtual async Task<OperationResult> RemoveAsync(int Id)
+        {
+            OperationResult result= new OperationResult();
+            try
+            {
+                var entity = await _context.Set<TEntity>().FindAsync(Id);
+                if (entity != null)
+                {
+                    _context.Set<TEntity>().Remove(entity);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+                result.Message = "Ocurrio un error al desactivar los datos";
+            }
+            return result;
+        }
     }
 }

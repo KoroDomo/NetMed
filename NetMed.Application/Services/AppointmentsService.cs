@@ -6,6 +6,7 @@ using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Repositories;
 
 namespace NetMed.Application.Services
 {
@@ -15,7 +16,7 @@ namespace NetMed.Application.Services
         private readonly ILogger<AppointmentsService> _logger;
         private readonly IConfiguration _configuration;
 
-        public AppointmentsService(IAppointmentsRespository appointmentsRespository,                     ILogger<AppointmentsService> logger, IConfiguration configuration)
+        public AppointmentsService(IAppointmentsRespository appointmentsRespository,  ILogger<AppointmentsService> logger, IConfiguration configuration)
         {
             _appointmentsRespository = appointmentsRespository;
             _logger = logger;
@@ -23,7 +24,7 @@ namespace NetMed.Application.Services
         }
         public async Task<OperationResult> GetAll()
         {
-            OperationResult operationResult = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
                 var appointments = await _appointmentsRespository.GetAllAsync();
@@ -31,41 +32,105 @@ namespace NetMed.Application.Services
             }
             catch (Exception ex )
             {
-                operationResult.Message = _configuration["AppointmentsServiceError: GetAll"];
-                operationResult.Success = false;
-                _logger.LogError(operationResult.Message, ex.ToString());
+                result.Message = _configuration["AppointmentsServiceError: GetAll"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
             }
-            return operationResult;
+            return result;
         }
-
         public async Task<OperationResult> GetById(int Id)
         {
-            OperationResult operationResult = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
+                result = Validations.IsInt(Id);
+                if (!result.Success) return result;
+
+                result = Validations.IsNullOrWhiteSpace(Id, nameof(Id));
+                if (!result.Success) return result;
+
                 var appointments = await _appointmentsRespository.GetEntityByIdAsync(Id);
             }
             catch (Exception ex)
             {
-                operationResult.Message = _configuration["AppointmentsServiceError: GetById"];
-                operationResult.Success = false;
-                _logger.LogError(operationResult.Message, ex.ToString());
+                result.Message = _configuration["AppointmentsServiceError: GetById"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
             }
-            return operationResult;
+            return result;
         }
-        public async Task<OperationResult> Remove(RemoveAppointmentsDto TDto)
+        public async Task<OperationResult> Remove(int Id)
         {
-            throw new NotImplementedException();
-        }
+            OperationResult result = new OperationResult();
+            try
+            {
+                result = Validations.IsNullOrWhiteSpace(Id, nameof(Id));
+                if (!result.Success) return result;
 
-        public Task<OperationResult> Save(SaveAppointmentsDto TDto)
-        {
-            throw new NotImplementedException();
-        }
+                result = Validations.IsInt(Id);
+                if (!result.Success) return result;
 
-        public Task<OperationResult> Update(UpdateAppointmentsDto TDto)
+                var appointments = await _appointmentsRespository.RemoveAsync(Id);
+                result.Success = true;
+                result.Message = "Datos desactivados con exito";
+            }
+            catch (Exception ex) 
+            {
+
+                result.Message = _configuration["AppointmentsServiceError: Remove"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;          
+        }
+        public async Task<OperationResult> Save(SaveAppointmentsDto TDto)
         {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult();
+            try
+            {
+                var appointments = new Appointments
+                {
+                    PatientID = TDto.PatientID,
+                    DoctorID = TDto.DoctorID,
+                    AppointmentDate = TDto.AppointmentDate,
+                    StatusID = TDto.StatusID
+                };
+                await _appointmentsRespository.SaveEntityAsync(appointments);
+                result.Success = true;
+                result.Message = "Datos guardados cone exito";
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["AppointmentsServiceError: Save"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+        public async Task<OperationResult> Update(UpdateAppointmentsDto TDto)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                var appointments = new Appointments
+                {
+                    Id = TDto.AppointmentID,
+                    PatientID = TDto.PatientID,
+                    DoctorID = TDto.DoctorID,
+                    AppointmentDate = TDto.AppointmentDate,
+                    StatusID = TDto.StatusID
+                };
+                await _appointmentsRespository.UpdateEntityAsync(appointments);
+                result.Success = true;
+                result.Message = "Datos actualizados cone exito";
+            }
+            catch (Exception ex)
+            {
+                result.Message = _configuration["AppointmentsServiceError: Save"];
+                result.Success = false;
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
     }
 }
