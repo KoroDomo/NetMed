@@ -4,42 +4,23 @@ using NetMed.Domain.Base;
 using NetMed.Domain.Repository;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Validators;
 using System.Linq.Expressions;
 
 namespace NetMed.Persistence.Base
 {
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
-        private readonly NetMedContext _context;
-        private readonly OperationValidator _operations;
-        private readonly ICustomLogger _logger;
-        private readonly IConfiguration _configuration;
+        protected readonly NetMedContext _context;
+        protected readonly ICustomLogger _logger;
+        protected readonly OperationValidator _operations;
+        protected DbSet<TEntity> Entity { get; }
 
-        private DbSet<TEntity> Entity { get; set; }
-
-        public BaseRepository(NetMedContext context,
-                             ICustomLogger logger,
-                             IConfiguration configuration)
+        public BaseRepository(NetMedContext context, ICustomLogger logger, IConfiguration configuration)
         {
             _context = context;
             _logger = logger;
-            _configuration = configuration;
             Entity = _context.Set<TEntity>();
-            _operations = new OperationValidator(_configuration);
-        }
-
-        public virtual async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> filter)
-        {
-            try
-            {
-                return await Entity.AnyAsync(filter);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error al verificar la existencia de la entidad con el filtro: {filter.ToString()}");
-                throw; 
-            }
+            _operations = new OperationValidator(configuration);
         }
 
         public virtual async Task<OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter)

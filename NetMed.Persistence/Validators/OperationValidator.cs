@@ -1,10 +1,21 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.SqlServer.Server;
 using NetMed.Domain.Base;
+using NetMed.Domain.Entities;
+using NetMed.Persistence.Context;
 using NetMed.Persistence.Validators;
+using System.Text.RegularExpressions;
 
 public class OperationValidator : BaseValidator
 {
-
+    private static readonly Regex EmailRegex = new Regex(
+        @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+        RegexOptions.Compiled
+    );
+    private static readonly Regex PhoneRegex = new Regex(
+        @"^\d{10}$", // 10 dígitos exactos
+        RegexOptions.Compiled
+    );
     public OperationValidator(IConfiguration configuration): base(configuration)
     {
     
@@ -22,6 +33,7 @@ public class OperationValidator : BaseValidator
 
             return result;
         }
+        result.Result = entity;
         result.Success = true;
         return result;
     }
@@ -95,4 +107,35 @@ public class OperationValidator : BaseValidator
         result.Success = true;
         return result;
     }
+
+    public OperationResult IsValidEmail(string email)
+    {
+        var result = new OperationResult();
+        if (EmailRegex.IsMatch(email) == false) 
+        {
+            result.Success = false;
+            result.Message = "El correo electronico no es valido";
+            return result;
+        }
+        result.Success = true;
+        return result;
+    }
+
+    public OperationResult IsValidPhoneNumber(string phoneNumber)
+    {
+        var result = new OperationResult();
+        if (PhoneRegex.IsMatch(phoneNumber) == false)
+        {
+            result.Success = false;
+            result.Message = "El numero de telefono no es valido";
+            return result;
+        }
+        result.Success = true;
+        return result;
+        
+    }
+
+
+    
+
 }

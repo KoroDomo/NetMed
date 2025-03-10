@@ -15,7 +15,7 @@ namespace NetMed.Persistence.Validators
 
         public OperationResult SuccessResult(dynamic result, string configKey = null)
         {
-            var successMessage = _configuration[$"Messages:Success:{configKey}"];
+            string successMessage = _configuration[$"Messages:Success:{configKey}"];
 
             return new OperationResult
             {
@@ -27,12 +27,13 @@ namespace NetMed.Persistence.Validators
 
         public OperationResult HandleException(Exception ex, string configKey)
         {
-            var errorMessage = _configuration[$"Messages:Error:{configKey}"];
+            string errorMessage = _configuration[$"Messages:Error:{configKey}"];
 
             return new OperationResult
             {
+                Result = null,
                 Success = false,
-                Message = $"{errorMessage}: {ex.Message}"
+                Message = $"{errorMessage}"
             };
         }
     }

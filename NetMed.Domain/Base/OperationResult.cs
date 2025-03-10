@@ -5,7 +5,7 @@ namespace NetMed.Domain.Base
     {
         public OperationResult() 
         { 
-            this.Success = true;
+            Success = false;
         }
         public string Message { get; set; }
         public bool Success {get; set;}
