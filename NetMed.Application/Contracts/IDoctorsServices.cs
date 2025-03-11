@@ -8,7 +8,6 @@ namespace NetMed.Application.Contracts
 {
     public interface IDoctorsServices : IBaseService<AddDoctorsDto, UpdateDoctorsDto, DeleteDoctorDto>
     {
-    
     }
 
 }

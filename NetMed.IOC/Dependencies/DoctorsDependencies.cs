@@ -12,7 +12,7 @@ namespace NetMed.IOC.Dependencies
     {
         public static void AddDoctorsDependencies(IServiceCollection services)
         {
-            services.AddScoped<IDoctorsServices, DoctorsService>();
+            services.AddScoped<IDoctorsServices, DoctorsServices>();
             services.AddScoped<IDoctorsRepository, DoctorsRepository>();
         }
     }

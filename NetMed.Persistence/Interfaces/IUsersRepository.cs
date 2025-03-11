@@ -22,5 +22,6 @@ namespace NetMed.Persistence.Interfaces
 
         Task<OperationResult> GetAddressAsync(string address);
       
+        Task<OperationResult> GetPasswordAsync(string password);
     }
 }

@@ -9,15 +9,16 @@ using NetMed.Persistence.Interfaces;
 
 namespace NetMed.Application.Services
 {
-   public class UsersService : IUsersServices
+   public class UsersServices : IUsersServices
     {
         private readonly IUsersRepository _usersRepository;
-        public UsersService(IUsersRepository usersRepository,
-            ILogger<UsersService> logger,
+        public UsersServices(IUsersRepository usersRepository,
+            ILogger<UsersServices> logger,
             IConfiguration configuration)
         {
             this._usersRepository = usersRepository;
         }
+
 
         public async Task<OperationResult> Add(AddUserDto dto)
         {

@@ -10,7 +10,7 @@ namespace NetMed.IOC.Dependencies
     {
         public static void AddUsersDependencies(this IServiceCollection services)
         {
-            services.AddScoped<IUsersServices, UsersService>();
+            services.AddScoped<IUsersServices, UsersServices>();
             services.AddScoped<IUsersRepository, UsersRepository>();
         }
     }

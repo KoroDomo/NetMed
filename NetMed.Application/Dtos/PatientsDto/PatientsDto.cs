@@ -20,7 +20,14 @@ namespace NetMed.Application.Dtos.PatientsDto
         public string? Allergies { get; set; }
       
         public int InsuranceProviderID { get; set; }
-        
+
+        public string? PhoneNumber { get; set; }
+
+        public string? Address { get; set; }
+
+
+
+
 
 
     }

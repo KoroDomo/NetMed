@@ -12,11 +12,11 @@ using NetMed.Persistence.Repositories;
 
 namespace NetMed.Application.Services
 {
-    public class DoctorsService : IDoctorsServices
+    public class DoctorsServices : IDoctorsServices
     {
         private readonly IDoctorsRepository _doctorsRepository;
-        public DoctorsService(IDoctorsRepository doctorsRepository,
-            ILogger<DoctorsService> logger,
+        public DoctorsServices(IDoctorsRepository doctorsRepository,
+            ILogger<DoctorsServices> logger,
             IConfiguration configuration)
         {
 

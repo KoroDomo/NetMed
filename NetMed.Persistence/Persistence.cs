@@ -12,7 +12,12 @@ namespace NetMed.Persistence
                 result.Success = false;
             }
 
-            ifNull(result);
+            else
+            {
+                result.Message = "Datos encontrados";
+                result.Success = true;
+            }
+           
         }
 
  

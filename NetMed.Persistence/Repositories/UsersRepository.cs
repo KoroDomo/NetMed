@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using Microsoft.Extensions.Configuration;
 
 namespace NetMed.Persistence.Repositories
 {
@@ -15,13 +16,18 @@ namespace NetMed.Persistence.Repositories
     {
         private readonly NetMedContext _context;
         private readonly ILogger<UsersRepository> _logger;
+        private readonly IConfiguration _configuration;
+
+
         public UsersRepository(NetMedContext context,
-         ILogger<UsersRepository> logger) : base(context)
+         ILogger<UsersRepository> logger, IConfiguration configuration) : base(context)
         {
             _context = context;
             _logger = logger;
+            _configuration = configuration;
         }
 
+ 
         public async Task<OperationResult> GetEmailAsync(string email)
         {
             OperationResult result = new OperationResult();
@@ -182,27 +188,30 @@ namespace NetMed.Persistence.Repositories
             return result;
         }
 
-        public async Task<OperationResult> GetUserPassword(string password)
+        public async Task<OperationResult> GetPasswordAsync(string password)
         {
             OperationResult result = new OperationResult();
             try
             {
-                if (result.data == null)
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Password == password);
+                if (user == null)
                 {
                     result.Message = "No se encontraron datos";
                     result.Success = false;
                 }
-                result.data = await _context.Users.Where(x => x.Password == password).FirstOrDefaultAsync();
-                result.Success = true;
+                else
+                {
+                    result.data = user;
+                    result.Success = true;
+                }
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + " Ocurrio un error al buscar los datos";
             }
             return result;
         }
-
         public override async Task<OperationResult> GetAllAsync(Expression<Func<Users, bool>> filter)
         {
             OperationResult result = new OperationResult();

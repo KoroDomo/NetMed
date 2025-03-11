@@ -1,6 +1,7 @@
 ﻿
 using NetMed.Persistence.Base;
 using NetMed.Domain.Entities;
+
 using NetMed.Persistence.Context;
 using NetMed.Domain.Base;
 using Microsoft.EntityFrameworkCore;
@@ -30,15 +31,7 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result.data = await _context.Doctors.Where(x => x.AvailabilityModeId == availabilityModeId).ToListAsync();
-                if (result.data == null)
-                {
-                    result.Message = "No";
-                    result.Success = false;
-                }
-                else
-                {
-                    result.Success = true;
-                }
+             
             }
             catch (Exception ex)
             {
@@ -296,7 +289,7 @@ namespace NetMed.Persistence.Repositories
             return result;
 
         }
-
+     
 
     }
 }

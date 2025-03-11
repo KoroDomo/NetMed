@@ -32,5 +32,7 @@ namespace NetMed.Domain.Entities
         public required string ClinicAddress { get; set; }
         [Required]
         public DateOnly LicenseExpirationDate { get; set; }
+
+        public int AvailabilityModeId { get; set; }
     }
 }
