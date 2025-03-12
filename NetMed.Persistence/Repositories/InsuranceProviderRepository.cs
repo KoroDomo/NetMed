@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Model.Models;
@@ -17,13 +16,14 @@ namespace NetMed.Persistence.Repositories
         private readonly ICustomLogger _logger;
         private readonly InsuranceProviderValidator _operations;
 
+
         public InsuranceProviderRepository(NetMedContext context, 
-                                           ICustomLogger logger, 
-                                           IConfiguration configuration): base(context, logger, configuration)
+                                           ICustomLogger logger,
+                                           MessageMapper messageMapper) : base(context, logger, messageMapper)
         {
             _context = context;
             _logger = logger;
-            _operations = new InsuranceProviderValidator(configuration);
+            _operations = new InsuranceProviderValidator(messageMapper);
         }
 
         public async override Task<OperationResult> SaveEntityAsync(InsuranceProviders provider)
@@ -48,69 +48,76 @@ namespace NetMed.Persistence.Repositories
                 _context.InsuranceProviders.Add(provider);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation("Se ha guardado el Provider: " + provider.ToString());
+                _logger.LogInformation(_operations.GetSuccesMessage("Operations", "SaveSuccess"));
 
-                return _operations.SuccessResult(provider, "InsuranceProviderRepository.SaveEntityAsync");
+                return _operations.SuccessResult(provider, "Insurances", "SaveSuccess");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error al guardar el Provider: {provider.ToString}: {operationR.Message}");
+                _logger.LogError(ex, _operations.GetErrorMessage("Operations", "SaveFailed"));
 
-                return _operations.HandleException(ex, "InsuranceProviderRepository.SaveEntityAsync");
+                return _operations.HandleException("Operations", "SaveFailed");
             }
         }
 
         public async Task<OperationResult> RemoveInsuranceProviderAsync(int id)
         {
-            InsuranceProviders provider;
             try
             {
-                var entity = await GetInsurenProviderById(id);
-                provider = entity.Result;
+                var provider = await _context.InsuranceProviders.FindAsync(id);
+
+                if (provider == null)
+                {
+                    _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
+                    return _operations.HandleException("Entitys", "NotFound");
+                }
 
                 provider.IsActive = false;
 
-                await UpdateEntityAsync(provider);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("Provider eliminado exitosamente: " + provider.ToString());
-                return _operations.SuccessResult(null, "InsuranceProviderRepository.RemoveInsuranceProviderAsync.");
+
+                _logger.LogInformation(_operations.GetSuccesMessage("Insurances", "RemoveInsurenProvider"));
+
+                return _operations.SuccessResult(provider, "Insurances", "RemoveInsurenProvider");
+                
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error al eliminar el Provider con el ID: {id}");
-                return _operations.HandleException(ex, "InsuranceProviderRepository.RemoveInsuranceProviderAsync.");
+                _logger.LogError(ex, _operations.GetErrorMessage("Insurances", "RemoveInsurenProvider"));
+
+                return _operations.HandleException("Insurances", "RemoveInsurenProvider");
             }
         }
 
         public async override Task<OperationResult> UpdateEntityAsync(InsuranceProviders provider)
         {
-            OperationResult operationR;
             try
             {
-                operationR = _operations.ValidateNameExists(provider, _context);
-                if (!operationR.Success)
+                var result = _operations.ValidateInsuranceProvider(provider); 
+                if (!result.Success)
                 {
-                    _logger.LogWarning(operationR.Message);
-                    return operationR;
+                    _logger.LogWarning(result.Message);
+                    return result;
                 }
 
-                operationR = _operations.ValidateInsuranceProvider(provider);
-                if (!operationR.Success)
+                var Provider = await _context.InsuranceProviders.FindAsync(provider.Id);
+                if (Provider == null)
                 {
-                    _logger.LogWarning(operationR.Message);
-                    return operationR;
+                    _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
+                    return _operations.HandleException("Entitys", "NotFound");
                 }
 
-                _context.InsuranceProviders.Update(provider);
+                _context.Entry(Provider).CurrentValues.SetValues(provider);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation("Se ha actualizado el Provider: " + provider.ToString());
-                return _operations.SuccessResult(provider, "InsuranceProviderRepository.UpdateEntityAsync");
+                _logger.LogInformation(_operations.GetSuccesMessage("Operations", "SaveSuccess"));
+                return _operations.SuccessResult(provider, "Operations", "SaveSuccess");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error al actualizar el Provider {provider.ToString}: : {ex.Message}.");
-                return _operations.HandleException(ex, "InsuranceProviderRepository.UpdateEntityAsync");
+
+                _logger.LogError(ex, _operations.GetErrorMessage("Operations", "SaveFailed"));
+                return _operations.HandleException("Operations", "SaveFailed");
             }
         }
 
@@ -120,7 +127,7 @@ namespace NetMed.Persistence.Repositories
             {
                 var providers = await _context.InsuranceProviders
                     .Where(ip => ip.Id == InsuranceId)
-                    .Select(ip => new InsuranceProviderModel()
+                    .Select(ip => new NetworktypeModel()
                     {
                         Id = ip.Id,
                         Name = ip.Name,
@@ -140,20 +147,22 @@ namespace NetMed.Persistence.Repositories
 
                     }).ToListAsync();
 
+                
                 if (!providers.Any())
                 {
-                    _logger.LogWarning($"No se encontró el insuranceProvider con el ID: {InsuranceId}.");
-                    return _operations.HandleException(null, "InsuranceProviderRepository.GetInsurenProviderById");
+                    _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
+                    return _operations.HandleException("Entitys", "NotFound");
                 }
 
-                return _operations.SuccessResult(providers, "InsuranceProviderRepository.GetInsurenProviderById");
-                
+                return _operations.SuccessResult(providers, "Insurances", "GetInsurenProvider");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error al obtener el insuranceProvider con el ID: {InsuranceId}: {ex.Message}");
+                _logger.LogError(ex, _operations.GetErrorMessage("Insurances", "GetInsurenProvider"));
 
-                return _operations.HandleException(ex, "InsuranceProviderRepository.GetInsurenProviderById");
+                return _operations.HandleException("Insurances", "GetInsurenProvider");
+
+
             }
         }
 
@@ -163,7 +172,7 @@ namespace NetMed.Persistence.Repositories
             {
                 var providers = await _context.InsuranceProviders
                     .OrderByDescending(ip => ip.CreatedAt)
-                    .Select(ip => new InsuranceProviderModel()
+                    .Select(ip => new NetworktypeModel()
                     {
                         Id = ip.Id,
                         Name = ip.Name,
@@ -179,23 +188,24 @@ namespace NetMed.Persistence.Repositories
                         IsPreferred = ip.IsPreferred,
                         NetworkTypeID = ip.NetworkTypeID,
                         AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount
+                        MaxCoverageAmount = ip.MaxCoverageAmount,
+                        IsActive = ip.IsActive
 
                     }).ToListAsync();
 
                 if (!providers.Any())
                 {
-                    _logger.LogWarning("No hay Proveedores.");
-                    return _operations.HandleException(null, "InsuranceProviderRepository.GetAllAsync");
-                }
+                    _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
+                    return _operations.HandleException("Entitys", "NotFound");
 
-                return _operations.SuccessResult(providers, "InsuranceProviderRepository.GetAllAsync");
+                }
+                return _operations.SuccessResult(providers, "Insurances", "GetInsurenProvider");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error al obtener todos los Providers : {ex.Message}.");
+                _logger.LogError(ex, _operations.GetErrorMessage("Insurances", "GetInsurenProvider"));
 
-                return _operations.HandleException(ex, "InsuranceProviderRepository.GetAllAsync" );
+                return _operations.HandleException("Insurances", "GetInsurenProvider");
             }
         }
 
@@ -206,7 +216,7 @@ namespace NetMed.Persistence.Repositories
                 var providers = await _context.InsuranceProviders
                     .Where(filter)
                     .OrderByDescending(ip => ip.CreatedAt)
-                    .Select(ip => new InsuranceProviderModel()
+                    .Select(ip => new NetworktypeModel()
                     {
                         Id = ip.Id,
                         Name = ip.Name,
@@ -225,20 +235,19 @@ namespace NetMed.Persistence.Repositories
                         MaxCoverageAmount = ip.MaxCoverageAmount
 
                     }).ToListAsync();
-
                 if (!providers.Any())
                 {
-                    _logger.LogWarning("No hay insuranceProviders que cumplan el filtro.");
-                    return _operations.HandleException(null, "InsuranceProviderRepository.GetAllAsync");
+                    _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
+                    return _operations.HandleException("Entitys", "NotFound");
                 }
 
-                return _operations.SuccessResult(providers, "InsuranceProviderRepository.GetAllAsync");
+                return _operations.SuccessResult(providers, "Insurances", "GetInsurenProvider");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error al obtener todos los Providers.");
+                _logger.LogError(ex, _operations.GetErrorMessage("Insurances", "GetInsurenProvider"));
 
-                return _operations.HandleException(ex, "InsuranceProviderRepository.GetAllAsync");
+                return _operations.HandleException("Insurances", "GetInsurenProvider");
             }
         }
 
@@ -248,7 +257,7 @@ namespace NetMed.Persistence.Repositories
             {
                 var providers = await _context.InsuranceProviders
                     .Where(ip => ip.IsPreferred)
-                    .Select(ip => new InsuranceProviderModel()
+                    .Select(ip => new NetworktypeModel()
                     {
                         Id = ip.Id,
                         Name = ip.Name,
@@ -269,16 +278,17 @@ namespace NetMed.Persistence.Repositories
 
                 if (!providers.Any())
                 {
-                    _logger.LogWarning($"No se encontraron insuranceProviders con preferencia.");
-                    return _operations.HandleException(null, "InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync"); ;
+                    _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
+                    return _operations.HandleException("Entitys", "NotFound");
                 }
 
-                return _operations.SuccessResult(providers,"InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync");
+                return _operations.SuccessResult(providers, "Insurances", "GetPreferredInsuranceProviders");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error al obtener insuranceProvider con preferencia");
-                return _operations.HandleException(ex, "InsuranceProviderRepository.GetPreferredInsuranceProvidersAsync");
+                _logger.LogError(ex, _operations.GetErrorMessage("Entitys", "NotFound"));
+
+                return _operations.HandleException("Entitys", "NotFound");
             }
         }
 
@@ -289,7 +299,7 @@ namespace NetMed.Persistence.Repositories
             {
                 var providers = await _context.InsuranceProviders
                     .Where(ip => ip.IsActive)
-                    .Select(ip => new InsuranceProviderModel()
+                    .Select(ip => new NetworktypeModel()
                     {
                         Id = ip.Id,
                         Name = ip.Name,
@@ -310,16 +320,16 @@ namespace NetMed.Persistence.Repositories
 
                 if (!providers.Any())
                 {
-                    _logger.LogWarning($"No se encontraron insuranceProviders activos.");
-                    return _operations.HandleException(null, "InsuranceProviderRepository.GetActiveInsuranceProvidersAsync"); ;
+                    _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
+                    return _operations.HandleException("Entitys", "NotFound");
                 }
 
-                return _operations.SuccessResult(providers,"InsuranceProviderRepository.GetActiveInsuranceProvidersAsync");
+                return _operations.SuccessResult(providers, "Insurances", "GetPreferredInsuranceProviders");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error al obtener insuranceProvider.");
-                return _operations.HandleException(ex, "InsuranceProviderRepository.GetActiveInsuranceProvidersAsync");
+                _logger.LogError(ex, _operations.GetErrorMessage("Entitys", "NotFound"));
+                return _operations.HandleException("Entitys", "NotFound");
             }
         }
     }

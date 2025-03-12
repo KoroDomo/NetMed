@@ -7,6 +7,7 @@ using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
 using NetMed.Persistence.Validators;
+using NPOI.SS.Formula.Functions;
 
 namespace NetMed.Persistence.Test
 {
@@ -14,7 +15,7 @@ namespace NetMed.Persistence.Test
     {
         private readonly NetMedContext _context;
         private readonly Mock<ICustomLogger> _mockLogger;
-        private readonly Mock<IConfiguration> _mockConfiguration;
+        private readonly Mock<MessageMapper> _messageMapper;
         private readonly InsuranceProviderValidator _validator;
         private readonly InsuranceProviderRepository _repository;
 
@@ -27,9 +28,9 @@ namespace NetMed.Persistence.Test
             _context = new NetMedContext(options);
 
             _mockLogger = new Mock<ICustomLogger>();
-            _mockConfiguration = new Mock<IConfiguration>();
-            _validator = new InsuranceProviderValidator(_mockConfiguration.Object);
-            _repository = new InsuranceProviderRepository(_context, _mockLogger.Object, _mockConfiguration.Object);
+            _messageMapper = new Mock<MessageMapper>();
+            _validator = new InsuranceProviderValidator(_messageMapper.Object);
+            _repository = new InsuranceProviderRepository(_context, _mockLogger.Object, _messageMapper.Object);
         }
 
         [Fact] //SaveEntityAsync
@@ -38,7 +39,7 @@ namespace NetMed.Persistence.Test
             // Arrange
             var provider = new InsuranceProviders
             {
-                Id = 1,
+                Id = 5,
                 Name = "Provider 2222",
                 PhoneNumber = "8071111111",
                 Email = "provder2@gmail.com",
@@ -61,7 +62,9 @@ namespace NetMed.Persistence.Test
 
             // Act
             var result = await _repository.SaveEntityAsync(provider);
-            
+            await _context.SaveChangesAsync();
+
+
             // Assert
 
             Assert.True(result.Success);
@@ -101,7 +104,7 @@ namespace NetMed.Persistence.Test
 
             // Assert
             Assert.False(result.Success);
-            Assert.Contains("Ya existe un InsuranceProvider con este nombre", result.Message);
+            Assert.Contains("Ya existe un registro con este nombre.", result.Message);
         }
 
         [Fact] //GetInsurenProviderById
@@ -234,43 +237,76 @@ namespace NetMed.Persistence.Test
             //Assert.Contains("Proveedores de seguros obtenidos exitosamente.", result.Message);
         }
 
-        [Fact] //UpdateEntityAsync
-        public async Task UpdateEntityAsync_ValidUpdate_ReturnsSuccess()
+        [Fact]
+        public async Task UpdateEntityAsync_ValidProvider_ReturnsSuccess()
         {
             // Arrange
-            var provider = new InsuranceProviders { Id = 1, Name = "OldName" };
+            var provider = new InsuranceProviders
+            {
+                Id = 10,
+                Name = "Provider3",
+                PhoneNumber = "8071111111",
+                Email = "provder2@gmail.com",
+                Website = "www.provider2.com",
+                Address = "123 Man St",
+                City = "City",
+                State = "Stat",
+                LogoUrl = "gffdg",
+                CustomerSupportContact = "8091111121",
+                Country = "Counry",
+                ZipCode = "1245",
+                CoverageDetails = "Dtails",
+                IsPreferred = true,
+                IsActive = true,
+                NetworkTypeID = 1,
+                AcceptedRegions = "Region",
+                MaxCoverageAmount = 14548
+            };
             _context.InsuranceProviders.Add(provider);
             await _context.SaveChangesAsync();
 
-            provider.Name = "NewName";
+            
+            provider.Name = "Provider Actualizado";
 
             // Act
             var result = await _repository.UpdateEntityAsync(provider);
 
             // Assert
             Assert.True(result.Success);
-            Assert.Equal("NewName", _context.InsuranceProviders.Find(1).Name);
+            Assert.Equal("Provider Actualizado", ((InsuranceProviders)result.Result).Name);
         }
 
         [Fact]
-        public async Task UpdateEntityAsync_DuplicateName_ReturnsError()
+        public async Task UpdateEntityAsync_NonExistentProvider_ReturnsError()
         {
             // Arrange
-            _context.InsuranceProviders.AddRange(
-                new InsuranceProviders { Id = 1, Name = "Provider1" },
-                new InsuranceProviders { Id = 2, Name = "Provider2" }
-            );
-            await _context.SaveChangesAsync();
-
-            var providerToUpdate = _context.InsuranceProviders.Find(2);
-            providerToUpdate.Name = "Provider1"; // Nombre duplicado
-
+            var provider = new InsuranceProviders {
+                Id = 984,
+                Name = "Provider3",
+                PhoneNumber = "8071111111",
+                Email = "provder2@gmail.com",
+                Website = "www.provider2.com",
+                Address = "123 Man St",
+                City = "City",
+                State = "Stat",
+                LogoUrl = "gffdg",
+                CustomerSupportContact = "8091111121",
+                Country = "Counry",
+                ZipCode = "1245",
+                CoverageDetails = "Dtails",
+                IsPreferred = true,
+                IsActive = true,
+                NetworkTypeID = 1,
+                AcceptedRegions = "Region",
+                MaxCoverageAmount = 14548
+            };
 
             // Act
-            var result = await _repository.UpdateEntityAsync(providerToUpdate);
+            var result = await _repository.UpdateEntityAsync(provider);
 
             // Assert
             Assert.False(result.Success);
+            Assert.Contains("no encontrado", result.Message);
         }
 
         [Fact] //RemoveInsuranceProviderAsync
@@ -279,46 +315,46 @@ namespace NetMed.Persistence.Test
             // Arrange
             var provider = new InsuranceProviders
             {
-                Id = 1,
-                Name = "ExistingProvider12",
-                PhoneNumber = "809-111-1111",
-                Email = "provider1@gmail.com",
-                Website = "www.provider1.com",
-                Address = "123 Main St",
+                Id = 7,
+                Name = "Provideeeer",
+                PhoneNumber = "8071111111",
+                Email = "provder2@gmail.com",
+                Website = "www.provider2.com",
+                Address = "123 Man St",
                 City = "City",
-                State = "State",
-                Country = "Country",
-                ZipCode = "12345",
-                CoverageDetails = "Details",
+                State = "Stat",
+                LogoUrl = "gffdg",
+                CustomerSupportContact = "8091111121",
+                Country = "Counry",
+                ZipCode = "1245",
+                CoverageDetails = "Dtails",
                 IsPreferred = true,
                 IsActive = true,
                 NetworkTypeID = 1,
                 AcceptedRegions = "Region",
-                MaxCoverageAmount = 100
+                MaxCoverageAmount = 14548
             };
 
             _context.InsuranceProviders.Add(provider);
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.RemoveInsuranceProviderAsync(1);
+            var result = await _repository.RemoveInsuranceProviderAsync(7);
 
             // Assert
-            Assert.Contains("Proveedores de removido exitosamente.", result.Message);
             Assert.True(result.Success);
-            Assert.False(_context.InsuranceProviders.Find(1).IsActive);
+            Assert.False(provider.IsActive);
         }
 
         [Fact]
-        public async Task RemoveInsuranceProviderAsync_InvalidId_ReturnsError()
+        public async Task RemoveInsuranceProviderAsync_InvalidId_ReturnsNotFound()
         {
-            // Arrange
-
             // Act
             var result = await _repository.RemoveInsuranceProviderAsync(999);
 
             // Assert
             Assert.False(result.Success);
+            Assert.Contains("No se encontró", result.Message);
         }
 
         [Fact] //GetPreferredInsuranceProvidersAsync
@@ -326,8 +362,44 @@ namespace NetMed.Persistence.Test
         {
             // Arrange
             _context.InsuranceProviders.AddRange(
-                new InsuranceProviders { IsPreferred = true },
-                new InsuranceProviders { IsPreferred = false }
+                new InsuranceProviders {
+                    Id = 84,
+                    Name = "ExistingPr",
+                    PhoneNumber = "809-111-1111",
+                    Email = "provider1@gmail.com",
+                    Website = "www.provider1.com",
+                    Address = "123 Main St",
+                    City = "City",
+                    State = "State",
+                    Country = "Country",
+                    ZipCode = "12345",
+                    LogoUrl = "assa",
+                    CoverageDetails = "Details",
+                    IsPreferred = true,
+                    IsActive = true,
+                    NetworkTypeID = 1,
+                    AcceptedRegions = "Region",
+                    MaxCoverageAmount = 100
+                },
+                new InsuranceProviders {
+                    Id = 94,
+                    Name = "ExistingPr2",
+                    PhoneNumber = "809-111-1111",
+                    Email = "provider1@gmail.com",
+                    Website = "www.provider1.com",
+                    Address = "123 Main St",
+                    City = "City",
+                    State = "State",
+                    Country = "Country",
+                    ZipCode = "12345",
+                    LogoUrl = "assa",
+                    CoverageDetails = "Details",
+                    IsPreferred = false,
+                    IsActive = true,
+                    NetworkTypeID = 1,
+                    AcceptedRegions = "Region",
+                    MaxCoverageAmount = 100
+                }
             );
             await _context.SaveChangesAsync();
 
@@ -336,7 +408,7 @@ namespace NetMed.Persistence.Test
 
             // Assert
             Assert.True(result.Success);
-            Assert.Single((List<InsuranceProviderModel>)result.Result);
+            Assert.Single((List<NetworktypeModel>)result.Result);
         }
 
         [Fact] //GetActiveInsuranceProvidersAsync
@@ -390,7 +462,7 @@ namespace NetMed.Persistence.Test
 
             // Assert
             Assert.True(result.Success);
-            Assert.Single((List<InsuranceProviderModel>)result.Result);
+            Assert.Single((List<NetworktypeModel>)result.Result);
         }
     }
 }

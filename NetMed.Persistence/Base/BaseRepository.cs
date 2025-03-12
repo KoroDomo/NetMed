@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using NetMed.Domain.Base;
 using NetMed.Domain.Repository;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Validators;
 using System.Linq.Expressions;
 
 namespace NetMed.Persistence.Base
@@ -15,12 +15,12 @@ namespace NetMed.Persistence.Base
         protected readonly OperationValidator _operations;
         protected DbSet<TEntity> Entity { get; }
 
-        public BaseRepository(NetMedContext context, ICustomLogger logger, IConfiguration configuration)
+        public BaseRepository(NetMedContext context, ICustomLogger logger, MessageMapper messageMapper)
         {
             _context = context;
             _logger = logger;
             Entity = _context.Set<TEntity>();
-            _operations = new OperationValidator(configuration);
+            _operations = new OperationValidator(messageMapper);
         }
 
         public virtual async Task<OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter)
@@ -28,11 +28,11 @@ namespace NetMed.Persistence.Base
             try
             {
                 var datos = await Entity.Where(filter).ToListAsync();
-                return _operations.SuccessResult(datos, "BaseRepository.GetAllAsync");
+                return _operations.SuccessResult(datos, "Operations", "GetSuccess");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "BaseRepository.GetAllAsync");
+                return _operations.HandleException("Operations", "GetFailed");
             }
         }
 
@@ -41,11 +41,11 @@ namespace NetMed.Persistence.Base
             try
             {
                 var datos = await Entity.ToListAsync();
-                return _operations.SuccessResult(datos, "BaseRepository.GetAllAsync");
+                return _operations.SuccessResult(datos, "Operations", "GetSuccess");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "BaseRepository.GetAllAsync");
+                return _operations.HandleException("Operations", "GetFailed");
             }
         }
 
@@ -56,14 +56,14 @@ namespace NetMed.Persistence.Base
                 var entity = await Entity.FindAsync(id);
                 if (entity == null)
                 {
-                    return _operations.SuccessResult(null, "BaseRepository.GetEntityByIdAsync");
+                    return _operations.HandleException("Operations", "GetFailed");
                 }
 
-                return _operations.SuccessResult(entity, "BaseRepository.GetEntityByIdAsync");
+                return _operations.SuccessResult(entity, "Operations", "GetFailed");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "BaseRepository.GetEntityByIdAsync");
+                return _operations.HandleException("Operations", "GetFailed");
             }
         }
 
@@ -74,17 +74,17 @@ namespace NetMed.Persistence.Base
 
                 if (entity == null)
                 {
-                    return _operations.SuccessResult(null, "La entidad no puede ser nula.");
+                    return _operations.HandleException("Operations", "SaveFailed");
                 }
 
                 Entity.Add(entity);
                 await _context.SaveChangesAsync();
 
-                return _operations.SuccessResult(entity, "BaseRepository.SaveEntityAsync");
+                return _operations.SuccessResult(entity, "Operations", "SaveSuccess");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "BaseRepository.SaveEntityAsync");
+                return _operations.HandleException("Operations", "SaveFailed");
             }
         }
 
@@ -94,17 +94,17 @@ namespace NetMed.Persistence.Base
             {
                 if (entity == null)
                 {
-                    return _operations.SuccessResult(null, "La entidad no puede ser nula.");
+                    return _operations.HandleException("Operations", "UpdateFailed");
                 }
 
                 Entity.Update(entity); 
                 await _context.SaveChangesAsync();
 
-                return _operations.SuccessResult(entity, "BaseRepository.UpdateEntityAsync");
+                return _operations.SuccessResult(entity, "Operations", "UpdateSuccess");
             }
             catch (Exception ex)
             {
-                return _operations.HandleException(ex, "BaseRepository.UpdateEntityAsync" );
+                return _operations.HandleException("Operations", "UpdateFailed");
             }
         }
 

@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NetMed.IOC\NetMed.IOC.csproj" />
+  </ItemGroup>
+
 </Project>

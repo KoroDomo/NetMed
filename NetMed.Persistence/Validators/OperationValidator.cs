@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.SqlServer.Server;
 using NetMed.Domain.Base;
-using NetMed.Domain.Entities;
-using NetMed.Persistence.Context;
+using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Validators;
 using System.Text.RegularExpressions;
 
@@ -16,7 +14,7 @@ public class OperationValidator : BaseValidator
         @"^\d{10}$", // 10 dígitos exactos
         RegexOptions.Compiled
     );
-    public OperationValidator(IConfiguration configuration): base(configuration)
+    public OperationValidator(MessageMapper messageMapper) : base(messageMapper)
     {
     
     }
@@ -30,6 +28,23 @@ public class OperationValidator : BaseValidator
 
             result.Success = false;
             result.Message = $"{entity.ToString} es nulo.";
+
+            return result;
+        }
+        result.Result = entity;
+        result.Success = true;
+        return result;
+    }
+    public OperationResult isNull<TEntity>(TEntity entity, ICustomLogger customLogger)
+    {
+        var result = new OperationResult();
+
+        if (entity is null)
+        {
+
+            result.Success = false;
+            result.Message = $"{entity.ToString} es nulo.";
+            customLogger.LogWarning("No se encontraron registros.");
 
             return result;
         }

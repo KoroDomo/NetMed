@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using NetMed.Domain.Base;
+﻿using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Context;
 
@@ -9,9 +8,9 @@ namespace NetMed.Persistence.Validators
     {
         private readonly OperationValidator _operationValidator;
 
-        public InsuranceProviderValidator(IConfiguration configuration) : base(configuration)
+        public InsuranceProviderValidator(MessageMapper messageMapper) : base(messageMapper)
         {
-            _operationValidator = new OperationValidator(configuration);
+            _operationValidator = new OperationValidator(messageMapper);
         }
 
         public OperationResult ValidateInsuranceProvider(InsuranceProviders insuranceProvider)

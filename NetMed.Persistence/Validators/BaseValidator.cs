@@ -1,40 +1,46 @@
-﻿
-using Microsoft.Extensions.Configuration;
-using NetMed.Domain.Base;
+﻿using NetMed.Domain.Base;
 
 namespace NetMed.Persistence.Validators
 {
     public class BaseValidator
     {
-        private readonly IConfiguration _configuration;
+        private readonly MessageMapper _messageMapper;
 
-        public BaseValidator(IConfiguration configuration)
+        public BaseValidator(MessageMapper messageMapper)
         {
-            _configuration = configuration;
+            _messageMapper = messageMapper;
         }
 
-        public OperationResult SuccessResult(dynamic result, string configKey = null)
+        public OperationResult SuccessResult(dynamic result, string className, string methodName )
         {
-            string successMessage = _configuration[$"Messages:Success:{configKey}"];
-
             return new OperationResult
             {
                 Success = true,
-                Result = result,
-                Message = successMessage
+                Message = GetSuccesMessage(className, methodName),
+                Result = result
             };
         }
 
-        public OperationResult HandleException(Exception ex, string configKey)
+        public OperationResult HandleException(string className, string methodName)
         {
-            string errorMessage = _configuration[$"Messages:Error:{configKey}"];
-
             return new OperationResult
             {
-                Result = null,
                 Success = false,
-                Message = $"{errorMessage}"
+                Message = GetErrorMessage(className, methodName)
             };
         }
+
+        public string GetErrorMessage(string className, string methodName)
+        {
+            return _messageMapper.ErrorMessages[className][methodName];
+        }
+
+        public string GetSuccesMessage(string className, string methodName)
+        {
+            return _messageMapper.SuccessMessages[className][methodName];
+
+        }
+
+        
     }
 }

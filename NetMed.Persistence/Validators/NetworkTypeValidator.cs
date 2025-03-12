@@ -1,8 +1,4 @@
-﻿
-using Azure;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using NetMed.Domain.Base;
+﻿using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Context;
 
@@ -11,9 +7,9 @@ namespace NetMed.Persistence.Validators
     public class NetworkTypeValidator : OperationValidator
     {
         private OperationValidator _operationValidator;
-        public NetworkTypeValidator(IConfiguration configuration) : base(configuration)
+        public NetworkTypeValidator(MessageMapper messageMapper) : base(messageMapper)
         {
-            _operationValidator = new OperationValidator(configuration);
+            _operationValidator = new OperationValidator(messageMapper);
         }
 
         public OperationResult ValidateNetworkType(NetworkType networkType)

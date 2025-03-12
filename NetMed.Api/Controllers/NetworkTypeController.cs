@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NetMed.Application.Contracts;
+using NetMed.Application.Dtos.InsuranceProvider;
+using NetMed.Application.Services;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
 
@@ -8,17 +11,17 @@ namespace NetMed.Api.Controllers
     [ApiController]
     public class NetworkTypeController : ControllerBase
     {
-        public INetworkTypeRepository _NetworkTypeRepository;
+        public INetworkTypeService _networkTypeService;
 
-        public NetworkTypeController(INetworkTypeRepository networkTypeRepository,
-                                           ILogger<NetworkTypeController> logger)
+        public NetworkTypeController(INetworkTypeService networkTypeRepository,
+                                           ICustomLogger logger)
         {
-            _NetworkTypeRepository = networkTypeRepository;
+            _networkTypeService = networkTypeRepository;
         }
         [HttpGet("GetNetworkTypeRepositorys")]
         public async Task<IActionResult> Get()
         {
-            var networkTypeRepositorys = await _NetworkTypeRepository.GetAllAsync();
+            var networkTypeRepositorys = await _networkTypeService.GetAll();
 
             return Ok(networkTypeRepositorys);
         }
@@ -26,27 +29,34 @@ namespace NetMed.Api.Controllers
         [HttpGet("GetNetworkTypeRepositoryBy{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var networkTypeRepositorys = await _NetworkTypeRepository.GetEntityByIdAsync(id);
+            var networkTypeRepositorys = await _networkTypeService.GetById(id);
 
             return Ok(networkTypeRepositorys);
         }
 
 
         [HttpPost("SaveNetworkTypeRepository")]
-        public async Task<IActionResult> Post([FromBody] NetworkType networks)
+        public async Task<IActionResult> Post([FromBody] SaveNetworkTypeDto networks)
         {
-            var networkTypeRepositorys = await _NetworkTypeRepository.SaveEntityAsync(networks);
+            var networkTypeRepositorys = await _networkTypeService.Save(networks);
 
             return Ok(networkTypeRepositorys);
         }
 
 
-        [HttpPost("UpdateNetworkTypeRepository")]
-        public async Task<IActionResult> Put([FromBody] NetworkType networks)
+        [HttpPut("UpdateNetworkTypeRepository")]
+        public async Task<IActionResult> Put([FromBody] UpdateNetworkTypeDto networks)
         {
-            var networkTypeRepositorys = await _NetworkTypeRepository.UpdateEntityAsync(networks);
+            var networkTypeRepositorys = await _networkTypeService.Update(networks);
 
             return Ok(networkTypeRepositorys);
+        }
+        [HttpDelete("RemoveInsuranceProvider")]
+        public async Task<IActionResult> Remove([FromBody] RemoveNetworkTypeDto insuranceProvider)
+        {
+            var insurenceProviders = await _networkTypeService.Remove(insuranceProvider);
+
+            return Ok(insurenceProviders);
         }
     }
 }

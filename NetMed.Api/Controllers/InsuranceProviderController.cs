@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NetMed.Domain.Entities;
+using NetMed.Application.Contracts;
+using NetMed.Application.Dtos.InsuranceProvider;
 using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Validators;
 
 namespace NetMed.Api.Controllers
 {
@@ -9,18 +9,18 @@ namespace NetMed.Api.Controllers
     [ApiController]
     public class InsuranceProviderController : ControllerBase
     {
-        public IInsuranceProviderRepository _insuranceProviderService;
+        public IInsuranceProviderService _insuranceProviderService;
 
-        public InsuranceProviderController(IInsuranceProviderRepository insuranceProviderRepository,
+        public InsuranceProviderController(IInsuranceProviderService insuranceProviderService,
                                            ICustomLogger logger) 
         {
-            _insuranceProviderService = insuranceProviderRepository;
+            _insuranceProviderService = insuranceProviderService;
         }
         
         [HttpGet("GetInsuranceProviders")]
         public async Task<IActionResult> Get()
         {
-            var insurenceProviders = await _insuranceProviderService.GetAllAsync();
+            var insurenceProviders = await _insuranceProviderService.GetAll();
 
             return Ok(insurenceProviders);
         }
@@ -28,29 +28,36 @@ namespace NetMed.Api.Controllers
         [HttpGet("GetInsuranceProviderBy{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var insurenceProviders = await _insuranceProviderService.GetEntityByIdAsync(id);
+            var insurenceProviders = await _insuranceProviderService.GetById(id);
 
             return Ok(insurenceProviders);
         }
 
 
         [HttpPost("SaveInsuranceProvider")]
-        public async Task<IActionResult> Post([FromBody] InsuranceProviders insuranceProvider)
+        public async Task<IActionResult> Post([FromBody] SaveInsuranceProviderDto insuranceProvider)
         {
-            var insurenceProviders = await _insuranceProviderService.SaveEntityAsync(insuranceProvider);
+            var insurenceProviders = await _insuranceProviderService.Save(insuranceProvider);
 
             return Ok(insurenceProviders);
         }
 
 
-        [HttpPost("UpdateInsuranceProvider")]
-        public async Task<IActionResult> Put([FromBody] InsuranceProviders insuranceProvider)
+        [HttpPut("UpdateInsuranceProvider")]
+        public async Task<IActionResult> Put([FromBody] UpdateInsuranceProviderDto insuranceProvider)
         {
-            var insurenceProviders = await _insuranceProviderService.UpdateEntityAsync(insuranceProvider);
+            var insurenceProviders = await _insuranceProviderService.Update(insuranceProvider);
 
             return Ok(insurenceProviders);
         }
 
-        
+        [HttpDelete("RemoveInsuranceProvider")]
+        public async Task<IActionResult> Remove([FromBody] RemoveInsuranceProviderDto insuranceProvider)
+        {
+            var insurenceProviders = await _insuranceProviderService.Remove(insuranceProvider);
+
+            return Ok(insurenceProviders);
+        }
+
     }
 }

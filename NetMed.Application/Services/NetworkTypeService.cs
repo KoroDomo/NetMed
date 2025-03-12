@@ -5,6 +5,7 @@ using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.InsuranceProvider;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Model.Models;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
@@ -15,99 +16,101 @@ namespace NetMed.Application.Services
 
     public class NetworktypeService : INetworkTypeService
     {
-        private readonly NetMedContext _context;
         private readonly INetworkTypeRepository _networkTypeRepository;
         private readonly ICustomLogger _logger;
-        private readonly IConfiguration _configuration;
         private readonly NetworkTypeValidator _operations;
         public NetworktypeService(NetMedContext context,
                                   INetworkTypeRepository repository,
-                                  ICustomLogger logger, IConfiguration configuration)
+                                  ICustomLogger logger, MessageMapper messageMapper)
         {
-            _context = context;
             _networkTypeRepository = repository;
             _logger = logger;
-            _configuration = configuration;
-            _operations = new NetworkTypeValidator(_configuration);
+            _operations = new NetworkTypeValidator(messageMapper);
         }
         public async Task<OperationResult> GetAll()
         {
-            OperationResult operationR = new OperationResult();
             try
             {
 
-                var networks = await _context.NetworkType
-                    .Select(n => new NetworkTypeDto()
+                var repositoryResult = await _networkTypeRepository.GetAllAsync();
+                if (!repositoryResult.Success) return repositoryResult;
+
+                var dtos = ((List<NetworkTypeModel>)repositoryResult.Result)
+                    .Select(n => new NetworkTypeDto
                     {
                         Name = n.Name,
                         Description = n.Description,
                         ChangeDate = n.UpdatedAt
-                        
-                    }).ToListAsync();
+                    })
+                    .ToList();
 
-                operationR = _operations.isNull(networks);
-
-                if (operationR.Success == false)
-                {
-                    _logger.LogWarning($"No se encontraron los networks.");
-                    return operationR;
-                }
-
-                return _operations.SuccessResult(networks, "NetworktypeService.GetAll");
+                return _operations.SuccessResult(dtos, "Operations", "GetSuccess");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error al obtener el Providers.");
+                _logger.LogError(ex, _operations.GetErrorMessage("Operations", "GetFailed"));
 
-                return _operations.HandleException(ex, "NetworktypeService.GetAll");
+                return _operations.HandleException("Operations", "GetFailed");
             }
         }
 
         public async Task<OperationResult> GetById(int id)
         {
-            OperationResult operationR = new OperationResult();
             try
             {
 
-                var networks = await _context.NetworkType
-                    .Where(ip => ip.Id == id)
-                    .OrderByDescending(ip => ip.CreatedAt)
-                    .Select(n => new NetworkTypeDto()
+                var repositoryResult = await _networkTypeRepository.GetEntityByIdAsync(id);
+                if (!repositoryResult.Success) return repositoryResult;
+
+                if (repositoryResult.Result is not List<NetworktypeModel> providers)
+                {
+                    return _operations.HandleException("Operations", "GetFailed");
+                }
+
+                var dtos = ((List<NetworkTypeModel>)repositoryResult.Result)
+                    .Select(n => new NetworkTypeDto
                     {
                         Name = n.Name,
                         Description = n.Description,
                         ChangeDate = n.UpdatedAt
+                    })
+                    .ToList();
 
-                    }).ToListAsync();
-
-                operationR = _operations.isNull(networks);
-
-                if (operationR.Success == false)
-                {
-                    _logger.LogWarning($"No se encontró el network con el ID: {id}");
-                    return operationR;
-                }
-
-                return _operations.SuccessResult(networks, "NetworktypeService.GetById");
+                return _operations.SuccessResult(dtos, "Operations", "GetSuccess");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error al obtener el Providers.");
+                _logger.LogError(ex, _operations.GetErrorMessage("Operations", "GetFailed"));
 
-                return _operations.HandleException(ex, "NetworktypeService.GetById");
+                return _operations.HandleException("Operations", "GetFailed");
             }
         }
-        public async Task<OperationResult> Remove(int id)
+        public async Task<OperationResult> Remove(RemoveNetworkTypeDto dto)
         {
             try
             {
-                var networks = await _networkTypeRepository.RemoveNetworkTypeAsync(id);
-                return _operations.SuccessResult(networks, "NetworktypeService:Remove");
+                var validationResult = _operations.isNull(dto);
+                if (!validationResult.Success)
+                {
+                    _logger.LogWarning(validationResult.Message);
+                    return validationResult;
+                }
+
+                var operationResult = await _networkTypeRepository.RemoveNetworkTypeAsync(dto.NetworkTypeId);
+
+                if (operationResult.Success)
+                {
+                    dto.Removed = true;
+                    dto.ChangeUserID = dto.NetworkTypeId;
+                    return _operations.SuccessResult(dto, "Operations", "GetSuccess");
+                }
+
+                return operationResult;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error en el servicio al remover el Network.");
-                return _operations.HandleException(ex, "NetworktypeService:Remove");
+                _logger.LogError(ex, _operations.GetErrorMessage("Insurances", "RemoveInsurenProvider"));
+                return _operations.HandleException("Insurances", "RemoveInsurenProvider");
             }
         }
 
@@ -123,12 +126,12 @@ namespace NetMed.Application.Services
                 };
 
                 var networks = await _networkTypeRepository.SaveEntityAsync(network);
-                return _operations.SuccessResult(networks, "NetworktypeService:Save");
+                return _operations.SuccessResult(dto, "Operations", "SaveSuccess");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error en el servicio al guardar el Network.");
-                return _operations.HandleException(ex, "NetworktypeService:Save");
+                _logger.LogError(ex, _operations.GetErrorMessage("Operations", "SaveFailed"));
+                return _operations.HandleException("Operations", "SaveFailed");
             }
         }
 
@@ -144,12 +147,12 @@ namespace NetMed.Application.Services
                 };
 
                 var networks = await _networkTypeRepository.UpdateEntityAsync(network);
-                return _operations.SuccessResult(networks, "NetworktypeService:Update");
+                return _operations.SuccessResult(dto, "Operations", "GetSuccess");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error en el servicio al guardar el Network.");
-                return _operations.HandleException(ex, "NetworktypeService:Update");
+                _logger.LogError(ex, _operations.GetErrorMessage("Operations", "SaveFailed"));
+                return _operations.HandleException("Operations", "SaveFailed");
             }
         }
     }
