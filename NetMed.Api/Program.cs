@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using NetMed.IOC.Dependencies;
+using NetMed.Domain.Base;
+using NetMed.Infraestructure.Loggin.Base;
+using NetMed.Infrastructure.Loggin.NetMed.Application.Interfaces;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Context.Interfaces;
 using NetMed.Persistence.Repositories;
@@ -18,9 +19,13 @@ builder.Services.AddScoped<IRolesRepository, RolesRepository>();
 
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 
-builder.Services.AddNotificationDependency();
-builder.Services.AddRolesDependency();
-builder.Services.AddStatusDependency();
+//builder.Services.AddNotificationDependency();
+//builder.Services.AddRolesDependency();
+//builder.Services.AddStatusDependency();
+
+builder.Services.AddSingleton<ILoggerCustom, LoggerCustom>();
+
+builder.Services.AddSingleton<JsonMessage>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

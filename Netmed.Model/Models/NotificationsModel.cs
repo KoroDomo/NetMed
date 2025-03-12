@@ -1,6 +1,6 @@
 ﻿
 
-namespace Netmed.Model.Models
+namespace NetMed.Model.Models
 {
     public class NotificationsModel
     {

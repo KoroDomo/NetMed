@@ -1,4 +1,4 @@
-﻿namespace NetMed.Infraestructure
+﻿namespace NetMed.Infrastructure
 {
     public class Infra
     {

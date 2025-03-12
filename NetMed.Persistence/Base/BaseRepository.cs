@@ -1,12 +1,10 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Repository;
 using NetMed.Persistence.Context;
 using System.Linq.Expressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NetMed.Persistence.Base
 {
@@ -14,16 +12,16 @@ namespace NetMed.Persistence.Base
     {
         private readonly NetmedContext _context;
         private readonly ILogger<BaseRepository<TEntity>> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly JsonMessage _messageMapper;
 
         private DbSet<TEntity> Entity { get; set; }
 
-        protected BaseRepository(NetmedContext context, ILogger<BaseRepository<TEntity>> logger, IConfiguration configuration)
+        protected BaseRepository(NetmedContext context, ILogger<BaseRepository<TEntity>> logger, JsonMessage messageMapper)
         {
             _context = context;
             _logger = logger;
-            _configuration = configuration;
             Entity = _context.Set<TEntity>();
+            _messageMapper = messageMapper;
         }
 
         public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> filter)
@@ -34,7 +32,7 @@ namespace NetMed.Persistence.Base
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                _logger.LogError(ex, _messageMapper.ErrorMessages["DatabaseError"], ex.Message);
                 throw; 
             }
         }
@@ -47,7 +45,7 @@ namespace NetMed.Persistence.Base
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                _logger.LogError(ex, _messageMapper.ErrorMessages["DatabaseError"], ex.Message);
                 throw; 
             }
         }
@@ -59,18 +57,16 @@ namespace NetMed.Persistence.Base
             try
             {
                 var datos = await Entity.Where(filter).ToListAsync();
-                result.Data = datos;
-                result.Success = true;
-                result.Message = _configuration["ErrorMessages:EntityRetrieved"];
+            
+                _logger.LogInformation(_messageMapper.SuccessMessages["GetAllEntity"]);
+                return new OperationResult { Success = true, Message = _messageMapper.SuccessMessages["GetAllEntity"], Data = datos };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
-                result.Success = false;
-                result.Message = _configuration["ErrorMessages:GeneralError"];
+                _logger.LogError(ex, _messageMapper.ErrorMessages["DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Message = _messageMapper.ErrorMessages["GeneralError"], Data = result };
             }
 
-            return result;
         }
 
         public virtual async Task<TEntity> GetEntityByIdAsync(int id)
@@ -81,16 +77,17 @@ namespace NetMed.Persistence.Base
 
                 if (entity == null)
                 {
-                    _logger.LogWarning(_configuration["ErrorMessages:EntityNotFound"], "id", id);
-                    throw new KeyNotFoundException(_configuration["ErrorMessages:EntityNotFound"]);
+                    _logger.LogWarning(_messageMapper.ErrorMessages["EntityNotFound"], "id", id);
+                    throw new KeyNotFoundException(_messageMapper.ErrorMessages["EntityNotFound"]);
                 }
 
-                _logger.LogInformation(_configuration["ErrorMessages:EntityRetrieved"], "id", id);
+                _logger.LogInformation(_messageMapper.SuccessMessages["EntityRetrieved"], "id", id);
                 return entity;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
+                _logger.LogError(ex, _messageMapper.ErrorMessages["DatabaseError"], ex.Message);
+
                 throw; 
             }
         }
@@ -104,18 +101,16 @@ namespace NetMed.Persistence.Base
                 await Entity.AddAsync(entity);
                 await _context.SaveChangesAsync();
 
-                result.Success = true;
-                result.Message = "Entidad creada con éxito";
-                result.Data = entity;
+               _logger.LogInformation(_messageMapper.SuccessMessages["EntityCreated"]);
+                return new OperationResult { Success = true, Message = _messageMapper.SuccessMessages["EntityCreated"], Data = entity };
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = "Error al procesar la solicitud";
-                result.Data = entity;
+                _logger.LogError(ex, _messageMapper.ErrorMessages["DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Message = _messageMapper.ErrorMessages["GeneralError"], Data = result };
             }
 
-            return result;
+
         }
 
         public virtual async Task<OperationResult> UpdateEntityAsync(TEntity entity)
@@ -127,17 +122,18 @@ namespace NetMed.Persistence.Base
                 Entity.Update(entity);
                 await _context.SaveChangesAsync();
 
-                result.Success = true;
-                result.Message = "Actualizacion exitosa";
+            
+                _logger.LogInformation(_messageMapper.SuccessMessages["EntityUpdated"]);
+                return new OperationResult { Success = true, Message = _messageMapper.SuccessMessages["EntityUpdated"], Data = entity };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
-                result.Success = false;
-                result.Message = _configuration["ErrorMessages:GeneralError"];
+
+
+                _logger.LogError(ex, _messageMapper.ErrorMessages["DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Message = _messageMapper.ErrorMessages["GeneralError"], Data = result };
             }
 
-            return result;
         }
 
         public virtual async Task<OperationResult> DeleteEntityAsync(TEntity entity)
@@ -149,18 +145,16 @@ namespace NetMed.Persistence.Base
                 Entity.Remove(entity);
                 await _context.SaveChangesAsync();
 
-                result.Success = true;
-                result.Message = _configuration["ErrorMessages:EntityDeleted"];
-                _logger.LogInformation(_configuration["ErrorMessages:EntityDeleted"], "entity", entity);
+
+               return new OperationResult { Success = true, Message = _messageMapper.SuccessMessages["EntityDeleted"], Data = entity };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _configuration["ErrorMessages:DatabaseError"], ex.Message);
-                result.Success = false;
-                result.Message = _configuration["ErrorMessages:GeneralError"];
+
+                _logger.LogError(ex, _messageMapper.ErrorMessages["DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Message = _messageMapper.ErrorMessages["GeneralError"], Data = result };
             }
 
-            return result;
         }
     }
 }

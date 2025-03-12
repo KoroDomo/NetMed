@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
@@ -16,34 +15,36 @@ namespace NetMed.Persistence.Repositories
         private readonly NetmedContext _context;
         private readonly ILogger<RolesRepository> _logger;
         private readonly IConfiguration _configuration;
+        private readonly JsonMessage _jsonMessage;
 
         public RolesRepository(NetmedContext context,
                                ILogger<RolesRepository> logger,
-                               IConfiguration configuration) : base(context, logger, configuration)
+                               JsonMessage jsonMessage) : base(context, logger, jsonMessage)
         {
             _context = context;
             _logger = logger;
-            _configuration = configuration;
+            _jsonMessage = jsonMessage;
         }
 
         public override Task<List<Roles>> GetAllAsync()
         {
+            _logger.LogInformation(_jsonMessage.SuccessMessages["GetAllEntity"]);
             return base.GetAllAsync();
         }
 
-      
-
         public override Task<OperationResult> GetAllAsync(Expression<Func<Roles, bool>> filter)
         {
+            _logger.LogInformation(_jsonMessage.SuccessMessages["GetAllEntity"]);
             return base.GetAllAsync(filter);
         }
 
         public async Task<OperationResult> GetRoleByIdAsync(int roleId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(roleId, "El ID proporcionado no es válido");
+            var validationResult = EntityValidator.ValidatePositiveNumber(roleId, _jsonMessage.ErrorMessages["InvalidId"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogError(validationResult.Message);
                 return validationResult;
             }
 
@@ -51,27 +52,31 @@ namespace NetMed.Persistence.Repositories
             {
                 var role = await _context.Roles.FindAsync(roleId);
 
-                var notNullRole = EntityValidator.ValidateNotNull(role, "No se encontró el rol");
+                var notNullRole = EntityValidator.ValidateNotNull(role, _jsonMessage.ErrorMessages["RoleNotFound"]);
 
                 if (!notNullRole.Success)
                 {
+                    _logger.LogWarning(notNullRole.Message);
                     return notNullRole;
                 }
 
-                return new OperationResult { Success = true, Message = "Rol obtenido con éxito ", Data = role };
+                _logger.LogInformation(_jsonMessage.SuccessMessages["RoleFound"]);
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["RoleFound"], Data = role };
             }
             catch (Exception ex)
             {
-                return new OperationResult { Success = false, Message = "Error al procesar la solicitud" };
+                _logger.LogError(ex, _jsonMessage.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["DatabaseError"] };
             }
         }
 
         public async Task<OperationResult> CreateRoleAsync(Roles roles)
         {
-            var validationResult = EntityValidator.ValidateNotNull(roles, "La entidad 'Roles' no puede ser nula");
+            var validationResult = EntityValidator.ValidateNotNull(roles, _jsonMessage.ErrorMessages["NullEntity"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogError(validationResult.Message);
                 return validationResult;
             }
 
@@ -80,21 +85,23 @@ namespace NetMed.Persistence.Repositories
                 await _context.Roles.AddAsync(roles);
                 await _context.SaveChangesAsync();
 
-                return new OperationResult { Success = true, Message = "Rol creado con éxito", Data = roles };
+                _logger.LogInformation(_jsonMessage.SuccessMessages["EntityCreated"]);
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["EntityCreated"], Data = roles };
             }
             catch (Exception ex)
             {
-                return new OperationResult
-                { Success = false, Message = "Error al procesar la solicitud" };
+                _logger.LogError(ex, _jsonMessage.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["DatabaseError"] };
             }
         }
 
         public async Task<OperationResult> UpdateRoleAsync(Roles roles)
         {
-            var validationResult = EntityValidator.ValidateNotNull(roles, "La entidad no puede ser nula");
+            var validationResult = EntityValidator.ValidateNotNull(roles, _jsonMessage.ErrorMessages["NullEntity"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogError(validationResult.Message);
                 return validationResult;
             }
 
@@ -103,20 +110,23 @@ namespace NetMed.Persistence.Repositories
                 _context.Roles.Update(roles);
                 await _context.SaveChangesAsync();
 
-                return new OperationResult { Success = true, Message = "Rol actualizado con éxito " , Data = roles};
+                _logger.LogInformation(_jsonMessage.SuccessMessages["EntityUpdated"]);
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["EntityUpdated"], Data = roles };
             }
             catch (Exception ex)
             {
-                return new OperationResult { Success = false, Message = "Error al procesar la solicitud" };
+                _logger.LogError(ex, _jsonMessage.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["DatabaseError"] };
             }
         }
 
         public async Task<OperationResult> DeleteRoleAsync(int rolesId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(rolesId, "El ID proporcionado no es válido");
+            var validationResult = EntityValidator.ValidatePositiveNumber(rolesId, _jsonMessage.ErrorMessages["InvalidId"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogError(validationResult.Message);
                 return validationResult;
             }
 
@@ -124,23 +134,25 @@ namespace NetMed.Persistence.Repositories
             {
                 var role = await _context.Roles.FindAsync(rolesId);
 
-                var notNullRole = EntityValidator.ValidateNotNull(role, "No se encontró el rol");
+                var notNullRole = EntityValidator.ValidateNotNull(role, _jsonMessage.ErrorMessages["RoleNotFound"]);
 
                 if (!notNullRole.Success)
                 {
+                    _logger.LogWarning(notNullRole.Message);
                     return notNullRole;
                 }
 
                 _context.Roles.Remove(role);
                 await _context.SaveChangesAsync();
 
-                return new OperationResult { Success = true, Message = "Rol eliminado con éxito" , Data = role};
+                _logger.LogInformation(_jsonMessage.SuccessMessages["EntityDeleted"]);
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["EntityDeleted"], Data = role };
             }
             catch (Exception ex)
             {
-                return new OperationResult { Success = false, Message = "Error al procesar la solicitud" };
+                _logger.LogError(ex, _jsonMessage.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["DatabaseError"] };
             }
         }
     }
 }
-  

@@ -1,5 +1,4 @@
 ﻿
-
 using NetMed.Application.Base;
 using NetMed.Application.Dtos.Notification;
 

@@ -1,12 +1,13 @@
 ﻿
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.Roles;
 using NetMed.Domain.Base;
+using NetMed.Domain.Entities;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Context.Interfaces;
+using NetMed.Persistence.Interfaces;
 
 namespace NetMed.Application.Services
 {
@@ -15,43 +16,133 @@ namespace NetMed.Application.Services
         private readonly NetmedContext _context;
         private readonly IRolesRepository _rolesRepository;
         private readonly ILogger<RolesServices> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly JsonMessage _jsonMessageMapper;
+
 
         public RolesServices(NetmedContext context,IRolesRepository rolesRepository,
                              ILogger<RolesServices> logger,
-                             IConfiguration configuration) 
+                             JsonMessage jsonMessageMapper) 
         {
           _context = context;
           _rolesRepository = rolesRepository;
           _logger = logger;
-          _configuration = configuration;
+          _jsonMessageMapper = jsonMessageMapper;
 
         }
 
 
-        public Task<OperationResult> DeleteDto(DeleteRolesDto dtoDelete)
+        
+
+        public async Task<OperationResult> DeleteDto(int dtoDelete)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var rolDeleted = await _rolesRepository.DeleteRoleAsync(dtoDelete);
+                _logger.LogInformation(_jsonMessageMapper.SuccessMessages["RoleDeleted"], nameof(Roles), dtoDelete);
+                return new OperationResult { Success = true, Message = _jsonMessageMapper.SuccessMessages["RoleDeleted"], Data = dtoDelete };
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError(ex, _jsonMessageMapper.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessageMapper.ErrorMessages["DatabaseError"] };
+            }
         }
 
-        public Task<List<OperationResult>> GetAllDto()
+        public async Task<OperationResult> GetAllDto()
         {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var rol= await _rolesRepository.GetAllAsync();
+                _logger.LogInformation(_jsonMessageMapper.SuccessMessages["GetAllEntity"], nameof(Roles), rol);
+                return new OperationResult { Success = true, Message = _jsonMessageMapper.SuccessMessages["GetAllEntity"], Data = rol };
+            }
+
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, _jsonMessageMapper.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessageMapper.ErrorMessages["DatabaseError"] };
+            }
+
         }
 
-        public Task<OperationResult> GetDtoById(int id)
+        public async Task<OperationResult> GetDtoById(int id)
         {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                result = EntityValidator.ValidatePositiveNumber(id,_jsonMessageMapper.ErrorMessages["InvalidId"]);
+
+                if (!result.Success)
+                {
+                    _logger.LogError(result.Message);
+                    return result;
+                }
+
+                _logger.LogInformation(_jsonMessageMapper.SuccessMessages["RoleFound"], nameof(Roles), id);
+                return new OperationResult { Success = true, Message = _jsonMessageMapper.SuccessMessages["RoleFound"]};
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, _jsonMessageMapper.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessageMapper.ErrorMessages["DatabaseError"] };
+
+            }
+
         }
 
-        public Task<OperationResult> SaveDto(SaveRolesDto dtoSave)
+        public async Task<OperationResult> SaveDto(SaveRolesDto dtoSave)
         {
-            throw new NotImplementedException();
+
+            OperationResult result = new OperationResult();
+            try
+            {
+                var rol = new Roles
+                {
+                    RoleName  = dtoSave.RoleName,
+                    
+                };
+
+                var roles= await _rolesRepository.SaveEntityAsync(rol);
+                _logger.LogInformation(_jsonMessageMapper.SuccessMessages["RoleCreated"], nameof(Roles), roles);
+                return new OperationResult { Success = true, Message = _jsonMessageMapper.SuccessMessages["RoleCreated"] };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, _jsonMessageMapper.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessageMapper.ErrorMessages["DatabaseError"] };
+            }
+
         }
 
-        public Task<OperationResult> UpdateDto(UpdateRolesDto dtoUpdate)
+        public async Task<OperationResult> UpdateDto(UpdateRolesDto dtoUpdate)
         {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult();
+            try
+            {
+                var roles = new Roles
+                {
+                    Id = dtoUpdate.RolesId,
+                    RoleName = dtoUpdate.RoleName,
+                    
+                };
+
+                var rol = await _rolesRepository.UpdateRoleAsync(roles);
+                _logger.LogInformation(_jsonMessageMapper.SuccessMessages["RoleUpdated"], nameof(Roles), roles);
+                return new OperationResult { Success = true, Message = _jsonMessageMapper.SuccessMessages["RoleUpdated"], Data = roles};
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, _jsonMessageMapper.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessageMapper.ErrorMessages["DatabaseError"] };
+            }
         }
+
+       
     }
 }

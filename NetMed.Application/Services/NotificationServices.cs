@@ -2,9 +2,11 @@
 using Microsoft.Extensions.Logging;
 using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.Notification;
-using NetMed.Persistence.Context.Interfaces;
 using NetMed.Domain.Base;
+using NetMed.Domain.Entities;
 using NetMed.Persistence.Context;
+using NetMed.Persistence.Context.Interfaces;
+using NetMed.Persistence.Interfaces;
 
 
 namespace NetMed.Application.Services
@@ -15,42 +17,129 @@ namespace NetMed.Application.Services
         private readonly NetmedContext _context;
         private readonly INotificationRepository _notificationRepository;
         private readonly ILogger<NotificationServices> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly JsonMessage _jsonMessageMapper;
 
         public  NotificationServices(NetmedContext context,INotificationRepository notificationRepository,
                                                            ILogger<NotificationServices> logger,
-                                                           IConfiguration configuration)
+                                                           JsonMessage jsonMessageMapper)
         {
             _context = context;
-            _configuration = configuration;
             _logger = logger;
             _notificationRepository = notificationRepository;
+            _jsonMessageMapper = jsonMessageMapper;
 
         }
 
-        public Task<OperationResult> DeleteDto(DeleteNotificationDto dtoDelete)
+  
+
+        public async Task<OperationResult> GetAllDto()
         {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var notification = await _notificationRepository.GetAllAsync();
+                _logger.LogInformation(_jsonMessageMapper.ErrorMessages["GetAllEntity"], notification);
+                return new OperationResult { Success = true, Message = _jsonMessageMapper.SuccessMessages["GetAllEntity"], Data = notification };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, _jsonMessageMapper.ErrorMessages["DatabaseError"], ex.Message);
+                return new OperationResult { Success = false, Message = _jsonMessageMapper.ErrorMessages["DatabaseError"] };
+            }
+
+            
         }
 
-        public Task<List<OperationResult>> GetAllDto()
+        public async Task<OperationResult> GetDtoById(int id)
         {
-            throw new NotImplementedException();
+            OperationResult result = new OperationResult();
+
+            try
+            {
+             result = EntityValidator.ValidatePositiveNumber(id, _jsonMessageMapper.ErrorMessages["InvalidId"]);
+
+                if (!result.Success)
+                {
+                    _logger.LogError(result.Message);
+                    return result;
+                }
+
+                _logger.LogInformation(_jsonMessageMapper.SuccessMessages["GetAllEntity"], nameof(Notification));
+                return new OperationResult { Success = true, Message = _jsonMessageMapper.SuccessMessages["NotificationFound"]};
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, _jsonMessageMapper.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessageMapper.ErrorMessages["DatabaseError"] };
+
+            }
+
         }
 
-        public Task<OperationResult> GetDtoById(int id)
+        public async Task<OperationResult> SaveDto(SaveNotificationDto dtoSave)
         {
-            throw new NotImplementedException();
+          OperationResult result = new OperationResult();
+            try
+            {               
+                var notification = new Notification
+                {
+                   
+                    UserID = dtoSave.UserID,
+                    Message = dtoSave.Message,
+                    SentAt = dtoSave.SentAt,
+                };
+
+                _logger.LogInformation(_jsonMessageMapper.SuccessMessages["NotificationCreated"], nameof(Notification), notification);
+                var notificationSave = await _notificationRepository.SaveEntityAsync(notification);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, _jsonMessageMapper.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessageMapper.ErrorMessages["DatabaseError"] };
+            }
+            return result;
+
         }
 
-        public Task<OperationResult> SaveDto(SaveNotificationDto dtoSave)
+        public async Task<OperationResult> UpdateDto(UpdateNotificationDto dtoUpdate)
         {
-            throw new NotImplementedException();
-        }
+            OperationResult result = new OperationResult();
+            try
+            {
+                var notification = new Notification
+                {
+                    Id = dtoUpdate.NotificationId,
+                    UserID = dtoUpdate.UserID,
+                    Message = dtoUpdate.Message,
+                    SentAt = dtoUpdate.SentAt,
+                };
 
-        public Task<OperationResult> UpdateDto(UpdateNotificationDto dtoUpdate)
+                _logger.LogInformation(_jsonMessageMapper.SuccessMessages["NotificationUpdated"], nameof(Notification), notification);
+                var notificationUp = await _notificationRepository.UpdateNotificationAsync(notification);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, _jsonMessageMapper.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessageMapper.ErrorMessages["DatabaseError"] };
+            }
+            return result;
+        }
+        public async Task<OperationResult> DeleteDto(int dtoDelete)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _logger.LogInformation(_jsonMessageMapper.SuccessMessages["NotificationDeleted"], nameof(Notification));
+                var notificationUp = await _notificationRepository.DeleteNotificationAsync(dtoDelete);
+                return new OperationResult { Success = true, Message = _jsonMessageMapper.SuccessMessages["NotificationDeleted"] };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, _jsonMessageMapper.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessageMapper.ErrorMessages["DatabaseError"] };
+            }
+
         }
     }
 }

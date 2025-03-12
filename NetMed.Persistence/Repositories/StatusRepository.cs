@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
@@ -7,10 +6,7 @@ using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Context.Interfaces;
 using NetMed.Persistence.Interfaces;
-using System.Data;
 using System.Linq.Expressions;
-
-
 
 namespace NetMed.Persistence.Repositories
 {
@@ -19,58 +15,36 @@ namespace NetMed.Persistence.Repositories
         private readonly NetmedContext _context;
         private readonly ILogger<StatusRepository> _logger;
         private readonly IConfiguration _configuration;
+        private readonly JsonMessage _jsonMessage;
 
         public StatusRepository(NetmedContext context,
                                ILogger<StatusRepository> logger,
-                               IConfiguration configuration) : base(context,logger,configuration)
+                               JsonMessage jsonMessage) : base(context, logger, jsonMessage)
         {
             _context = context;
             _logger = logger;
-            _configuration = configuration;
+            _jsonMessage = jsonMessage;
         }
-
-     
 
         public override Task<List<Status>> GetAllAsync()
         {
+            _logger.LogInformation(_jsonMessage.SuccessMessages["GetAllEntity"]);
             return base.GetAllAsync();
         }
 
-        public override async Task<OperationResult> UpdateEntityAsync(Status status)
-        {
-            var validationResult = EntityValidator.ValidateNotNull(status, "La entidad 'Status' no puede ser nula");
-
-            if (!validationResult.Success)
-            {
-                return validationResult;
-            }
-
-            try
-            {
-                await _context.statuses.AddAsync(status);
-                await _context.SaveChangesAsync();
-
-                return new OperationResult { Success = true, Message = "Status creado con éxito", Data = status };
-            }
-            catch (Exception ex)
-            {
-                return new OperationResult
-                { Success = false, Message = "Error con la base de datos" };
-            }
-        }
-        
-
         public override Task<OperationResult> GetAllAsync(Expression<Func<Status, bool>> filter)
         {
+            _logger.LogInformation(_jsonMessage.SuccessMessages["GetAllEntity"]);
             return base.GetAllAsync(filter);
         }
 
         public async Task<OperationResult> GetStatusByIdAsync(int statusId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(statusId, "El ID proporcionado no es válido");
+            var validationResult = EntityValidator.ValidatePositiveNumber(statusId, _jsonMessage.ErrorMessages["InvalidId"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogError(validationResult.Message);
                 return validationResult;
             }
 
@@ -78,27 +52,31 @@ namespace NetMed.Persistence.Repositories
             {
                 var status = await _context.statuses.FindAsync(statusId);
 
-                var notNullStatus = EntityValidator.ValidateNotNull(status, " Status no encontrado");
+                var notNullStatus = EntityValidator.ValidateNotNull(status, _jsonMessage.ErrorMessages["StatusNotFound"]);
 
                 if (!notNullStatus.Success)
                 {
+                    _logger.LogWarning(notNullStatus.Message);
                     return notNullStatus;
                 }
 
-                return new OperationResult { Success = true, Message = "Status obtenido con éxito", Data = status };
+                _logger.LogInformation(_jsonMessage.SuccessMessages["StatusFound"]);
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["StatusFound"], Data = status };
             }
             catch (Exception ex)
             {
-                return new OperationResult { Success = false, Message = "Error al procesar la solicitud" };
+                _logger.LogError(ex, _jsonMessage.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["DatabaseError"] };
             }
         }
 
         public async Task<OperationResult> CreateStatusAsync(Status status)
         {
-            var validationResult = EntityValidator.ValidateNotNull(status, "La entidad 'Status' no puede ser nula");
+            var validationResult = EntityValidator.ValidateNotNull(status, _jsonMessage.ErrorMessages["NullEntity"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogError(validationResult.Message);
                 return validationResult;
             }
 
@@ -107,21 +85,23 @@ namespace NetMed.Persistence.Repositories
                 await _context.statuses.AddAsync(status);
                 await _context.SaveChangesAsync();
 
-                return new OperationResult { Success = true, Message = "Status creado con éxito", Data = status};
+                _logger.LogInformation(_jsonMessage.SuccessMessages["EntityCreated"]);
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["EntityCreated"], Data = status };
             }
             catch (Exception ex)
             {
-                return new OperationResult
-                { Success = false, Message = "Error al procesar la solicitud" };
+                _logger.LogError(ex, _jsonMessage.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["DatabaseError"] };
             }
         }
 
         public async Task<OperationResult> UpdateStatusAsync(Status status)
         {
-            var validationResult = EntityValidator.ValidateNotNull(status, " La entidad no puede ser nula");
+            var validationResult = EntityValidator.ValidateNotNull(status, _jsonMessage.ErrorMessages["NullEntity"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogError(validationResult.Message);
                 return validationResult;
             }
 
@@ -130,20 +110,23 @@ namespace NetMed.Persistence.Repositories
                 _context.statuses.Update(status);
                 await _context.SaveChangesAsync();
 
-                return new OperationResult { Success = true, Message = "Estado actualizado con éxito", Data = status };
+                _logger.LogInformation(_jsonMessage.SuccessMessages["EntityUpdated"]);
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["EntityUpdated"], Data = status };
             }
             catch (Exception ex)
             {
-                return new OperationResult { Success = false, Message = "Error al procesar la solicitud" };
+                _logger.LogError(ex, _jsonMessage.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["DatabaseError"] };
             }
         }
 
         public async Task<OperationResult> DeleteStatusAsync(int statusId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(statusId, "El ID proporcionado no es válido");
+            var validationResult = EntityValidator.ValidatePositiveNumber(statusId, _jsonMessage.ErrorMessages["InvalidId"]);
 
             if (!validationResult.Success)
             {
+                _logger.LogError(validationResult.Message);
                 return validationResult;
             }
 
@@ -151,23 +134,24 @@ namespace NetMed.Persistence.Repositories
             {
                 var status = await _context.statuses.FindAsync(statusId);
 
-                var notNullStatus = EntityValidator.ValidateNotNull(status, "No se encontró el status");
+                var notNullStatus = EntityValidator.ValidateNotNull(status, _jsonMessage.ErrorMessages["StatusNotFound"]);
 
                 if (!notNullStatus.Success)
                 {
+                    _logger.LogWarning(notNullStatus.Message);
                     return notNullStatus;
                 }
 
                 _context.statuses.Remove(status);
                 await _context.SaveChangesAsync();
 
-                return new OperationResult { Success = true, Message = "Estado eliminado con éxito", Data = status };
+                _logger.LogInformation(_jsonMessage.SuccessMessages["EntityDeleted"]);
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["EntityDeleted"], Data = status };
             }
             catch (Exception ex)
             {
-                return new OperationResult { Success = false, Message = "Error al procesar la solicitud" };
-
-
+                _logger.LogError(ex, _jsonMessage.ErrorMessages["DatabaseError"]);
+                return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["DatabaseError"] };
             }
         }
     }

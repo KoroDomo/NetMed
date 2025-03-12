@@ -33,7 +33,7 @@ namespace NetMed.Persistence.Interfaces
 
             var result = new OperationResult();
 
-            if (number < 0)
+            if (number < 0 && number > 999)
             { 
                 result.Success = false ;
                 result.Message = errorMessage;
