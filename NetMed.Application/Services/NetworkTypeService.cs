@@ -3,8 +3,9 @@ using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.InsuranceProvider;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.Logger;
+using NetMed.Infraestructure.Validators;
 using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Validators;
 
 namespace NetMed.Application.Services
 {

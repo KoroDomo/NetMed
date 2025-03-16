@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.Logger;
+using NetMed.Infraestructure.Validators;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
-using NetMed.Persistence.Validators;
 using NPOI.SS.Formula.Functions;
 
 namespace NetMed.Persistence.Test

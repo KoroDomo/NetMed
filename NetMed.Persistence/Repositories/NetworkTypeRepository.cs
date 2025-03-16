@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.Logger;
+using NetMed.Infraestructure.Validators;
 using NetMed.Model.Models;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Validators;
 using System.Linq.Expressions;
 
 namespace NetMed.Persistence.Repositories

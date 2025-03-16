@@ -2,9 +2,10 @@
 using NetMed.Application.Contracts;
 using NetMed.Domain.Base;
 using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Validators;
 using NetMed.Domain.Entities;
 using AutoMapper;
+using NetMed.Infraestructure.Validators;
+using NetMed.Infraestructure.Logger;
 
 namespace NetMed.Application.Services
 {

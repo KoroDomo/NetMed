@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.Logger;
+using NetMed.Infraestructure.Validators;
 using NetMed.Model.Models;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
-using NetMed.Persistence.Validators;
 using NPOI.SS.Formula.Functions;
 
 namespace NetMed.Persistence.Test
@@ -16,7 +17,7 @@ namespace NetMed.Persistence.Test
         private readonly Mock<ICustomLogger> _mockLogger;
         private readonly Mock<MessageMapper> _messageMapper;
         private readonly InsuranceProviderValidator _validator;
-        private readonly InsuranceProviderRepository _repository;
+        private readonly IInsuranceProviderRepository _repository;
 
         public InsuranceProviderRepositoryUnitTests()
         {

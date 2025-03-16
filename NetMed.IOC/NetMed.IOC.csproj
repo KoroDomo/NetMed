@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NetMed.Application\NetMed.Application.csproj" />
-    <ProjectReference Include="..\NetMed.Persistence\NetMed.Persistence.csproj" />
+    <ProjectReference Include="..\NetMed.Infraestructure\NetMed.Infraestructure.csproj" />
   </ItemGroup>
 
 </Project>

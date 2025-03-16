@@ -1,6 +1,6 @@
 ﻿using NetMed.Domain.Base;
 
-namespace NetMed.Persistence.Validators
+namespace NetMed.Infraestructure.Validators
 {
     public class BaseValidator
     {

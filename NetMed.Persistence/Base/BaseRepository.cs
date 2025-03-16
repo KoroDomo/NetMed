@@ -2,9 +2,9 @@
 using NetMed.Domain.Base;
 using NetMed.Domain.Repository;
 using NetMed.Persistence.Context;
-using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Validators;
 using System.Linq.Expressions;
+using NetMed.Infraestructure.Validators;
+using NetMed.Infraestructure.Logger;
 
 namespace NetMed.Persistence.Base
 {

@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.InsuranceProvider;
-using NetMed.Application.Services;
-using NetMed.Domain.Entities;
-using NetMed.Persistence.Interfaces;
+using NetMed.Infraestructure.Logger;
 
 namespace NetMed.Api.Controllers
 {

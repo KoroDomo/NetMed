@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using NetMed.Persistence.Context;
 using NetMed.IOC.Dependencies;
-using NetMed.Persistence.Validators;
 using NetMed.Persistence.Interfaces;
+using NetMed.Infraestructure.Logger;
+using NetMed.Infraestructure.Validators;
 
 namespace NetMed.Api
 {
@@ -24,6 +25,7 @@ namespace NetMed.Api
             builder.Services.AddScoped<MessageMapper>();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddLogging();
+
 
 
             builder.Services.AddControllers();

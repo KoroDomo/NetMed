@@ -3,11 +3,11 @@ using NetMed.Application.Dtos.InsuranceProvider;
 using NetMed.Domain.Entities;
 using NetMed.Model.Models;
 
-namespace NetMed.Application.Mapper
+namespace NetMed.Infraestructure.Mapper
 {
-    public class InsuranceProviderMapper : Profile
+    public class InsuranceProviderSeviceMapper : Profile
     {
-        public InsuranceProviderMapper()
+        public InsuranceProviderSeviceMapper()
         {
             // Mapeo de ModeloEntidad -> DTO
             CreateMap<InsuranceProviderModel, InsuranceProviderDto>()

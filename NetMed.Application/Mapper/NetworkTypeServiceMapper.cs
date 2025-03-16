@@ -3,11 +3,11 @@ using NetMed.Application.Dtos.InsuranceProvider;
 using NetMed.Domain.Entities;
 using NetMed.Model.Models;
 
-namespace NetMed.Application.Mapper
+namespace NetMed.Infraestructure.Mapper
 {
-    public class NetworkTypeMapper : Profile
+    public class NetworkTypeServiceMapper : Profile
     {
-        public NetworkTypeMapper()
+        public NetworkTypeServiceMapper()
         {
             
             CreateMap<NetworkTypeModel, NetworkTypeDto>()

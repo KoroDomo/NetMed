@@ -1,5 +1,5 @@
 ﻿
-namespace NetMed.Persistence.Validators
+namespace NetMed.Infraestructure.Validators
 {
     public class MessageMapper
     {

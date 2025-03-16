@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using NetMed.Persistence.Interfaces;
 
-namespace NetMed.Persistence.Validators
+namespace NetMed.Infraestructure.Logger
 {
     public class CustomLogger: ICustomLogger
     {

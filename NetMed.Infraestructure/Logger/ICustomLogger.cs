@@ -1,5 +1,5 @@
 ﻿
-namespace NetMed.Persistence.Interfaces
+namespace NetMed.Infraestructure.Logger
 {
     public interface ICustomLogger
     {
