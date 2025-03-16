@@ -1,16 +1,17 @@
 ﻿using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.Validators.Interfaces;
 using NetMed.Persistence.Context;
 
-namespace NetMed.Infraestructure.Validators
+namespace NetMed.Infraestructure.Validators.Implementations
 {
-    public class InsuranceProviderValidator : OperationValidator
+    public class InsuranceProviderValidator : OperationValidator, IInsuranceProviderValidator
     {
         private readonly OperationValidator _operationValidator;
 
-        public InsuranceProviderValidator(MessageMapper messageMapper) : base(messageMapper)
+        public InsuranceProviderValidator()
         {
-            _operationValidator = new OperationValidator(messageMapper);
+            _operationValidator = new OperationValidator();
         }
 
         public OperationResult ValidateInsuranceProvider(InsuranceProviders insuranceProvider)
@@ -45,9 +46,10 @@ namespace NetMed.Infraestructure.Validators
                     return result;
 
                 return new OperationResult { Success = true, Result = insuranceProvider, Message = result.Message };
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
-                return new OperationResult { Message = ex.Message};
+                return new OperationResult { Message = ex.Message };
             }
         }
 

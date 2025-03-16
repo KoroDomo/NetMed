@@ -4,7 +4,8 @@ using NetMed.Application.Dtos.InsuranceProvider;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
-using NetMed.Infraestructure.Validators;
+using NetMed.Infraestructure.Validators.Implementations;
+using NetMed.Infraestructure.Validators.Interfaces;
 using NetMed.Persistence.Interfaces;
 
 namespace NetMed.Application.Services
@@ -14,15 +15,15 @@ namespace NetMed.Application.Services
     {
         private readonly INetworkTypeRepository _networkTypeRepository;
         private readonly ICustomLogger _logger;
-        private readonly NetworkTypeValidator _operations;
+        private readonly INetworkTypeValidator _operations;
         private readonly IMapper _mapper;
         public NetworktypeService(INetworkTypeRepository repository,
-                                  ICustomLogger logger, MessageMapper messageMapper,
+                                  ICustomLogger logger, 
                                   IMapper mapper)
         {
             _networkTypeRepository = repository;
             _logger = logger;
-            _operations = new NetworkTypeValidator(messageMapper);
+            _operations = new NetworkTypeValidator();
             _mapper = mapper;
         }
         public async Task<OperationResult> GetAll()

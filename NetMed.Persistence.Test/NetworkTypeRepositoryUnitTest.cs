@@ -2,7 +2,6 @@
 using Moq;
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
-using NetMed.Infraestructure.Validators;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
@@ -14,9 +13,7 @@ namespace NetMed.Persistence.Test
     {
         private readonly NetMedContext _context;
         private readonly Mock<ICustomLogger> _mockLogger;
-        private readonly Mock<MessageMapper> _messageMapper;
-        private readonly NetworkTypeValidator _validator;
-        private readonly NetworkTypeRepository _repository;
+        private readonly INetworkTypeRepository _repository;
 
         public NetworkTypeRepositoryUnitTest()
         {
@@ -25,11 +22,8 @@ namespace NetMed.Persistence.Test
             .Options;
 
             _context = new NetMedContext(options);
-
             _mockLogger = new Mock<ICustomLogger>();
-            _messageMapper = new Mock<MessageMapper>();
-            _validator = new NetworkTypeValidator(_messageMapper.Object);
-            _repository = new NetworkTypeRepository(_context, _mockLogger.Object, _messageMapper.Object);
+            _repository = new NetworkTypeRepository(_context, _mockLogger.Object);
         }
 
         [Fact] //SaveEntityAsync

@@ -1,15 +1,16 @@
 ﻿using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.Validators.Interfaces;
 using NetMed.Persistence.Context;
 
-namespace NetMed.Infraestructure.Validators
+namespace NetMed.Infraestructure.Validators.Implementations
 {
-    public class NetworkTypeValidator : OperationValidator
+    public class NetworkTypeValidator : OperationValidator, INetworkTypeValidator
     {
         private OperationValidator _operationValidator;
-        public NetworkTypeValidator(MessageMapper messageMapper) : base(messageMapper)
+        public NetworkTypeValidator() 
         {
-            _operationValidator = new OperationValidator(messageMapper);
+            _operationValidator = new OperationValidator();
         }
 
         public OperationResult ValidateNetworkType(NetworkType networkType)

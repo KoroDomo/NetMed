@@ -2,8 +2,8 @@
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
-using NetMed.Infraestructure.Validators;
-using NetMed.Model.Models;
+using NetMed.Infraestructure.Validators.Implementations;
+using NetMed.Infraestructure.Validators.Interfaces;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
@@ -15,16 +15,15 @@ namespace NetMed.Persistence.Repositories
     {
         private readonly NetMedContext _context;
         private readonly ICustomLogger _logger;
-        private readonly InsuranceProviderValidator _operations;
+        private readonly IInsuranceProviderValidator _operations;
 
 
         public InsuranceProviderRepository(NetMedContext context, 
-                                           ICustomLogger logger,
-                                           MessageMapper messageMapper) : base(context, logger, messageMapper)
+                                           ICustomLogger logger) : base(context)
         {
             _context = context;
             _logger = logger;
-            _operations = new InsuranceProviderValidator(messageMapper);
+            _operations = new InsuranceProviderValidator();
         }
 
         public async override Task<OperationResult> SaveEntityAsync(InsuranceProviders provider)
@@ -128,27 +127,10 @@ namespace NetMed.Persistence.Repositories
             {
                 var providers = await _context.InsuranceProviders
                     .Where(ip => ip.Id == InsuranceId)
-                    .Select(ip => new InsuranceProviderModel()
-                    {
-                        Id = ip.Id,
-                        Name = ip.Name,
-                        ContactNumber = ip.PhoneNumber,
-                        Email = ip.Email,
-                        Website = ip.Website,
-                        Address = ip.Address,
-                        City = ip.City,
-                        State = ip.State,
-                        Country = ip.Country,
-                        ZipCode = ip.ZipCode,
-                        CoverageDetails = ip.CoverageDetails,
-                        IsPreferred = ip.IsPreferred,
-                        NetworkTypeID = ip.NetworkTypeID,
-                        AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount
+                    .MapToInsuranceProviderModel()
+                    .ToListAsync();
 
-                    }).ToListAsync();
 
-                
                 if (!providers.Any())
                 {
                     _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
@@ -174,26 +156,8 @@ namespace NetMed.Persistence.Repositories
                 var providers = await _context.InsuranceProviders
                     .Where(ip => ip.IsActive == true)
                     .OrderByDescending(ip => ip.CreatedAt)
-                    .Select(ip => new InsuranceProviderModel()
-                    {
-                        Id = ip.Id,
-                        Name = ip.Name,
-                        ContactNumber = ip.PhoneNumber,
-                        Email = ip.Email,
-                        Website = ip.Website,
-                        Address = ip.Address,
-                        City = ip.City,
-                        State = ip.State,
-                        Country = ip.Country,
-                        ZipCode = ip.ZipCode,
-                        CoverageDetails = ip.CoverageDetails,
-                        IsPreferred = ip.IsPreferred,
-                        NetworkTypeID = ip.NetworkTypeID,
-                        AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount,
-                        IsActive = ip.IsActive
-
-                    }).ToListAsync();
+                    .MapToInsuranceProviderModel()
+                    .ToListAsync();
 
                 if (!providers.Any())
                 {
@@ -218,25 +182,9 @@ namespace NetMed.Persistence.Repositories
                 var providers = await _context.InsuranceProviders
                     .Where(filter)
                     .OrderByDescending(ip => ip.CreatedAt)
-                    .Select(ip => new InsuranceProviderModel()
-                    {
-                        Id = ip.Id,
-                        Name = ip.Name,
-                        ContactNumber = ip.PhoneNumber,
-                        Email = ip.Email,
-                        Website = ip.Website,
-                        Address = ip.Address,
-                        City = ip.City,
-                        State = ip.State,
-                        Country = ip.Country,
-                        ZipCode = ip.ZipCode,
-                        CoverageDetails = ip.CoverageDetails,
-                        IsPreferred = ip.IsPreferred,
-                        NetworkTypeID = ip.NetworkTypeID,
-                        AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount
+                    .MapToInsuranceProviderModel()
+                    .ToListAsync();
 
-                    }).ToListAsync();
                 if (!providers.Any())
                 {
                     _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
@@ -259,24 +207,8 @@ namespace NetMed.Persistence.Repositories
             {
                 var providers = await _context.InsuranceProviders
                     .Where(ip => ip.IsPreferred)
-                    .Select(ip => new InsuranceProviderModel()
-                    {
-                        Id = ip.Id,
-                        Name = ip.Name,
-                        ContactNumber = ip.PhoneNumber,
-                        Email = ip.Email,
-                        Website = ip.Website,
-                        Address = ip.Address,
-                        City = ip.City,
-                        State = ip.State,
-                        Country = ip.Country,
-                        ZipCode = ip.ZipCode,
-                        CoverageDetails = ip.CoverageDetails,
-                        IsPreferred = ip.IsPreferred,
-                        NetworkTypeID = ip.NetworkTypeID,
-                        AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount
-                    }).ToListAsync();
+                    .MapToInsuranceProviderModel()
+                    .ToListAsync();
 
                 if (!providers.Any())
                 {
@@ -301,24 +233,8 @@ namespace NetMed.Persistence.Repositories
             {
                 var providers = await _context.InsuranceProviders
                     .Where(ip => ip.IsActive)
-                    .Select(ip => new InsuranceProviderModel()
-                    {
-                        Id = ip.Id,
-                        Name = ip.Name,
-                        ContactNumber = ip.PhoneNumber,
-                        Email = ip.Email,
-                        Website = ip.Website,
-                        Address = ip.Address,
-                        City = ip.City,
-                        State = ip.State,
-                        Country = ip.Country,
-                        ZipCode = ip.ZipCode,
-                        CoverageDetails = ip.CoverageDetails,
-                        IsPreferred = ip.IsPreferred,
-                        NetworkTypeID = ip.NetworkTypeID,
-                        AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount
-                    }).ToListAsync();
+                    .MapToInsuranceProviderModel()
+                    .ToListAsync();
 
                 if (!providers.Any())
                 {

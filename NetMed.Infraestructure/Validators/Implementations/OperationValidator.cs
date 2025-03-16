@@ -1,10 +1,11 @@
 ﻿using NetMed.Domain.Base;
 using NetMed.Infraestructure.Logger;
+using NetMed.Infraestructure.Validators.Interfaces;
 using System.Text.RegularExpressions;
 
-namespace NetMed.Infraestructure.Validators
+namespace NetMed.Infraestructure.Validators.Implementations
 {
-    public class OperationValidator : BaseValidator
+    public class OperationValidator : BaseValidator, IOperationValidator
     {
         private static readonly Regex EmailRegex = new Regex(
             @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
@@ -14,7 +15,7 @@ namespace NetMed.Infraestructure.Validators
             @"^\d{10}$", // 10 dígitos exactos
             RegexOptions.Compiled
         );
-        public OperationValidator(MessageMapper messageMapper) : base(messageMapper)
+        public OperationValidator()
         {
 
         }

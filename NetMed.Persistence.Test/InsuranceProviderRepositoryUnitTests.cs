@@ -15,8 +15,6 @@ namespace NetMed.Persistence.Test
     {
         private readonly NetMedContext _context;
         private readonly Mock<ICustomLogger> _mockLogger;
-        private readonly Mock<MessageMapper> _messageMapper;
-        private readonly InsuranceProviderValidator _validator;
         private readonly IInsuranceProviderRepository _repository;
 
         public InsuranceProviderRepositoryUnitTests()
@@ -28,9 +26,7 @@ namespace NetMed.Persistence.Test
             _context = new NetMedContext(options);
 
             _mockLogger = new Mock<ICustomLogger>();
-            _messageMapper = new Mock<MessageMapper>();
-            _validator = new InsuranceProviderValidator(_messageMapper.Object);
-            _repository = new InsuranceProviderRepository(_context, _mockLogger.Object, _messageMapper.Object);
+            _repository = new InsuranceProviderRepository(_context, _mockLogger.Object);
         }
 
         [Fact] //SaveEntityAsync

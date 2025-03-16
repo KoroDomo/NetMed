@@ -3,24 +3,22 @@ using NetMed.Domain.Base;
 using NetMed.Domain.Repository;
 using NetMed.Persistence.Context;
 using System.Linq.Expressions;
-using NetMed.Infraestructure.Validators;
-using NetMed.Infraestructure.Logger;
+using NetMed.Infraestructure.Validators.Implementations;
+using NetMed.Infraestructure.Validators.Interfaces;
 
 namespace NetMed.Persistence.Base
 {
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         protected readonly NetMedContext _context;
-        protected readonly ICustomLogger _logger;
-        protected readonly OperationValidator _operations;
+        protected readonly IOperationValidator _operations;
         protected DbSet<TEntity> Entity { get; }
 
-        public BaseRepository(NetMedContext context, ICustomLogger logger, MessageMapper messageMapper)
+        public BaseRepository(NetMedContext context)
         {
             _context = context;
-            _logger = logger;
             Entity = _context.Set<TEntity>();
-            _operations = new OperationValidator(messageMapper);
+            _operations = new OperationValidator();
         }
 
         public virtual async Task<OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter)

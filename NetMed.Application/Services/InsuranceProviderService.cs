@@ -4,8 +4,9 @@ using NetMed.Domain.Base;
 using NetMed.Persistence.Interfaces;
 using NetMed.Domain.Entities;
 using AutoMapper;
-using NetMed.Infraestructure.Validators;
 using NetMed.Infraestructure.Logger;
+using NetMed.Infraestructure.Validators.Implementations;
+using NetMed.Infraestructure.Validators.Interfaces;
 
 namespace NetMed.Application.Services
 {
@@ -14,16 +15,16 @@ namespace NetMed.Application.Services
         
         private readonly IInsuranceProviderRepository _insuranceProviderRepository;
         private readonly ICustomLogger _logger;
-        private readonly InsuranceProviderValidator _operations;
+        private readonly IInsuranceProviderValidator _operations;
         private readonly IMapper _mapper;
 
         public InsuranceProviderService(IInsuranceProviderRepository repository,
-                                        ICustomLogger logger, MessageMapper messageMapper,
+                                        ICustomLogger logger,
                                         IMapper mapper)
         {
             _insuranceProviderRepository = repository;
             _logger = logger;
-            _operations = new InsuranceProviderValidator(messageMapper);
+            _operations = new InsuranceProviderValidator();
             _mapper = mapper;
             
             

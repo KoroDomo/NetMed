@@ -2,8 +2,8 @@
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
-using NetMed.Infraestructure.Validators;
-using NetMed.Model.Models;
+using NetMed.Infraestructure.Validators.Implementations;
+using NetMed.Infraestructure.Validators.Interfaces;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
@@ -15,15 +15,14 @@ namespace NetMed.Persistence.Repositories
     {
         private readonly NetMedContext _context;
         private readonly ICustomLogger _logger;
-        private readonly NetworkTypeValidator _operations;
+        private readonly INetworkTypeValidator _operations;
 
         public NetworkTypeRepository(NetMedContext context,
-                                     ICustomLogger logger,
-                                     MessageMapper messageMapper) : base(context, logger, messageMapper)
+                                     ICustomLogger logger) : base(context)
         {
             _context = context;
             _logger = logger;
-            _operations = new NetworkTypeValidator(messageMapper);
+            _operations = new NetworkTypeValidator();
         }
         public override async Task<OperationResult> SaveEntityAsync(NetworkType network)
         {
@@ -124,16 +123,8 @@ namespace NetMed.Persistence.Repositories
             {
                 var networkTypes = await _context.NetworkType
                     .Where(nt => nt.Id == networkTypeId)
-                    .Select(nt => new NetworkTypeModel()
-                    {
-                        Id = nt.Id,
-                        Name = nt.Name,
-                        Description = nt.Description,
-                        CreatedAt = nt.CreatedAt,
-                        UpdatedAt = nt.UpdatedAt,
-                        IsActive = nt.IsActive
-
-                    }).ToListAsync();
+                    .MapToNetworkTypeModel()
+                    .ToListAsync();
 
                 if (!networkTypes.Any())
                 {
@@ -158,16 +149,8 @@ namespace NetMed.Persistence.Repositories
                 var network = await _context.NetworkType
                     .Where(n => n.IsActive)
                     .OrderByDescending(n => n.CreatedAt)
-                    .Select(n => new NetworkTypeModel()
-                    {
-                        Id = n.Id,
-                        Name = n.Name,
-                        Description = n.Description,
-                        CreatedAt = n.CreatedAt,
-                        UpdatedAt = n.UpdatedAt,
-                        IsActive = n.IsActive
-
-                    }).ToListAsync();
+                    .MapToNetworkTypeModel()
+                    .ToListAsync();
 
                 if (!network.Any())
                 {
@@ -191,16 +174,8 @@ namespace NetMed.Persistence.Repositories
                 var networks = await _context.NetworkType
                     .Where(filter)
                     .OrderByDescending(n => n.CreatedAt)
-                    .Select(n => new NetworkTypeModel()
-                    {
-                        Id = n.Id,
-                        Name = n.Name,
-                        Description = n.Description,
-                        CreatedAt = n.CreatedAt,
-                        UpdatedAt = n.UpdatedAt,
-                        IsActive = n.IsActive
-
-                    }).ToListAsync();
+                    .MapToNetworkTypeModel()
+                    .ToListAsync();
 
                 if (!networks.Any())
                 {

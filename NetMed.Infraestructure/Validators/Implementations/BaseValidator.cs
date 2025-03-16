@@ -1,17 +1,18 @@
 ﻿using NetMed.Domain.Base;
+using NetMed.Infraestructure.Validators.Interfaces;
 
-namespace NetMed.Infraestructure.Validators
+namespace NetMed.Infraestructure.Validators.Implementations
 {
-    public class BaseValidator
+    public class BaseValidator : IBaseValidator
     {
         private readonly MessageMapper _messageMapper;
 
-        public BaseValidator(MessageMapper messageMapper)
+        public BaseValidator()
         {
-            _messageMapper = messageMapper;
+            _messageMapper = new MessageMapper();
         }
 
-        public OperationResult SuccessResult(dynamic result, string className, string methodName )
+        public OperationResult SuccessResult(dynamic result, string className, string methodName)
         {
             return new OperationResult
             {
@@ -41,6 +42,6 @@ namespace NetMed.Infraestructure.Validators
 
         }
 
-        
+
     }
 }
