@@ -5,10 +5,10 @@ namespace NetMed.Domain.Base
     {
 
        protected AptEntity() 
-       { 
-            this.CreatedAt = DateTime.Now;
+      { 
+            this.CreatedAt = DateTime.UtcNow;
        }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public  DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; } = true;
 

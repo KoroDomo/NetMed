@@ -11,6 +11,7 @@ namespace NetMed.IOC.Dependencies
     {
         public static void AddNetworkTypeDependency(this IServiceCollection services)
         {
+
             services.AddScoped<INetworkTypeRepository, NetworkTypeRepository>();
             services.AddTransient<INetworkTypeService, NetworktypeService>();
 

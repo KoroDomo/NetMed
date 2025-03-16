@@ -11,6 +11,7 @@ namespace NetMed.IOC.Dependencies
     {
         public static void AddInsuranceProviderDependency(this IServiceCollection services)
         {
+
             services.AddScoped<IInsuranceProviderRepository, InsuranceProviderRepository>();
             services.AddTransient<IInsuranceProviderService, InsuranceProviderService>();
 

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Moq;
 using NetMed.Domain.Entities;
 using NetMed.Model.Models;
@@ -52,7 +51,7 @@ namespace NetMed.Persistence.Test
                 Country = "Counry",
                 ZipCode = "1245",
                 CoverageDetails = "Dtails",
-                IsPreferred = true,
+                IsPreferred = false,
                 IsActive = true,
                 NetworkTypeID = 1,
                 AcceptedRegions = "Region",
@@ -64,11 +63,10 @@ namespace NetMed.Persistence.Test
             var result = await _repository.SaveEntityAsync(provider);
             await _context.SaveChangesAsync();
 
-
             // Assert
-
             Assert.True(result.Success);
             Assert.NotNull(await _repository.GetInsurenProviderById(provider.Id));
+            Assert.Contains("Registro guardado exitosamente.", result.Message);
             
         }
 
@@ -88,7 +86,7 @@ namespace NetMed.Persistence.Test
                 Country = "Country",
                 ZipCode = "12345",
                 CoverageDetails = "Details",
-                IsPreferred = true,
+                IsPreferred = false,
                 NetworkTypeID = 1,
                 AcceptedRegions = "Region",
                 MaxCoverageAmount = 100
@@ -104,7 +102,7 @@ namespace NetMed.Persistence.Test
 
             // Assert
             Assert.False(result.Success);
-            Assert.Contains("Ya existe un registro con este nombre.", result.Message);
+            Assert.Contains("Ya existe un InsuranceProvider con este nombre.", result.Message);
         }
 
         [Fact] //GetInsurenProviderById
@@ -125,7 +123,7 @@ namespace NetMed.Persistence.Test
                 Country = "Country",
                 ZipCode = "12345",
                 CoverageDetails = "Details",
-                IsPreferred = true,
+                IsPreferred = false,
                 NetworkTypeID = 1,
                 AcceptedRegions = "Region",
                 MaxCoverageAmount = 100
@@ -165,7 +163,7 @@ namespace NetMed.Persistence.Test
                 Country = "Counry",
                 ZipCode = "1245",
                 CoverageDetails = "Dtails",
-                IsPreferred = true,
+                IsPreferred = false,
                 IsActive = true,
                 NetworkTypeID = 1,
                 AcceptedRegions = "Region",
@@ -178,7 +176,7 @@ namespace NetMed.Persistence.Test
             // Assert
             Assert.False(result.Success);
             Assert.Null(result.Result);
-            Assert.Equal("No se encontró el insuranceProvider con el ID: 999.", result.Message);
+            Assert.Equal("Registro no encontrado.", result.Message);
         }
 
         [Fact] //GettAllAsync
@@ -197,7 +195,7 @@ namespace NetMed.Persistence.Test
                 Country = "Country",
                 ZipCode = "12345",
                 CoverageDetails = "Details",
-                IsPreferred = true,
+                IsPreferred = false,
                 IsActive = true,
                 NetworkTypeID = 1,
                 AcceptedRegions = "Region",
@@ -218,7 +216,7 @@ namespace NetMed.Persistence.Test
                 Country = "Country",
                 ZipCode = "12345",
                 CoverageDetails = "Details",
-                IsPreferred = true,
+                IsPreferred = false,
                 IsActive = true,
                 NetworkTypeID = 1,
                 AcceptedRegions = "Region",
@@ -256,7 +254,7 @@ namespace NetMed.Persistence.Test
                 Country = "Counry",
                 ZipCode = "1245",
                 CoverageDetails = "Dtails",
-                IsPreferred = true,
+                IsPreferred = false,
                 IsActive = true,
                 NetworkTypeID = 1,
                 AcceptedRegions = "Region",
@@ -294,7 +292,7 @@ namespace NetMed.Persistence.Test
                 Country = "Counry",
                 ZipCode = "1245",
                 CoverageDetails = "Dtails",
-                IsPreferred = true,
+                IsPreferred = false,
                 IsActive = true,
                 NetworkTypeID = 1,
                 AcceptedRegions = "Region",
@@ -328,7 +326,7 @@ namespace NetMed.Persistence.Test
                 Country = "Counry",
                 ZipCode = "1245",
                 CoverageDetails = "Dtails",
-                IsPreferred = true,
+                IsPreferred = false,
                 IsActive = true,
                 NetworkTypeID = 1,
                 AcceptedRegions = "Region",
@@ -354,7 +352,7 @@ namespace NetMed.Persistence.Test
 
             // Assert
             Assert.False(result.Success);
-            Assert.Contains("No se encontró", result.Message);
+            Assert.Contains("Registro no encontrado.", result.Message);
         }
 
         [Fact] //GetPreferredInsuranceProvidersAsync
@@ -408,7 +406,7 @@ namespace NetMed.Persistence.Test
 
             // Assert
             Assert.True(result.Success);
-            Assert.Single((List<NetworktypeModel>)result.Result);
+            Assert.Single((List<InsuranceProviderModel>)result.Result);
         }
 
         [Fact] //GetActiveInsuranceProvidersAsync
@@ -427,7 +425,7 @@ namespace NetMed.Persistence.Test
                 Country = "Country",
                 ZipCode = "12345",
                 CoverageDetails = "Details",
-                IsPreferred = true,
+                IsPreferred = false,
                 IsActive = true,
                 NetworkTypeID = 1,
                 AcceptedRegions = "Region",
@@ -448,7 +446,7 @@ namespace NetMed.Persistence.Test
                 Country = "Country",
                 ZipCode = "12345",
                 CoverageDetails = "Details",
-                IsPreferred = true,
+                IsPreferred = false,
                 IsActive = false,
                 NetworkTypeID = 1,
                 AcceptedRegions = "Region",
@@ -462,7 +460,7 @@ namespace NetMed.Persistence.Test
 
             // Assert
             Assert.True(result.Success);
-            Assert.Single((List<NetworktypeModel>)result.Result);
+            Assert.Single((List<InsuranceProviderModel>)result.Result);
         }
     }
 }

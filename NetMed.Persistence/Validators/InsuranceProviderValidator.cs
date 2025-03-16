@@ -15,34 +15,40 @@ namespace NetMed.Persistence.Validators
 
         public OperationResult ValidateInsuranceProvider(InsuranceProviders insuranceProvider)
         {
-            var result = _operationValidator.isNull(insuranceProvider);
-            if (!result.Success)
+            try
             {
-                result.Message = "El insuranceProvider es nulo.";
-                return result;
+                var result = _operationValidator.isNull(insuranceProvider);
+                if (!result.Success)
+                {
+                    result.Message = "El insuranceProvider es nulo.";
+                    return result;
+                }
+
+                result = ValidateStringProperties(insuranceProvider);
+                if (!result.Success)
+                    return result;
+
+                result = ValidateNumericProperties(insuranceProvider);
+                if (!result.Success)
+                    return result;
+
+                result = IsValidEmail(insuranceProvider.Email);
+                if (!result.Success)
+                    return result;
+
+                result = IsValidPhoneNumber(insuranceProvider.PhoneNumber);
+                if (!result.Success)
+                    return result;
+
+                result = IsValidPhoneNumber(insuranceProvider.CustomerSupportContact);
+                if (!result.Success)
+                    return result;
+
+                return new OperationResult { Success = true, Result = insuranceProvider, Message = result.Message };
+            }catch(Exception ex)
+            {
+                return new OperationResult { Message = ex.Message};
             }
-
-            result = ValidateStringProperties(insuranceProvider);
-            if (!result.Success)
-                return result;
-
-            result = ValidateNumericProperties(insuranceProvider);
-            if (!result.Success)
-                return result;
-
-            result = IsValidEmail(insuranceProvider.Email);
-            if (!result.Success)
-                return result;
-
-            result = IsValidPhoneNumber(insuranceProvider.PhoneNumber);
-            if (!result.Success)
-                return result;
-
-            result = IsValidPhoneNumber(insuranceProvider.CustomerSupportContact);
-            if (!result.Success)
-                return result;
-
-            return new OperationResult { Success = true, Result=insuranceProvider, Message= result.Message};
         }
 
         private OperationResult ValidateStringProperties(InsuranceProviders insuranceProvider)
@@ -58,8 +64,6 @@ namespace NetMed.Persistence.Validators
                 (insuranceProvider.State, 100, nameof(insuranceProvider.State)),
                 (insuranceProvider.Country, 100, nameof(insuranceProvider.Country)),
                 (insuranceProvider.ZipCode, 10, nameof(insuranceProvider.ZipCode)),
-                (insuranceProvider.CoverageDetails, 20000, nameof(insuranceProvider.CoverageDetails)),
-                (insuranceProvider.LogoUrl, 255, nameof(insuranceProvider.LogoUrl)),
                 (insuranceProvider.CustomerSupportContact, 15, nameof(insuranceProvider.CustomerSupportContact)),
                 (insuranceProvider.AcceptedRegions, 255, nameof(insuranceProvider.AcceptedRegions))
             };
@@ -70,6 +74,7 @@ namespace NetMed.Persistence.Validators
                 if (!result.Success)
                 {
                     result.Message = $"El campo {validation.FieldName} excede la longitud máxima permitida.";
+                    result.Success = false;
                     return result;
                 }
             }
@@ -83,6 +88,7 @@ namespace NetMed.Persistence.Validators
             if (!result.Success)
             {
                 result.Message = "El campo NetworkTypeID debe ser un número entero.";
+                result.Success = false;
                 return result;
             }
 

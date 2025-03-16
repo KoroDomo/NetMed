@@ -28,12 +28,11 @@ namespace NetMed.Persistence.Validators
             return new OperationResult { Success = true, Result = networkType };
         }
 
-        private OperationResult ValidateStringProperties(NetworkType networkType)
+        public OperationResult ValidateStringProperties(NetworkType networkType)
         {
             var validations = new (string Value, int MaxLength, string FieldName)[]
             {
-                (networkType.Name, 50, nameof(networkType.Name)),
-                (networkType.Description, 2000, nameof(networkType.Description))
+                (networkType.Name, 50, nameof(networkType.Name))
             };
 
             foreach (var validation in validations)
@@ -49,9 +48,9 @@ namespace NetMed.Persistence.Validators
             return new OperationResult { Success = true, Result = networkType };
         }
 
-        public OperationResult ValidateNetworkTypeNameExists(NetworkType networkType, NetMedContext context)
+        public OperationResult ValidateNameExists(NetworkType networkType, NetMedContext context)
         {
-            if (context.InsuranceProviders.Any(ip => ip.Name == networkType.Name && ip.Id != networkType.Id))
+            if (context.NetworkType.Any(n => n.Name == networkType.Name && n.Id != networkType.Id))
             {
                 return new OperationResult
                 {

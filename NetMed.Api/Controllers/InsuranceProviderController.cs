@@ -35,7 +35,7 @@ namespace NetMed.Api.Controllers
 
 
         [HttpPost("SaveInsuranceProvider")]
-        public async Task<IActionResult> Post([FromBody] SaveInsuranceProviderDto insuranceProvider)
+        public async Task<IActionResult> Post(SaveInsuranceProviderDto insuranceProvider)
         {
             var insurenceProviders = await _insuranceProviderService.Save(insuranceProvider);
 
@@ -44,7 +44,7 @@ namespace NetMed.Api.Controllers
 
 
         [HttpPut("UpdateInsuranceProvider")]
-        public async Task<IActionResult> Put([FromBody] UpdateInsuranceProviderDto insuranceProvider)
+        public async Task<IActionResult> Put(UpdateInsuranceProviderDto insuranceProvider)
         {
             var insurenceProviders = await _insuranceProviderService.Update(insuranceProvider);
 
@@ -52,7 +52,7 @@ namespace NetMed.Api.Controllers
         }
 
         [HttpDelete("RemoveInsuranceProvider")]
-        public async Task<IActionResult> Remove([FromBody] RemoveInsuranceProviderDto insuranceProvider)
+        public async Task<IActionResult> Remove(RemoveInsuranceProviderDto insuranceProvider)
         {
             var insurenceProviders = await _insuranceProviderService.Remove(insuranceProvider);
 

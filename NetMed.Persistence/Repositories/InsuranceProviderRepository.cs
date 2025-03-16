@@ -28,10 +28,10 @@ namespace NetMed.Persistence.Repositories
 
         public async override Task<OperationResult> SaveEntityAsync(InsuranceProviders provider)
         {
-            OperationResult operationR = new OperationResult();
+            
             try
             {
-                operationR = _operations.ValidateNameExists(provider, _context);
+                var operationR = _operations.ValidateNameExists(provider, _context);
                 if (!operationR.Success)
                 {
                     _logger.LogWarning(operationR.Message);
@@ -50,7 +50,7 @@ namespace NetMed.Persistence.Repositories
 
                 _logger.LogInformation(_operations.GetSuccesMessage("Operations", "SaveSuccess"));
 
-                return _operations.SuccessResult(provider, "Insurances", "SaveSuccess");
+                return _operations.SuccessResult(provider, "Operations", "SaveSuccess");
             }
             catch (Exception ex)
             {
@@ -127,7 +127,7 @@ namespace NetMed.Persistence.Repositories
             {
                 var providers = await _context.InsuranceProviders
                     .Where(ip => ip.Id == InsuranceId)
-                    .Select(ip => new NetworktypeModel()
+                    .Select(ip => new InsuranceProviderModel()
                     {
                         Id = ip.Id,
                         Name = ip.Name,
@@ -171,8 +171,9 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 var providers = await _context.InsuranceProviders
+                    .Where(ip => ip.IsActive == true)
                     .OrderByDescending(ip => ip.CreatedAt)
-                    .Select(ip => new NetworktypeModel()
+                    .Select(ip => new InsuranceProviderModel()
                     {
                         Id = ip.Id,
                         Name = ip.Name,
@@ -216,7 +217,7 @@ namespace NetMed.Persistence.Repositories
                 var providers = await _context.InsuranceProviders
                     .Where(filter)
                     .OrderByDescending(ip => ip.CreatedAt)
-                    .Select(ip => new NetworktypeModel()
+                    .Select(ip => new InsuranceProviderModel()
                     {
                         Id = ip.Id,
                         Name = ip.Name,
@@ -257,7 +258,7 @@ namespace NetMed.Persistence.Repositories
             {
                 var providers = await _context.InsuranceProviders
                     .Where(ip => ip.IsPreferred)
-                    .Select(ip => new NetworktypeModel()
+                    .Select(ip => new InsuranceProviderModel()
                     {
                         Id = ip.Id,
                         Name = ip.Name,
@@ -299,7 +300,7 @@ namespace NetMed.Persistence.Repositories
             {
                 var providers = await _context.InsuranceProviders
                     .Where(ip => ip.IsActive)
-                    .Select(ip => new NetworktypeModel()
+                    .Select(ip => new InsuranceProviderModel()
                     {
                         Id = ip.Id,
                         Name = ip.Name,

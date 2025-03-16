@@ -21,6 +21,8 @@ namespace NetMed.Api
             builder.Services.AddInsuranceProviderDependency();
             builder.Services.AddNetworkTypeDependency();
 
+            builder.Services.AddScoped<MessageMapper>();
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddLogging();
 
 

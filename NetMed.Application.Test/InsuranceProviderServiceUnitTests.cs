@@ -1,6 +1,6 @@
 ﻿namespace NetMed.Application.Test
 {
-    public class UnitTest1
+    public class InsuranceProviderServiceUnitTests
     {
         [Fact]
         public void Test1()

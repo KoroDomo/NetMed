@@ -1,7 +1,7 @@
 ﻿
 namespace NetMed.Model.Models
 {
-    public class NetworktypeModel
+    public class InsuranceProviderModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

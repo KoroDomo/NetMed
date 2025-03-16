@@ -20,14 +20,16 @@ namespace NetMed.Persistence.Repositories
                                      ICustomLogger logger,
                                      MessageMapper messageMapper) : base(context, logger, messageMapper)
         {
+            _context = context;
+            _logger = logger;
             _operations = new NetworkTypeValidator(messageMapper);
         }
         public override async Task<OperationResult> SaveEntityAsync(NetworkType network)
         {
-            OperationResult operationR = new OperationResult();
+            
             try
             {
-                operationR = _operations.ValidateNetworkTypeNameExists(network, _context);
+                var operationR = _operations.ValidateNameExists(network, _context);
                 if (!operationR.Success)
                 {
                     _logger.LogWarning(operationR.Message);
@@ -46,7 +48,7 @@ namespace NetMed.Persistence.Repositories
 
                 _logger.LogInformation(_operations.GetSuccesMessage("Operations", "SaveSuccess"));
 
-                return _operations.SuccessResult(network, "Insurances", "SaveSuccess");
+                return _operations.SuccessResult(network, "Operations", "SaveSuccess");
             }
             catch (Exception ex)
             {
@@ -83,19 +85,19 @@ namespace NetMed.Persistence.Repositories
                 return _operations.HandleException("Insurances", "RemoveInsurenProvider");
             }
         }
-        public override async Task<OperationResult> UpdateEntityAsync(NetworkType network)
+        public async override Task<OperationResult> UpdateEntityAsync(NetworkType network)
         {
             
             try
             {
-                var result = _operations.ValidateNetworkTypeNameExists(network, _context);
+                var result = _operations.ValidateNameExists(network, _context);
                 if (!result.Success)
                 {
                     _logger.LogWarning(result.Message);
                     return result;
                 }
 
-                var Network = await _context.InsuranceProviders.FindAsync(network.Id);
+                var Network = await _context.NetworkType.FindAsync(network.Id);
                 
                 if (Network == null)
                 {

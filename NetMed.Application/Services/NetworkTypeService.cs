@@ -1,14 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
 using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.InsuranceProvider;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
-using NetMed.Model.Models;
-using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Repositories;
 using NetMed.Persistence.Validators;
 
 namespace NetMed.Application.Services
@@ -19,13 +14,15 @@ namespace NetMed.Application.Services
         private readonly INetworkTypeRepository _networkTypeRepository;
         private readonly ICustomLogger _logger;
         private readonly NetworkTypeValidator _operations;
-        public NetworktypeService(NetMedContext context,
-                                  INetworkTypeRepository repository,
-                                  ICustomLogger logger, MessageMapper messageMapper)
+        private readonly IMapper _mapper;
+        public NetworktypeService(INetworkTypeRepository repository,
+                                  ICustomLogger logger, MessageMapper messageMapper,
+                                  IMapper mapper)
         {
             _networkTypeRepository = repository;
             _logger = logger;
             _operations = new NetworkTypeValidator(messageMapper);
+            _mapper = mapper;
         }
         public async Task<OperationResult> GetAll()
         {
@@ -35,14 +32,7 @@ namespace NetMed.Application.Services
                 var repositoryResult = await _networkTypeRepository.GetAllAsync();
                 if (!repositoryResult.Success) return repositoryResult;
 
-                var dtos = ((List<NetworkTypeModel>)repositoryResult.Result)
-                    .Select(n => new NetworkTypeDto
-                    {
-                        Name = n.Name,
-                        Description = n.Description,
-                        ChangeDate = n.UpdatedAt
-                    })
-                    .ToList();
+                var dtos = _mapper.Map<List<NetworkTypeDto>>(repositoryResult.Result);
 
                 return _operations.SuccessResult(dtos, "Operations", "GetSuccess");
             }
@@ -59,22 +49,10 @@ namespace NetMed.Application.Services
             try
             {
 
-                var repositoryResult = await _networkTypeRepository.GetEntityByIdAsync(id);
+                var repositoryResult = await _networkTypeRepository.GetNetworkTypeById(id);
                 if (!repositoryResult.Success) return repositoryResult;
 
-                if (repositoryResult.Result is not List<NetworktypeModel> providers)
-                {
-                    return _operations.HandleException("Operations", "GetFailed");
-                }
-
-                var dtos = ((List<NetworkTypeModel>)repositoryResult.Result)
-                    .Select(n => new NetworkTypeDto
-                    {
-                        Name = n.Name,
-                        Description = n.Description,
-                        ChangeDate = n.UpdatedAt
-                    })
-                    .ToList();
+                var dtos = _mapper.Map<List<NetworkTypeDto>>(repositoryResult.Result);
 
                 return _operations.SuccessResult(dtos, "Operations", "GetSuccess");
             }
@@ -102,15 +80,15 @@ namespace NetMed.Application.Services
                 {
                     dto.Removed = true;
                     dto.ChangeUserID = dto.NetworkTypeId;
-                    return _operations.SuccessResult(dto, "Operations", "GetSuccess");
+                    return operationResult;
                 }
 
                 return operationResult;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _operations.GetErrorMessage("Insurances", "RemoveInsurenProvider"));
-                return _operations.HandleException("Insurances", "RemoveInsurenProvider");
+                _logger.LogError(ex, _operations.GetErrorMessage("Networks", "RemoveNetworkType"));
+                return _operations.HandleException("Networks", "RemoveNetworkType");
             }
         }
 
@@ -118,15 +96,10 @@ namespace NetMed.Application.Services
         {
             try
             {
-                var network = new NetworkType
-                {
-                    Name = dto.Name,
-                    Description = dto.Description,
-                    UpdatedAt = dto.ChangeDate
-                };
+                var network = _mapper.Map<NetworkType>(dto);
 
-                var networks = await _networkTypeRepository.SaveEntityAsync(network);
-                return _operations.SuccessResult(dto, "Operations", "SaveSuccess");
+                var result = await _networkTypeRepository.SaveEntityAsync(network);
+                return result;
             }
             catch (Exception ex)
             {
@@ -139,15 +112,11 @@ namespace NetMed.Application.Services
         {
             try
             {
-                var network = new NetworkType
-                {
-                    Name = dto.Name,
-                    Description = dto.Description,
-                    UpdatedAt = dto.ChangeDate
-                };
+                var network = _mapper.Map<NetworkType>(dto);
 
-                var networks = await _networkTypeRepository.UpdateEntityAsync(network);
-                return _operations.SuccessResult(dto, "Operations", "GetSuccess");
+                var result = await _networkTypeRepository.UpdateEntityAsync(network);
+                
+                return result;
             }
             catch (Exception ex)
             {

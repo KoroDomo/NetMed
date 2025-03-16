@@ -3,8 +3,10 @@ namespace NetMed.Application.Dtos.InsuranceProvider
 {
     public class InsuranceProviderDto : DtoBase
     {
-        public new string PhoneNumber { get; set; }
         public string Name { get; set; }
+        public new string PhoneNumber { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
         public string? Website { get; set; }
         public string? City { get; set; }
         public string? State { get; set; }
@@ -16,7 +18,5 @@ namespace NetMed.Application.Dtos.InsuranceProvider
         public string? CustomerSupportContact { get; set; }
         public string? AcceptedRegions { get; set; }
         public decimal? MaxCoverageAmount { get; set; }
-        public string Email { get; set; }
-        public string Address { get; set; }
     }
 }

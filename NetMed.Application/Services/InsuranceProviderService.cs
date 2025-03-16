@@ -2,10 +2,9 @@
 using NetMed.Application.Contracts;
 using NetMed.Domain.Base;
 using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Context;
 using NetMed.Persistence.Validators;
 using NetMed.Domain.Entities;
-using NetMed.Model.Models;
+using AutoMapper;
 
 namespace NetMed.Application.Services
 {
@@ -15,14 +14,17 @@ namespace NetMed.Application.Services
         private readonly IInsuranceProviderRepository _insuranceProviderRepository;
         private readonly ICustomLogger _logger;
         private readonly InsuranceProviderValidator _operations;
+        private readonly IMapper _mapper;
 
-        public InsuranceProviderService(NetMedContext context,
-                                        IInsuranceProviderRepository repository,
-                                        ICustomLogger logger, MessageMapper messageMapper)
+        public InsuranceProviderService(IInsuranceProviderRepository repository,
+                                        ICustomLogger logger, MessageMapper messageMapper,
+                                        IMapper mapper)
         {
             _insuranceProviderRepository = repository;
             _logger = logger;
             _operations = new InsuranceProviderValidator(messageMapper);
+            _mapper = mapper;
+            
             
         }
         public async Task<OperationResult> GetAll()
@@ -33,32 +35,7 @@ namespace NetMed.Application.Services
 
                 if (!repositoryResult.Success) return repositoryResult;
 
-                if (repositoryResult.Result is not List<NetworktypeModel> providers)
-                {
-                    return _operations.HandleException("Entitys", "NullEntity");
-                }
-
-                var dtos = ((List<NetworktypeModel>)repositoryResult.Result)
-                    .Where(ip => ip.IsActive == true)
-                    .Select(ip => new InsuranceProviderDto
-                    {
-                        Name = ip.Name,
-                        PhoneNumber = ip.ContactNumber,
-                        Email = ip.Email,
-                        Website = ip.Website,
-                        Address = ip.Address,
-                        City = ip.City,
-                        State = ip.State,
-                        Country = ip.Country,
-                        ZipCode = ip.ZipCode,
-                        CoverageDetails = ip.CoverageDetails,
-                        IsPreferred = ip.IsPreferred,
-                        NetworkTypeID = ip.NetworkTypeID,
-                        AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount
-                        
-                    })
-                    .ToList();
+                var dtos= _mapper.Map<List<InsuranceProviderDto>>(repositoryResult.Result);
 
                 return _operations.SuccessResult(dtos, "Operations", "GetSuccess");
             }
@@ -73,35 +50,10 @@ namespace NetMed.Application.Services
         {
             try
             {
-                var repositoryResult = await _insuranceProviderRepository.GetEntityByIdAsync(id);
+                var repositoryResult = await _insuranceProviderRepository.GetInsurenProviderById(id);
                 if (!repositoryResult.Success) return repositoryResult;
 
-                if (repositoryResult.Result is not List<NetworktypeModel> providers)
-                {
-                    return _operations.HandleException("Operations", "GetFailed");
-                }
-
-                var dtos = ((List<NetworktypeModel>)repositoryResult.Result)
-                    .Where(ip => ip.IsActive == true)
-                    .Select(ip => new InsuranceProviderDto
-                    {
-                        
-                        Name = ip.Name,
-                        PhoneNumber = ip.ContactNumber,
-                        Email = ip.Email,
-                        Website = ip.Website,
-                        Address = ip.Address,
-                        City = ip.City,
-                        State = ip.State,
-                        Country = ip.Country,
-                        ZipCode = ip.ZipCode,
-                        CoverageDetails = ip.CoverageDetails,
-                        IsPreferred = ip.IsPreferred,
-                        NetworkTypeID = ip.NetworkTypeID,
-                        AcceptedRegions = ip.AcceptedRegions,
-                        MaxCoverageAmount = ip.MaxCoverageAmount
-                    })
-                    .ToList();
+                var dtos = _mapper.Map<List<InsuranceProviderDto>>(repositoryResult.Result);
 
                 return _operations.SuccessResult(dtos,"Operations", "GetSuccess");
             }
@@ -127,8 +79,8 @@ namespace NetMed.Application.Services
                 if (operationResult.Success)
                 {
                     dto.Removed = true; 
-                    dto.ChangeUserID = dto.InsuranceProviderID;
-                    return _operations.SuccessResult(dto, "Insurances", "RemoveInsurenProvider");
+                    dto.ChangeUserID = dto.ChangeUserID;
+                    return operationResult;
                 }
 
                 return operationResult; 
@@ -144,27 +96,10 @@ namespace NetMed.Application.Services
         {
             try
             {
-                var insuranceProvider = new InsuranceProviders
-                {
-                    Id = dto.NetworkTypeID,
-                    Name = dto.Name,
-                    PhoneNumber = dto.PhoneNumber,
-                    Email = dto.Email,
-                    Website = dto.Website,
-                    Address = dto.Address,
-                    City = dto.City,
-                    State = dto.State,
-                    Country = dto.Country,
-                    ZipCode = dto.ZipCode,
-                    CoverageDetails = dto.CoverageDetails,
-                    IsPreferred = dto.IsPreferred,
-                    NetworkTypeID = dto.NetworkTypeID,
-                    AcceptedRegions = dto.AcceptedRegions,
-                    MaxCoverageAmount = dto.MaxCoverageAmount
-                };
+                var insuranceProvider = _mapper.Map<InsuranceProviders>(dto);
 
-                var insuranceProviders = await _insuranceProviderRepository.SaveEntityAsync(insuranceProvider);
-                return _operations.SuccessResult(dto, "Operations", "SaveSuccess");
+                var result = await _insuranceProviderRepository.SaveEntityAsync(insuranceProvider);
+                return result;
             }
             catch (Exception ex)
             {
@@ -177,27 +112,15 @@ namespace NetMed.Application.Services
         {
             try
             {
-                var insuranceProvider = new InsuranceProviders
+                var insuranceProvider = _mapper.Map<InsuranceProviders>(dto);
+                
+                var result= await _insuranceProviderRepository.UpdateEntityAsync(insuranceProvider);
+                if (result.Success)
                 {
-                    Id= dto.InsuranceProviderID,
-                    Name = dto.Name,
-                    PhoneNumber= dto.PhoneNumber,
-                    Email = dto.Email,
-                    Website = dto.Website,
-                    Address = dto.Address,
-                    City = dto.City,
-                    State = dto.State,
-                    Country = dto.Country,
-                    ZipCode = dto.ZipCode,
-                    CoverageDetails = dto.CoverageDetails,
-                    IsPreferred = dto.IsPreferred,
-                    NetworkTypeID = dto.NetworkTypeID,
-                    AcceptedRegions = dto.AcceptedRegions,
-                    MaxCoverageAmount = dto.MaxCoverageAmount
-                };
-
-                var insuranceProviders = await _insuranceProviderRepository.UpdateEntityAsync(insuranceProvider);
-                return _operations.SuccessResult(dto, "Operations", "UpdateSuccess");
+                    dto.ChangeUserID = dto.ChangeUserID;
+                    return _operations.SuccessResult(null, "Insurances", "RemoveInsurenProvider");
+                }
+                return result;
             }
             catch (Exception ex)
             {
