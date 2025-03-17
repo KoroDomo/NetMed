@@ -4,8 +4,10 @@ using NetMed.Application.Dtos.DoctorAvailability;
 using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.IValidators;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
+
 
 namespace NetMed.Application.Services
 {
@@ -14,12 +16,14 @@ namespace NetMed.Application.Services
         private readonly IDoctorAvailabilityRepository _doctorAvailabilityRepository;
         private readonly ILogger<DoctorAvailabilityService> _logger;
         private readonly IConfiguration _configuration;
+        private readonly IValidations _validations;
 
-        public DoctorAvailabilityService(IDoctorAvailabilityRepository doctorAvailabilityRepository , ILogger<DoctorAvailabilityService> logger, IConfiguration configuration)
+        public DoctorAvailabilityService(IDoctorAvailabilityRepository doctorAvailabilityRepository , ILogger<DoctorAvailabilityService> logger, IConfiguration configuration, IValidations validations)
         {
             _doctorAvailabilityRepository = doctorAvailabilityRepository;
             _logger = logger;
             _configuration = configuration;
+            _validations = validations;
         }
         public async Task<OperationResult> GetAll()
         {
@@ -42,10 +46,10 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsInt(Id);
+                result = _validations.IsInt(Id);
                 if (!result.Success) return result;
 
-                result = Validations.IsNullOrWhiteSpace(Id, nameof(Id));
+                result = _validations.IsNullOrWhiteSpace(Id);
                 if (!result.Success) return result;
 
                 var doctorAvailability = await _doctorAvailabilityRepository.GetEntityByIdAsync(Id);
@@ -63,10 +67,10 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(Id, nameof(Id));
+                result = _validations.IsNullOrWhiteSpace(Id);
                 if (!result.Success) return result;
 
-                result = Validations.IsInt(Id);
+                result = _validations.IsInt(Id);
                 if (!result.Success) return result;
 
                 var doctorAvailability = await _doctorAvailabilityRepository.RemoveAsync(Id);

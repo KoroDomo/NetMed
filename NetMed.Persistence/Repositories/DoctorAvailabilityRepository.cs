@@ -3,6 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.IValidators;
+using NetMed.Infraestructure.Logger;
+using NetMed.Infraestructure.Messages;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
@@ -14,14 +17,16 @@ namespace NetMed.Persistence.Repositories
     public class DoctorAvailabilityRepository : BaseRepository<DoctorAvailability>, IDoctorAvailabilityRepository
     {
         private readonly NetMedContext _context;
-        private readonly ILogger<DoctorAvailabilityRepository> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly ILoggerSystem _logger;
+        private readonly IValidations _validations;
+        private readonly IMessageService _messageService;
 
-        public DoctorAvailabilityRepository(NetMedContext context, ILogger<DoctorAvailabilityRepository> logger, IConfiguration configuration) : base(context)
+        public DoctorAvailabilityRepository(NetMedContext context, ILoggerSystem logger, IMessageService messageService, IValidations validations) : base(context)
         {
             _context = context;
             _logger = logger;
-            _configuration = configuration;
+            _messageService = messageService;
+            _validations = validations;
         }
         public async override Task<OperationResult> GetAllAsync()
         {
@@ -34,9 +39,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["AppointmentsRepositoryError: GetAllAsync"];
+                result.Message = "AppointmentsRepositoryError: GetAllAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
             return result;
         }
@@ -45,7 +50,7 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(entity, nameof(entity));
+                result = _validations.IsNullOrWhiteSpace(entity);
                 if (!result.Success) return result;
 
                 await base.SaveEntityAsync(entity);
@@ -55,9 +60,9 @@ namespace NetMed.Persistence.Repositories
 
             catch (Exception ex)
             {
-                result.Message = _configuration["DoctorAvailabilityRepositoryError: SaveEntityAsync"];
+                result.Message = "DoctorAvailabilityRepositoryError: SaveEntityAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+        
             }
             return result;
             
@@ -67,7 +72,7 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(entity, nameof(entity));
+                result = _validations.IsNullOrWhiteSpace(entity);
                 if (!result.Success) return result;
 
                 await base.UpdateEntityAsync(entity);
@@ -76,9 +81,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["DoctorAvailabilityRepositoryError: UpdateEntityAsync"];
+                result.Message = "DoctorAvailabilityRepositoryError: UpdateEntityAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+               
             }
             return result;
         }
@@ -87,15 +92,15 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(filter, nameof(filter));
+                result = _validations.IsNullOrWhiteSpace(filter);
                 if (!result.Success) return result;
                 await base.ExistsAsync(filter);
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["DoctorAvailabilityRepositoryError: ExistsAsync"];
+                result.Message = "DoctorAvailabilityRepositoryError: ExistsAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
             return result; ;
         }
@@ -104,16 +109,16 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(filter, nameof(filter));
+                result = _validations.IsNullOrWhiteSpace(filter);
                 if (!result.Success) return result;
 
                 await base.GetAllAsync(filter);
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["DoctorAvailabilityRepositoryError: GetAllAsync"];
+                result.Message = "DoctorAvailabilityRepositoryError: GetAllAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
            return result;
         }
@@ -122,10 +127,10 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(Id, nameof(Id));
+                result = _validations.IsNullOrWhiteSpace(Id);
                 if (!result.Success) return result;
 
-                result = Validations.IsInt(Id);
+                result = _validations.IsInt(Id);
                 if (!result.Success) return result;
 
                 await base.GetEntityByIdAsync(Id);
@@ -134,25 +139,24 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["DoctorAvailabilityRepositoryError: GetEntityByIdAsync"];
+                result.Message = "DoctorAvailabilityRepositoryError: GetEntityByIdAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
             return result;
         }
-
         public async override Task<OperationResult> RemoveAsync(int Id)
         {
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsInt(Id);
+                result = _validations.IsInt(Id);
                 if (!result.Success) return result;
 
-                result = Validations.IsNullOrWhiteSpace(Id, nameof(Id));
+                result = _validations.IsNullOrWhiteSpace(Id);
                 if (!result.Success) return result;
 
-                result = await Validations.ExistsEntity(Id, async (id) =>
+                result = await _validations.ExistsEntity(Id, async (id) =>
                 {
                     return await _context.DoctorAvailability.AnyAsync(a => a.Id == id);
                 });
@@ -164,9 +168,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["DoctorAvailabilityRepositoryError: RemoveAsync"];
+                result.Message = "DoctorAvailabilityRepositoryError: RemoveAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
             return result;
         }
@@ -175,16 +179,16 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(DoctorID, nameof(DoctorID));
+                result = _validations.IsNullOrWhiteSpace(DoctorID);
                 if (!result.Success) return result;
 
-                result = Validations.IsInt(DoctorID);
+                result = _validations.IsInt(DoctorID);
                 if (!result.Success) return result;
 
-                result = Validations.CheckDate(AvailableDate);
+                result = _validations.CheckDate(AvailableDate);
                 if (!result.Success) return result;
 
-                result = Validations.Time(StartTime, EndTime);
+                result = _validations.Time(StartTime, EndTime);
                 if (!result.Success) return result;
 
                 var newAvailability = new DoctorAvailability
@@ -203,9 +207,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["ErrorDoctorAvailabilityRepository: SetAvailabilityAsync"];
+                result.Message ="ErrorDoctorAvailabilityRepository: SetAvailabilityAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
             return result;
         }
@@ -214,13 +218,13 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(DoctorID, nameof(DoctorID));
+                result = _validations.IsNullOrWhiteSpace(DoctorID);
                 if (!result.Success) return result;
        
-                result = Validations.IsInt(DoctorID);
+                result = _validations.IsInt(DoctorID);
                 if (!result.Success) return result;
 
-                result = Validations.CheckDate(AvailableDate);
+                result = _validations.CheckDate(AvailableDate);
                 if (!result.Success) return result;
 
                 var availability = await _context.DoctorAvailability
@@ -231,9 +235,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["ErrorDoctorAvailabilityRepository: GetAvailabilityByDoctorAndDateAsync"];
+                result.Message = "ErrorDoctorAvailabilityRepository: GetAvailabilityByDoctorAndDateAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
             return result;
         }
@@ -242,22 +246,22 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsInt(DoctorID);
+                result = _validations.IsInt(DoctorID);
                 if (!result.Success) return result;
 
-                result = Validations.IsNullOrWhiteSpace(DoctorID, nameof(DoctorID));
+                result = _validations.IsNullOrWhiteSpace(DoctorID);
                 if (!result.Success) return result;
 
-                result = Validations.IsInt(AvailabilityID);
+                result = _validations.IsInt(AvailabilityID);
                 if (!result.Success) return result;
 
-                result = Validations.IsNullOrWhiteSpace(AvailabilityID, nameof(AvailabilityID));
+                result = _validations.IsNullOrWhiteSpace(AvailabilityID);
                 if (!result.Success) return result;
 
-                result = Validations.CheckDate(AvailableDate);
+                result = _validations.CheckDate(AvailableDate);
                 if (!result.Success) return result;
 
-                result = Validations.Time(StartTime, EndTime);
+                result = _validations.Time(StartTime, EndTime);
                 if (!result.Success) return result;
 
                 var availability = await _context.DoctorAvailability.FindAsync(AvailabilityID);
@@ -268,9 +272,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["ErrorDoctorAvailabilityRepository: UpdateAvailabilityAsync"];
+                result.Message = "ErrorDoctorAvailabilityRepository: UpdateAvailabilityAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
             return result;
         }
@@ -279,10 +283,10 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsInt(AvailabilityID);
+                result = _validations.IsInt(AvailabilityID);
                 if (!result.Success) return result;
 
-                result = Validations.IsNullOrWhiteSpace(AvailabilityID, nameof(AvailabilityID));
+                result = _validations.IsNullOrWhiteSpace(AvailabilityID);
                 if (!result.Success) return result;
 
                 var availability = await _context.DoctorAvailability.FindAsync(AvailabilityID);
@@ -294,9 +298,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["ErrorDoctorAvailabilityRepository: RemoveAvailabilityAsync"];
+                result.Message = "ErrorDoctorAvailabilityRepository: RemoveAvailabilityAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
             return result;
         }
@@ -306,16 +310,16 @@ namespace NetMed.Persistence.Repositories
            
             try
             {
-                result = Validations.IsNullOrWhiteSpace(DoctorID, nameof(DoctorID));
+                result = _validations.IsNullOrWhiteSpace(DoctorID);
                 if (!result.Success) return result;
 
-                result = Validations.IsInt(DoctorID);
+                result = _validations.IsInt(DoctorID);
                 if (!result.Success) return result;
 
-                result = Validations.CheckDate(AvailableDate);
+                result = _validations.CheckDate(AvailableDate);
                 if (!result.Success) return result;
 
-                result = Validations.Time(StartTime, EndTime);
+                result = _validations.Time(StartTime, EndTime);
                 if (!result.Success) return result;
 
                 bool overlappingAvailability = await _context.DoctorAvailability.AnyAsync
@@ -334,9 +338,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["ErrorDoctorAvailabilityRepository: IsDoctorAvailableAsync"];
+                result.Message ="ErrorDoctorAvailabilityRepository: IsDoctorAvailableAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+               
 
             }
             return result;
@@ -346,16 +350,16 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(DoctorID, nameof(DoctorID));
+                result = _validations.IsNullOrWhiteSpace(DoctorID);
                 if (!result.Success) return result;
 
-                result = Validations.IsInt(DoctorID);
+                result = _validations.IsInt(DoctorID);
                 if (!result.Success) return result;
 
-                result = Validations.CheckDate(AvailableDate);
+                result = _validations.CheckDate(AvailableDate);
                 if (!result.Success) return result;
 
-                result = Validations.Time(StartTime, EndTime);
+                result = _validations.Time(StartTime, EndTime);
                 if (!result.Success) return result;
 
                 var availability = await _context.DoctorAvailability.FirstOrDefaultAsync(a =>
@@ -386,9 +390,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["ErrorDoctorAvailabilityRepository: UpdateAvailabilityInRealTimeAsyn"];
+                result.Message = "ErrorDoctorAvailabilityRepository: UpdateAvailabilityInRealTimeAsyn";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+               
             }
             return result;
         }

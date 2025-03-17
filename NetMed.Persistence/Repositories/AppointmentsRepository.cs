@@ -1,42 +1,48 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.IValidators;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using System.Linq.Expressions;
+using NetMed.Infraestructure.Logger;
+using NetMed.Infraestructure.Messages;
 
 namespace NetMed.Persistence.Repositories
 {
     public class AppointmentsRepository : BaseRepository<Appointments>, IAppointmentsRespository
     {
         private readonly NetMedContext _context;
-        private readonly ILogger<AppointmentsRepository> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly ILoggerSystem _logger;
+        private readonly IValidations _validations;
+        private readonly IMessageService _messageService;
 
-        public AppointmentsRepository(NetMedContext context, ILogger<AppointmentsRepository> logger, IConfiguration configuration) : base(context)
+
+        public AppointmentsRepository(NetMedContext context, ILoggerSystem logger, IValidations validations, IMessageService messageService) : base(context)
         {
             _context = context;
             _logger = logger;
-            _configuration = configuration;
+            _validations = validations;
+            _messageService = messageService;
         }
+
         public override async  Task<OperationResult> SaveEntityAsync(Appointments entity)
         {
             OperationResult result = new OperationResult();
+            
             try
             {
-                result = Validations.IsNullOrWhiteSpace(entity, nameof(entity));
+                result = _validations.IsNullOrWhiteSpace(entity);
                 if (!result.Success) return result;
-
-                result = Validations.AppointmentExists(entity.PatientID, entity.AppointmentDate, (patientId, appointmentDate) =>
+        
+                result = _validations.AppointmentExists(entity.PatientID, entity.DoctorID, entity.AppointmentDate, entity.StatusID, (patientId, doctorId, appointmentDate,statusID) =>
                 {
-                    return _context.Appointments.Any(a => a.PatientID == patientId && a.AppointmentDate == appointmentDate);
+                    return _context.Appointments.Any(a => a.PatientID == patientId && a.DoctorID == doctorId && a.AppointmentDate == appointmentDate && a.StatusID == statusID);
                 });
                 if (!result.Success) return result;
 
-                result = Validations.CheckDate(entity.AppointmentDate);
+                result = _validations.CheckDate(entity.AppointmentDate);
                 if (!result.Success) return result;
 
                 await base.SaveEntityAsync(entity);
@@ -45,9 +51,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["AppointmentsRepositoryError: SaveEntityAsync"];
+                result.Message = _messageService.GetMessage("Errors", "SaveEntity");
                 result.Success = false;
-                _logger.LogError(result.Message,ex.ToString());
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -57,19 +63,19 @@ namespace NetMed.Persistence.Repositories
            
             try
             {
-                result = Validations.IsNullOrWhiteSpace(entity, nameof(entity));
+                result = _validations.IsNullOrWhiteSpace(entity);
                 if (!result.Success) return result;
 
                 await base.UpdateEntityAsync(entity);
                 result.Success = true;
-                result.Message = "Datos Actualizados con exito";
+                result.Message = _messageService.GetMessage("messagesAppointments", "UpdateEntityAsync");
             }
 
             catch (Exception ex)
             {
-                result.Message = _configuration["AppointmentsRepositoryError: UpdateEntityAsync"];
+                result.Message = _messageService.GetMessage("messagesAppointments", "UpdateEntityAsync");
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -77,16 +83,17 @@ namespace NetMed.Persistence.Repositories
         {
             OperationResult result = new OperationResult();
             try
-            {
+            {                                  
                 await base.GetAllAsync();
                 result.Success = true;
                 result.Message = "Datos Obtenidos con exito";
+ 
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["AppointmentsRepositoryError: GetAllAsync"];
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                result.Message ="AppointmentsRepositoryError: GetAllAsync";             
+               
             }
             return result;          
         }
@@ -95,7 +102,7 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(filter, nameof(filter));
+                result = _validations.IsNullOrWhiteSpace(filter);
                 if (!result.Success) return result;
 
                 await base.GetAllAsync(filter);
@@ -104,9 +111,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["AppointmentsRepositoryError: GetAllAsync"];
+                result.Message = "AppointmentsRepositoryError: GetAllAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
             return result;
         }
@@ -117,13 +124,13 @@ namespace NetMed.Persistence.Repositories
             {
                 await base.ExistsAsync(filter);
                 result.Success = true;
-                result.Message = "Los Datos Existen";
+                result.Message = "Entidad encontrada con éxito";
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["AppointmentsRepositoryError: ExistsAsync"];
+                result.Message = "AppointmentsRepositoryError: ExistsAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
             return result; ;
         }
@@ -132,13 +139,13 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(Id, nameof(Id));
+                result = _validations.IsNullOrWhiteSpace(Id);
                 if (!result.Success) return result;
 
-                result = Validations.IsInt(Id);
+                result = _validations.IsInt(Id);
                 if (!result.Success) return result;
     
-                result = await Validations.ExistsEntity(Id,async (id) =>
+                result = await _validations.ExistsEntity(Id,async (id) =>
                 {
                     return await _context.Appointments.AnyAsync(a => a.Id == id);
                 });
@@ -150,9 +157,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["AppointmentsRepositoryError: GetEntityByIdAsync"];
+                result.Message = "AppointmentsRepositoryError: GetEntityByIdAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
             return result;
         }
@@ -161,13 +168,13 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsInt(Id);
+                result = _validations.IsInt(Id);
                 if (!result.Success) return result;
 
-                result = Validations.IsNullOrWhiteSpace(Id, nameof(Id));
+                result = _validations.IsNullOrWhiteSpace(Id);
                 if (!result.Success) return result;
 
-                result = await Validations.ExistsEntity(Id, async (id) =>
+                result = await _validations.ExistsEntity(Id, async (id) =>
                 {
                     return await _context.Appointments.AnyAsync(a => a.Id == id);
                 });
@@ -179,84 +186,88 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["AppointmentsRepositoryError: RemoveAsync"];
+                result.Message = "AppointmentsRepositoryError: RemoveAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+               
             }
             return result;
         }
-        public async Task<OperationResult> CreateAppointmentAsync(int PatientID, int DoctorID, DateTime AppointmentDate)
+        public async Task<OperationResult> CreateAppointmentAsync(int AppointmentID, int PatientID, int DoctorID, DateTime AppointmentDate, int StatusID)
         {
             OperationResult result = new OperationResult();
             
             try
             {
-                result = Validations.IsNullOrWhiteSpace(PatientID, nameof(PatientID));
+                result = _validations.IsNullOrWhiteSpace(PatientID);
                 if (!result.Success) return result;
 
-                result = Validations.IsInt(PatientID);
+                result = _validations.IsInt(PatientID);
                 if (!result.Success) return result;
 
-                result = Validations.IsNullOrWhiteSpace(DoctorID, nameof(DoctorID));
+                result = _validations.IsNullOrWhiteSpace(DoctorID);
                 if (!result.Success) return result;
 
-                result = Validations.IsInt(DoctorID);
+                result = _validations.IsInt(DoctorID);
                 if (!result.Success) return result;
 
-                result = Validations.AppointmentExists(PatientID, AppointmentDate, (patientId, appointmentDate) =>
+                result = _validations.CheckDate(AppointmentDate);
+                if (!result.Success) return result;
+
+                result = _validations.AppointmentExists(PatientID, DoctorID, AppointmentDate, StatusID, (patientId, doctorId, appointmentDate, statusID) =>
                 {
-                    return _context.Appointments.Any(a => a.PatientID == patientId && a.AppointmentDate == appointmentDate);
-                });
-                if (!result.Success) return result;
-
-                result = Validations.CheckDate(AppointmentDate);
-                if (!result.Success) return result;
-
-                result = await Validations.PatientExists(PatientID, async (id) =>
-                {
-                    return await _context.Appointments.AnyAsync(p => p.Id == id);
+                    return _context.Appointments.Any(a => a.PatientID == patientId && a.DoctorID == doctorId && a.AppointmentDate == appointmentDate && a.StatusID == statusID);
                 });
                 if (!result.Success) return result;
 
                 var newAppointment = new Appointments 
                 {
+                    Id = 0,
                     PatientID = PatientID,
                     DoctorID = DoctorID,
-                    AppointmentDate = AppointmentDate                    
+                    AppointmentDate = AppointmentDate,
+                    StatusID = StatusID
                 };
                 _context.Appointments.Add(newAppointment); 
                 await _context.SaveChangesAsync();
-                return new OperationResult { Success = true, Message = "Cita creada exitosamente.", Data = newAppointment.Id };
+                result.Success = true;
+                result.Message = "Cita creada exitosamente.";
+                result.Data = newAppointment;
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["AppointmentsRepositoryError: CreateAppointmentAsync"];
+                result.Message = "AppointmentsRepositoryError: CreateAppointmentAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+               
             }
             return result;
         }     
         public async Task<OperationResult> GetAppointmentsByPatientAsync(int PatientID)
         {
-            OperationResult result = new OperationResult();
-            
+            OperationResult result = new OperationResult();          
             try
-            {
-                result = Validations.IsNullOrWhiteSpace(PatientID, nameof(PatientID));
+            {               
+                result = _validations.IsNullOrWhiteSpace(PatientID);
                 if (!result.Success) return result;
 
-                result = Validations.IsInt(PatientID);
+                result = _validations.IsInt(PatientID);
+                if (!result.Success) return result;
+
+                result = await _validations.PatientExists(PatientID, async (id) =>
+                {
+                    return await _context.Appointments.AnyAsync(p => p.Id == id);
+                });
                 if (!result.Success) return result;
 
                 var appointments = await _context.Appointments.Where(a => a.PatientID == PatientID).ToListAsync();
                 result.Success = true;
                 result.Message = "Cita encontrada con exito";
+                result.Data = appointments;
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["AppointmentsRepositoryError: GetAppointmentsByPatientAsync"];
+                result.Message ="AppointmentsRepositoryError: GetAppointmentsByPatientAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
             return result;
         }
@@ -265,10 +276,16 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(DoctorID, nameof(DoctorID));
+                result = _validations.IsNullOrWhiteSpace(DoctorID);
                 if (!result.Success) return result;
                
-                result = Validations.IsInt(DoctorID);
+                result = _validations.IsInt(DoctorID);
+                if (!result.Success) return result;
+
+                result = await _validations.ExistsEntity(DoctorID, async (id) =>
+                {
+                    return await _context.Appointments.AnyAsync(a => a.DoctorID == id);
+                });
                 if (!result.Success) return result;
 
                 var appointments = await _context.Appointments.Where(a => a.DoctorID == DoctorID).ToListAsync();
@@ -277,21 +294,21 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex) 
             {
-                result.Message = _configuration["AppointmentsRepositoryError: GetAppointmentsByDoctorAsync"];
+                result.Message ="AppointmentsRepositoryError: GetAppointmentsByDoctorAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+               
             }
             return result;
-        }
+        } //Aqui Test
         public async Task<OperationResult> GetAppointmentsByStatusAsync(int StatusID)
         {
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(StatusID, nameof(StatusID));
+                result = _validations.IsNullOrWhiteSpace(StatusID);
                 if (!result.Success) return result;
 
-                result = Validations.IsInt(StatusID);
+                result = _validations.IsInt(StatusID);
                 if (!result.Success) return result;
 
                 var appointments = await _context.Appointments.Where(a => a.StatusID == StatusID).ToListAsync();
@@ -300,9 +317,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["AppointmentsRepositoryError: GetAppointmentsByStatusAsync"];
+                result.Message = "AppointmentsRepositoryError: GetAppointmentsByStatusAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                
             }
             return result;
         }
@@ -311,10 +328,10 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(AppointmentDate, nameof(AppointmentDate));
+                result = _validations.IsNullOrWhiteSpace(AppointmentDate);
                 if (!result.Success) return result;
 
-                result = Validations.CheckDate(AppointmentDate);
+                result = _validations.CheckDate(AppointmentDate);
                 if (!result.Success) return result;
 
                var appointments = await _context.Appointments.Where(a => a.AppointmentDate == AppointmentDate).ToListAsync();
@@ -324,9 +341,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["AppointmentsRepositoryError: GetAppointmentsByDateAsync"];
+                result.Message = "AppointmentsRepositoryError: GetAppointmentsByDateAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+              
             }
             return result;
         }
@@ -335,10 +352,10 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = Validations.IsNullOrWhiteSpace(AppointmentID, nameof(AppointmentID));
+                result = _validations.IsNullOrWhiteSpace(AppointmentID);
                 if (!result.Success) return result;
 
-                result = Validations.IsInt(AppointmentID);
+                result = _validations.IsInt(AppointmentID);
                 if (!result.Success) return result;
 
                 var appointments = await _context.Appointments.FindAsync(AppointmentID);
@@ -350,9 +367,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex )
             {
-                result.Message = _configuration["AppointmentsRepositoryError: CancelAppointmentAsync"];
+                result.Message = "AppointmentsRepositoryError: CancelAppointmentAsync";
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+               
             }
             return result;
         }
@@ -362,13 +379,13 @@ namespace NetMed.Persistence.Repositories
             
             try
             {
-                result = Validations.IsNullOrWhiteSpace(DoctorID, nameof(DoctorID));
+                result = _validations.IsNullOrWhiteSpace(DoctorID);
                 if (!result.Success) return result;
 
-                result = Validations.IsInt(DoctorID);
+                result = _validations.IsInt(DoctorID);
                 if (!result.Success) return result;
 
-                result = Validations.CheckDate(AppointmentDate);
+                result = _validations.CheckDate(AppointmentDate);
                 if (!result.Success) return result;
 
                 var appointments = await _context.Appointments.Where(a => a.DoctorID == DoctorID && a.AppointmentDate == AppointmentDate).ToListAsync();
@@ -377,9 +394,8 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["AppointmentsRepositoryError: GetAppointmentsByDoctorAndDateAsync"];
-                result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                result.Message = "AppointmentsRepositoryError: GetAppointmentsByDoctorAndDateAsync";
+                result.Success = false;               
             }
             return result;
         }

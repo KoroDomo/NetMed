@@ -1,0 +1,122 @@
+{
+  "messagesAppointments": [
+    {
+      "method": "SaveEntityAsync",
+      "success": true,
+      "message": "Datos Guardados con exito"
+    },
+    {
+      "method": "SaveEntityAsync",
+      "success": false,
+      "message": "Error al guardar los datos"
+    },
+    {
+      "method": "UpdateEntityAsync",
+      "success": true,
+      "message": "Datos Actualizados con exito"
+    },
+    {
+      "method": "UpdateEntityAsync",
+      "success": false,
+      "message": "Error al actualizar los datos"
+    },
+    {
+      "method": "GetAllAsync",
+      "success": true,
+      "message": "Datos Obtenidos con exito"
+    },
+    {
+      "method": "GetAllAsync",
+      "success": false,
+      "message": "Error al obtener todos los datos"
+    },
+    {
+      "method": "GetEntityByIdAsync",
+      "success": true,
+      "message": "Datos Obtenidos con exito"
+    },
+    {
+      "method": "GetEntityByIdAsync",
+      "success": false,
+      "message": "Error al obtener los datos de este ID"
+    },
+    {
+      "method": "RemoveAsync",
+      "success": true,
+      "message": "Datos desactivados con exito"
+    },
+    {
+      "method": "RemoveAsync",
+      "success": false,
+      "message": "Error al desactivar los datos"
+    },
+    {
+      "method": "CreateAppointmentAsync",
+      "success": true,
+      "message": "Cita creada exitosamente."
+    },
+    {
+      "method": "CreateAppointmentAsync",
+      "success": false,
+      "message": "Error al crear la cita"
+    },
+    {
+      "method": "GetAppointmentsByPatientAsync",
+      "success": true,
+      "message": "Cita encontrada con exito"
+    },
+    {
+      "method": "GetAppointmentsByPatientAsync",
+      "success": false,
+      "message": "Error al encontrar esta cita"
+    },
+    {
+      "method": "GetAppointmentsByDoctorAsync",
+      "success": true,
+      "message": "Cita encontrada con exito"
+    },
+    {
+      "method": "GetAppointmentsByDoctorAsync",
+      "success": false,
+      "message": "Error al encontrar cita"
+    },
+    {
+      "method": "GetAppointmentsByStatusAsync",
+      "success": false,
+      "message": "Error al encontrar cita"
+    },
+    {
+      "method": "GetAppointmentsByDateAsync",
+      "success": true,
+      "message": "Lista de todas las citas en esta fecha"
+    },
+    {
+      "method": "GetAppointmentsByDateAsync",
+      "success": false,
+      "message": "Error al obtener la lista de citas en esta fecha"
+    },
+    {
+      "method": "CancelAppointmentAsync",
+      "success": true,
+      "message": "Cita cancelada con exito."
+    },
+    {
+      "method": "CancelAppointmentAsync",
+      "success": false,
+      "message": "Error al cancelar cita"
+    },
+    {
+      "method": "GetAppointmentsByDoctorAndDateAsync",
+      "success": true,
+      "message": "Cita encontrada exictosamente"
+    },
+    {
+      "method": "GetAppointmentsByDoctorAndDateAsync",
+      "success": false,
+      "message": "Error al encontrara cita en esta fecha"
+    }
+  ]
+}
+
+
+

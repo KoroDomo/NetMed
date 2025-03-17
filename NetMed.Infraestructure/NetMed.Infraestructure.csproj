@@ -7,8 +7,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Messages\MessageManager.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Messages\JsonMessage.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NetMed.Domain\NetMed.Domain.csproj" />
+    <ProjectReference Include="..\NetMed.Model\NetMed.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Include="Messages\JsonMessage.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </ApplicationDefinition>
   </ItemGroup>
 
 </Project>
