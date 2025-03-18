@@ -32,7 +32,7 @@ namespace NetMed.Tests
             var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             _logger = new LoggerSystem(loggerFactory.CreateLogger<LoggerSystem>());
             _validations = new Validations();
-            _messageService = new MessageService();
+            _messageService = new MessageService("messages.json");
             _repository = new AppointmentsRepository(_context,_logger, _validations, _messageService);
         }
 

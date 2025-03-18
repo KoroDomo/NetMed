@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.Logger;
+using NetMed.Infraestructure.Messages;
 using NetMed.Persistence.Interfaces;
 
 namespace NetMed.Api.Controllers
@@ -9,10 +11,14 @@ namespace NetMed.Api.Controllers
     public class DoctorAvailabilityController : ControllerBase
     {
         private readonly IDoctorAvailabilityRepository _doctorAvailabilityRepository;
+        private readonly IMessageService _messageService;
+        private readonly ILoggerSystem _logger;
 
-        public DoctorAvailabilityController(IDoctorAvailabilityRepository doctorAvailabilityRepository, ILogger<DoctorAvailability> logger ) 
+        public DoctorAvailabilityController(IDoctorAvailabilityRepository doctorAvailabilityRepository, ILoggerSystem logger, IMessageService messageService) 
         {
            _doctorAvailabilityRepository = doctorAvailabilityRepository;
+            _messageService = messageService;
+            _logger = logger;
         }  
         [HttpGet("GetDoctorAvailability")]
         public async Task<IActionResult> Get()

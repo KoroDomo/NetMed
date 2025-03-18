@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.Logger;
+using NetMed.Infraestructure.Messages;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
 
@@ -10,10 +12,14 @@ namespace NetMed.Api.Controllers
     public class AppointmentsController : ControllerBase
     {
         private readonly IAppointmentsRespository _appointmentsRespository;
+        private readonly IMessageService _messageService;
+        private readonly ILoggerSystem _logger;
 
-        public AppointmentsController(IAppointmentsRespository appointmentsRespository, ILogger <AppointmentsRepository> logger) 
+        public AppointmentsController(IAppointmentsRespository appointmentsRespository, ILoggerSystem logger, IMessageService messageService) 
         {
             _appointmentsRespository = appointmentsRespository;
+            _messageService = messageService;
+            _logger = logger;
         }
         [HttpGet("GetAppointment")]
         public async Task<IActionResult> Get()

@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
-using NetMed.Infraestructure.IValidators;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
 using System.Linq.Expressions;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
+using NetMed.Infraestructure.Validators;
 
 namespace NetMed.Persistence.Repositories
 {
@@ -17,7 +17,6 @@ namespace NetMed.Persistence.Repositories
         private readonly ILoggerSystem _logger;
         private readonly IValidations _validations;
         private readonly IMessageService _messageService;
-
 
         public AppointmentsRepository(NetMedContext context, ILoggerSystem logger, IValidations validations, IMessageService messageService) : base(context)
         {
@@ -47,12 +46,12 @@ namespace NetMed.Persistence.Repositories
 
                 await base.SaveEntityAsync(entity);
                 result.Success = true;
-                result.Message = "Datos Guardados con exito"; 
+                result.Message = _messageService.GetMessage(nameof(SaveEntityAsync), true);
             }
             catch (Exception ex)
             {
-                result.Message = _messageService.GetMessage("Errors", "SaveEntity");
                 result.Success = false;
+                result.Message = _messageService.GetMessage(nameof(SaveEntityAsync), false);
                 _logger.LogError(ex, result.Message);
             }
             return result;
@@ -68,13 +67,13 @@ namespace NetMed.Persistence.Repositories
 
                 await base.UpdateEntityAsync(entity);
                 result.Success = true;
-                result.Message = _messageService.GetMessage("messagesAppointments", "UpdateEntityAsync");
+                result.Message = _messageService.GetMessage(nameof(UpdateEntityAsync), true);
             }
 
             catch (Exception ex)
             {
-                result.Message = _messageService.GetMessage("messagesAppointments", "UpdateEntityAsync");
                 result.Success = false;
+                result.Message = _messageService.GetMessage(nameof(UpdateEntityAsync), false);
                 _logger.LogError(ex, result.Message);
             }
             return result;
@@ -86,14 +85,14 @@ namespace NetMed.Persistence.Repositories
             {                                  
                 await base.GetAllAsync();
                 result.Success = true;
-                result.Message = "Datos Obtenidos con exito";
- 
+                result.Message = _messageService.GetMessage(nameof(GetAllAsync), true);
+
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message ="AppointmentsRepositoryError: GetAllAsync";             
-               
+                result.Message = _messageService.GetMessage(nameof(GetAllAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;          
         }
@@ -107,13 +106,13 @@ namespace NetMed.Persistence.Repositories
 
                 await base.GetAllAsync(filter);
                 result.Success = true;
-                result.Message = "Datos Obtenidos con exito";
+                result.Message = _messageService.GetMessage(nameof(GetAllAsync), true);
             }
             catch (Exception ex)
             {
-                result.Message = "AppointmentsRepositoryError: GetAllAsync";
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(GetAllAsync), false);
+                _logger.LogError(ex,result.Message);
             }
             return result;
         }
@@ -124,15 +123,15 @@ namespace NetMed.Persistence.Repositories
             {
                 await base.ExistsAsync(filter);
                 result.Success = true;
-                result.Message = "Entidad encontrada con éxito";
+                result.Message = _messageService.GetMessage(nameof(ExistsAsync), true);
             }
             catch (Exception ex)
             {
-                result.Message = "AppointmentsRepositoryError: ExistsAsync";
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(ExistsAsync), false);
+                _logger.LogError(ex, result.Message);  
             }
-            return result; ;
+            return result; 
         }
         public async override Task<OperationResult> GetEntityByIdAsync(int Id)
         {
@@ -153,13 +152,13 @@ namespace NetMed.Persistence.Repositories
 
                 await base.GetEntityByIdAsync(Id);
                 result.Success = true;
-                result.Message = "Datos Obtenidos con exito";
+                result.Message = _messageService.GetMessage(nameof(GetEntityByIdAsync), true);
             }
             catch (Exception ex)
             {
-                result.Message = "AppointmentsRepositoryError: GetEntityByIdAsync";
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(GetEntityByIdAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -182,13 +181,13 @@ namespace NetMed.Persistence.Repositories
 
                 await base.RemoveAsync(Id);
                 result.Success = true;
-                result.Message = "Datos desactivados con exito";
+                result.Message = _messageService.GetMessage(nameof(RemoveAsync), true);
             }
             catch (Exception ex)
             {
-                result.Message = "AppointmentsRepositoryError: RemoveAsync";
                 result.Success = false;
-               
+                result.Message = _messageService.GetMessage(nameof(RemoveAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -230,14 +229,14 @@ namespace NetMed.Persistence.Repositories
                 _context.Appointments.Add(newAppointment); 
                 await _context.SaveChangesAsync();
                 result.Success = true;
-                result.Message = "Cita creada exitosamente.";
+                result.Message = _messageService.GetMessage(nameof(CreateAppointmentAsync), true);
                 result.Data = newAppointment;
             }
             catch (Exception ex)
             {
-                result.Message = "AppointmentsRepositoryError: CreateAppointmentAsync";
                 result.Success = false;
-               
+                result.Message = _messageService.GetMessage(nameof(CreateAppointmentAsync), false);
+                _logger.LogError(ex , result.Message);
             }
             return result;
         }     
@@ -260,14 +259,14 @@ namespace NetMed.Persistence.Repositories
 
                 var appointments = await _context.Appointments.Where(a => a.PatientID == PatientID).ToListAsync();
                 result.Success = true;
-                result.Message = "Cita encontrada con exito";
+                result.Message = _messageService.GetMessage(nameof(GetAppointmentsByPatientAsync), true);
                 result.Data = appointments;
             }
             catch (Exception ex)
             {
-                result.Message ="AppointmentsRepositoryError: GetAppointmentsByPatientAsync";
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(GetAppointmentsByPatientAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -290,16 +289,17 @@ namespace NetMed.Persistence.Repositories
 
                 var appointments = await _context.Appointments.Where(a => a.DoctorID == DoctorID).ToListAsync();
                 result.Success = true;
-                result.Message = "Cita encontrada con exito";
+                result.Message = _messageService.GetMessage(nameof(GetAppointmentsByDoctorAsync), true);
+                result.Data = appointments;
             }
             catch (Exception ex) 
             {
-                result.Message ="AppointmentsRepositoryError: GetAppointmentsByDoctorAsync";
                 result.Success = false;
-               
+                result.Message = _messageService.GetMessage(nameof(GetAppointmentsByDoctorAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
-        } //Aqui Test
+        } 
         public async Task<OperationResult> GetAppointmentsByStatusAsync(int StatusID)
         {
             OperationResult result = new OperationResult();
@@ -313,13 +313,15 @@ namespace NetMed.Persistence.Repositories
 
                 var appointments = await _context.Appointments.Where(a => a.StatusID == StatusID).ToListAsync();
 
-                return new OperationResult { Success = true, Data = appointments };
+                result.Success = true;
+                result.Message = _messageService.GetMessage(nameof(GetAppointmentsByStatusAsync), true);
+                result.Data = appointments;
             }
             catch (Exception ex)
             {
-                result.Message = "AppointmentsRepositoryError: GetAppointmentsByStatusAsync";
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(GetAppointmentsByStatusAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -337,13 +339,14 @@ namespace NetMed.Persistence.Repositories
                var appointments = await _context.Appointments.Where(a => a.AppointmentDate == AppointmentDate).ToListAsync();
 
                 result.Success = true;
-                result.Message = "Lista de todas las citas en esta fecha";
+                result.Message = _messageService.GetMessage(nameof(GetAppointmentsByDateAsync), true);
+                result.Data = appointments;
             }
             catch (Exception ex)
             {
-                result.Message = "AppointmentsRepositoryError: GetAppointmentsByDateAsync";
                 result.Success = false;
-              
+                result.Message = _messageService.GetMessage(nameof(GetAppointmentsByDateAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -363,13 +366,15 @@ namespace NetMed.Persistence.Repositories
                 await _context.SaveChangesAsync();
 
                 result.Success = true;
-                result.Message = "Cita cancelada con exito.";
+                result.Message = _messageService.GetMessage(nameof(CancelAppointmentAsync), true);
+                result.Data = appointments;
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
-                result.Message = "AppointmentsRepositoryError: CancelAppointmentAsync";
                 result.Success = false;
-               
+                result.Message = _messageService.GetMessage(nameof(CancelAppointmentAsync), false);
+                _logger.LogError(ex , result.Message);
+
             }
             return result;
         }
@@ -390,12 +395,14 @@ namespace NetMed.Persistence.Repositories
 
                 var appointments = await _context.Appointments.Where(a => a.DoctorID == DoctorID && a.AppointmentDate == AppointmentDate).ToListAsync();
                 result.Success = true;
-                result.Message = "Cita encontrada exictosamente";
+                result.Message = _messageService.GetMessage(nameof(GetAppointmentsByDoctorAndDateAsync), true);
+                result.Data = appointments;
             }
             catch (Exception ex)
             {
-                result.Message = "AppointmentsRepositoryError: GetAppointmentsByDoctorAndDateAsync";
-                result.Success = false;               
+                result.Success = false;
+                result.Message = _messageService.GetMessage(nameof(CancelAppointmentAsync), false);
+                _logger.LogError(ex , result.Message);
             }
             return result;
         }

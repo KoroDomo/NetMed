@@ -1,11 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
-using NetMed.Infraestructure.IValidators;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
+using NetMed.Infraestructure.Validators;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
@@ -35,13 +33,13 @@ namespace NetMed.Persistence.Repositories
             {
                 await base.GetAllAsync();
                 result.Success = true;
-                result.Message = "Datos Obtenidos con exito";
+                result.Message = _messageService.GetMessage(nameof(GetAllAsync), true);
             }
             catch (Exception ex)
             {
-                result.Message = "AppointmentsRepositoryError: GetAllAsync";
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(GetAllAsync), false);
+                _logger.LogError(ex, result.Message);   
             }
             return result;
         }
@@ -55,17 +53,16 @@ namespace NetMed.Persistence.Repositories
 
                 await base.SaveEntityAsync(entity);
                 result.Success = true;
-                result.Message = "Datos Guardados con exito" ;
+                result.Message = _messageService.GetMessage(nameof(SaveEntityAsync), true);
             }
 
             catch (Exception ex)
             {
-                result.Message = "DoctorAvailabilityRepositoryError: SaveEntityAsync";
                 result.Success = false;
-        
+                result.Message = _messageService.GetMessage(nameof(SaveEntityAsync), false);
+                _logger.LogError(ex, result.Message);
             }
-            return result;
-            
+            return result;      
         }
         public async override Task<OperationResult> UpdateEntityAsync(DoctorAvailability entity)
         {
@@ -77,13 +74,14 @@ namespace NetMed.Persistence.Repositories
 
                 await base.UpdateEntityAsync(entity);
                 result.Success = true;
-                result.Message = "Datos Actualizados con exito";
+                result.Message = _messageService.GetMessage(nameof(UpdateEntityAsync), true);
             }
             catch (Exception ex)
             {
-                result.Message = "DoctorAvailabilityRepositoryError: UpdateEntityAsync";
                 result.Success = false;
-               
+                result.Message = _messageService.GetMessage(nameof(UpdateEntityAsync), false);
+                _logger.LogError(ex, result.Message);
+
             }
             return result;
         }
@@ -95,12 +93,14 @@ namespace NetMed.Persistence.Repositories
                 result = _validations.IsNullOrWhiteSpace(filter);
                 if (!result.Success) return result;
                 await base.ExistsAsync(filter);
+                result.Success = true;
+                result.Message = _messageService.GetMessage(nameof(ExistsAsync), true);
             }
             catch (Exception ex)
             {
-                result.Message = "DoctorAvailabilityRepositoryError: ExistsAsync";
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(ExistsAsync), false);
+                _logger.LogError(ex , result.Message);  
             }
             return result; ;
         }
@@ -113,12 +113,14 @@ namespace NetMed.Persistence.Repositories
                 if (!result.Success) return result;
 
                 await base.GetAllAsync(filter);
+                result.Success = true;
+                result.Message = _messageService.GetMessage(nameof(GetAllAsync), true);
             }
             catch (Exception ex)
             {
-                result.Message = "DoctorAvailabilityRepositoryError: GetAllAsync";
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(GetAllAsync), false);
+                _logger.LogError(ex, result.Message);
             }
            return result;
         }
@@ -135,13 +137,13 @@ namespace NetMed.Persistence.Repositories
 
                 await base.GetEntityByIdAsync(Id);
                 result.Success = true;
-                result.Message = "Datos Obtenidos con exito";
+                result.Message = _messageService.GetMessage(nameof(GetEntityByIdAsync), true);
             }
             catch (Exception ex)
             {
-                result.Message = "DoctorAvailabilityRepositoryError: GetEntityByIdAsync";
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(GetEntityByIdAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -164,13 +166,13 @@ namespace NetMed.Persistence.Repositories
 
                 await base.RemoveAsync(Id);
                 result.Success = true;
-                result.Message = "Datos desactivados con exito";
+                result.Message = _messageService.GetMessage(nameof(RemoveAsync), true);
             }
             catch (Exception ex)
             {
-                result.Message = "DoctorAvailabilityRepositoryError: RemoveAsync";
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(RemoveAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -200,16 +202,15 @@ namespace NetMed.Persistence.Repositories
                 };
                 _context.DoctorAvailability.Add(newAvailability);
                 await _context.SaveChangesAsync();
-
                 result.Success = true;
-                result.Message = "Disponibilidad establecidad correctamente.";
-                return result;
+                result.Message = _messageService.GetMessage(nameof(SetAvailabilityAsync), true);
+                result.Data = newAvailability;
             }
             catch (Exception ex)
             {
-                result.Message ="ErrorDoctorAvailabilityRepository: SetAvailabilityAsync";
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(SetAvailabilityAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -230,14 +231,15 @@ namespace NetMed.Persistence.Repositories
                 var availability = await _context.DoctorAvailability
                     .Where(a => a.DoctorID == DoctorID && a.AvailableDate == AvailableDate)
                     .FirstOrDefaultAsync();
-
-                return result;
+                result.Success = true;
+                result.Message = _messageService.GetMessage(nameof(GetAvailabilityByDoctorAndDateAsync), true);
+                result.Data = availability;
             }
             catch (Exception ex)
             {
-                result.Message = "ErrorDoctorAvailabilityRepository: GetAvailabilityByDoctorAndDateAsync";
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(GetAvailabilityByDoctorAndDateAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -267,14 +269,14 @@ namespace NetMed.Persistence.Repositories
                 var availability = await _context.DoctorAvailability.FindAsync(AvailabilityID);
 
                 result.Success = true;
-                result.Message = "Disponibilidad actulizada exitosamente.";
-                return result;
+                result.Message = _messageService.GetMessage(nameof(UpdateAvailabilityAsync), true);
+                result.Data = availability;
             }
             catch (Exception ex)
             {
-                result.Message = "ErrorDoctorAvailabilityRepository: UpdateAvailabilityAsync";
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(UpdateAvailabilityAsync), false);
+                _logger.LogError(ex, result.Message); 
             }
             return result;
         }
@@ -294,13 +296,14 @@ namespace NetMed.Persistence.Repositories
                 await _context.SaveChangesAsync();
 
                 result.Success = true;
-                result.Message = "Disponibilidad desactivada con exito";
+                result.Message = _messageService.GetMessage(nameof(RemoveAvailabilityAsync), true);
+                result.Data = availability;
             }
             catch (Exception ex)
-            {
-                result.Message = "ErrorDoctorAvailabilityRepository: RemoveAvailabilityAsync";
+            {              
                 result.Success = false;
-                
+                result.Message = _messageService.GetMessage(nameof(RemoveAvailabilityAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -329,19 +332,17 @@ namespace NetMed.Persistence.Repositories
                 if (!overlappingAvailability)
                 {
                     result.Success = true;
-                    result.Message = "El doctor está disponible.";
+                    result.Message = _messageService.GetMessage(nameof(IsDoctorAvailableAsync), true);
                     return result;
                 }
                  result.Success = false;
-                 result.Message = "El doctor no está disponible para este horario.";
-                
+                 result.Message = _messageService.GetMessage(nameof(IsDoctorAvailableAsync), false);
             }
             catch (Exception ex)
             {
-                result.Message ="ErrorDoctorAvailabilityRepository: IsDoctorAvailableAsync";
                 result.Success = false;
-               
-
+                result.Message = _messageService.GetMessage(nameof(IsDoctorAvailableAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -382,17 +383,17 @@ namespace NetMed.Persistence.Repositories
                 else
                 {
                     result.Success = false;
-                    result.Message = "Estas intentado agregar datos ya existentes";
+                    result.Message = _messageService.GetMessage(nameof(UpdateAvailabilityInRealTimeAsync), false);
                 }
                 await _context.SaveChangesAsync();
                 result.Success = true;
-                result.Message = "Cambios actualizados con exito" ;
+                result.Message = _messageService.GetMessage(nameof(UpdateAvailabilityInRealTimeAsync), true);
             }
             catch (Exception ex)
             {
-                result.Message = "ErrorDoctorAvailabilityRepository: UpdateAvailabilityInRealTimeAsyn";
                 result.Success = false;
-               
+                result.Message = _messageService.GetMessage(nameof(UpdateAvailabilityInRealTimeAsync), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }

@@ -1,6 +1,6 @@
 ﻿using NetMed.Domain.Base;
 
-namespace NetMed.Infraestructure.IValidators
+namespace NetMed.Infraestructure.Validators
 {
     public interface IValidations 
     {

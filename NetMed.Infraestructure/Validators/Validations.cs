@@ -1,5 +1,4 @@
 ﻿using NetMed.Domain.Base;
-using NetMed.Infraestructure.IValidators;
 
 
 namespace NetMed.Infraestructure.Validators

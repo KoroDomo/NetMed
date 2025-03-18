@@ -4,7 +4,7 @@ using NetMed.Application.Dtos.DoctorAvailability;
 using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
-using NetMed.Infraestructure.IValidators;
+using NetMed.Infraestructure.Validators;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
 

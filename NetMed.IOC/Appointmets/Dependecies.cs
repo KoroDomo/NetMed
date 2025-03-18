@@ -1,7 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NetMed.Application.Interfaces;
-using NetMed.Application.Services;
-using NetMed.Infraestructure.IValidators;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
 using NetMed.Infraestructure.Validators;
@@ -21,9 +18,9 @@ namespace NetMed.IOC.Dependencias
             services.AddScoped<IDoctorAvailabilityRepository, DoctorAvailabilityRepository>();
             //services.AddTransient<IDoctorAvailabilityService, DoctorAvailabilityService>();
             services.AddScoped<ILoggerSystem, LoggerSystem>();
-            services.AddScoped<IValidations, Validations>();
-            services.AddScoped<IMessageService, MessageService>();
-            // Agregar demas dependencias aqui
+            services.AddScoped<IValidations, Validations>();           
+            var messageFilePath = Path.Combine(Directory.GetCurrentDirectory(),"messages.json");
+            services.AddSingleton<IMessageService>(new MessageService(messageFilePath));
             return services;
         }
     }

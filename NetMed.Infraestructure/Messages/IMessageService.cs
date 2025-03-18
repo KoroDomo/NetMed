@@ -4,6 +4,6 @@ namespace NetMed.Infraestructure.Messages
 {
     public interface IMessageService
     {
-        string GetMessage(string category, string key);
+        string GetMessage(string methodName, bool isSuccess);
     }
 }
