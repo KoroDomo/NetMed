@@ -8,9 +8,9 @@ namespace NetMed.Domain.Base
     {
         [Required]
         public string? Email { get; set; }
-        [NotMapped]
+  
         public string? Address { get; set; }
-        [NotMapped]
+       
         public string? PhoneNumber { get; set; }
         public required string LastName { get; set; }
     }

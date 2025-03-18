@@ -1,8 +1,11 @@
 ﻿
+using NetMed.Domain.Base;
+
 namespace NetMed.Domain.Base
 {
-    public abstract class BaseEntity<Ttype> : AptEntity
+    public abstract class BaseEntity<TKey> : AptEntity
     {
-        public abstract Ttype UserId{ get; set; }
+        public abstract TKey UserId { get; set; }
     }
 }
+

@@ -1,81 +1,230 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
-using NetMed.Domain.Base;
+using NetMed.Domain.Entities;
+using NetMed.Infrastructure.Mapper.RepositoryErrorMapper;
 using NetMed.Persistence.Context;
-using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Repositories;
 
 namespace NetMed.Persistence.Test;
 
 public class UnitTestDoctorscs
 {  
-    private readonly Mock<IDoctorsRepository> _mockDoctorRepository;
+   
     private readonly NetMedContext _context;
+    private readonly DoctorsRepository _doctorsRepository;
+    private readonly RepErrorMapper repErrorMapper;
+
 
     public UnitTestDoctorscs()
     {
         var options = new DbContextOptionsBuilder<NetMedContext>()
-            .UseInMemoryDatabase(databaseName: "MedicalAppointment")
-            .Options;
+           .UseInMemoryDatabase(databaseName: "Quegrasa")
+           .Options;
         _context = new NetMedContext(options);
-        _mockDoctorRepository = new Mock<IDoctorsRepository>();
+        var logger = new Mock<ILogger<DoctorsRepository>>().Object;
+        repErrorMapper = new RepErrorMapper();
+        _doctorsRepository = new DoctorsRepository(_context, logger, repErrorMapper); 
     }
+   
+    
     [Fact]
     public async Task GetByAvailabilityModeAsyncReturnAvailabilityAsync()
     {
+        var doctor = new Doctors
+        {
+            UserId = 1,
+            SpecialtyID = 1,
+            LicenseNumber = "123456",
+            YearsOfExperience = 5,
+            ConsultationFee = 100,
+            AvailabilityModeId = 1,
+            IsActive = true,
+            LicenseExpirationDate = new DateOnly(2022, 12, 31),
+            PhoneNumber = "555-1234",
+            Education = "MD",
+            ClinicAddress = "123 Main St"
+        };
+        //act
 
-        var mockDoctorAvailability = new Mock<IDoctorsRepository>();
-        mockDoctorAvailability.Setup(x => x.GetByAvailabilityModeAsync(1)).ReturnsAsync(new OperationResult { Success = true });
-        var result = await mockDoctorAvailability.Object.GetByAvailabilityModeAsync(1);
+        var result = await _doctorsRepository.GetByAvailabilityModeAsync(1);
+
+        //assert
         Assert.True(result.Success);
+        Assert.Equal("Doctor disponible", result.Message);
 
     }
     [Fact]
     public async Task GetBySpecialtyAsyncReturnSpecialtyAsync()
     {
-        var mockDoctorSpecialty = new Mock<IDoctorsRepository>();
-        mockDoctorSpecialty.Setup(x => x.GetBySpecialtyAsync(1)).ReturnsAsync(new OperationResult { Success = true });
-        var result = await mockDoctorSpecialty.Object.GetBySpecialtyAsync(1);
+        var doctor = new Doctors
+        {
+            UserId = 1,
+            SpecialtyID = 1,
+            LicenseNumber = "123456",
+            YearsOfExperience = 5,
+            ConsultationFee = 100,
+            AvailabilityModeId = 1,
+            IsActive = true,
+            LicenseExpirationDate = new DateOnly(2022, 12, 31),
+            PhoneNumber = "555-1234",
+            Education = "MD",
+            ClinicAddress = "123 Main St"
+        };
+        //act
+
+        var result = await _doctorsRepository.GetBySpecialtyAsync(1);
         Assert.True(result.Success);
+        Assert.Equal("Doctor especializado encontrado", result.Message);
+        Assert.Equal(1, doctor.SpecialtyID);
     }
     [Fact]
     public async Task GetByLicenseNumberAsyncReturnLicenseNumberAsync()
     {
-        var mockDoctorLicenseNumber = new Mock<IDoctorsRepository>();
-        mockDoctorLicenseNumber.Setup(x => x.GetByLicenseNumberAsync("123456")).ReturnsAsync(new OperationResult { Success = true });
-        var result = await mockDoctorLicenseNumber.Object.GetByLicenseNumberAsync("123456");
+
+        var doctor = new Doctors
+        {
+            UserId = 1,
+            SpecialtyID = 1,
+            LicenseNumber = "123456",
+            YearsOfExperience = 5,
+            ConsultationFee = 100,
+            AvailabilityModeId = 1,
+            IsActive = true,
+            LicenseExpirationDate = new DateOnly(2022, 12, 31),
+            PhoneNumber = "555-1234",
+            Education = "MD",
+            ClinicAddress = "123 Main St"
+        };
+        //act
+        var result = await _doctorsRepository.GetByLicenseNumberAsync("123456");
         Assert.True(result.Success);
+        Assert.Equal("Numero de licencia encontrado", result.Message);
+        Assert.Equal("123456", doctor.LicenseNumber);
     }
     [Fact]
     public async Task GetDoctorsByExperienceAsyncReturnExperienceAsync()
     {
-        var mockDoctorExperience = new Mock<IDoctorsRepository>();
-        mockDoctorExperience.Setup(x => x.GetDoctorsByExperienceAsync(1, 10)).ReturnsAsync(new OperationResult { Success = true });
-        var result = await mockDoctorExperience.Object.GetDoctorsByExperienceAsync(1, 10);
+        var doctor = new Doctors
+        {
+            UserId = 1,
+            SpecialtyID = 1,
+            LicenseNumber = "123456",
+            YearsOfExperience = 5,
+            ConsultationFee = 100,
+            AvailabilityModeId = 1,
+            IsActive = true,
+            LicenseExpirationDate = new DateOnly(2022, 12, 31),
+            PhoneNumber = "555-1234",
+            Education = "MD",
+            ClinicAddress = "123 Main St"
+        };
+        //act
+        var result = await _doctorsRepository.GetDoctorsByExperienceAsync(5);
         Assert.True(result.Success);
+        Assert.Equal("Doctor con experiencia", result.Message);
+        Assert.False(result.Success == false);
     }
     [Fact]
     public async Task GetDoctorsByConsultationFeeAsyncReturnConsultationFeeAsync()
     {
-        var mockDoctorConsultationFee = new Mock<IDoctorsRepository>();
-        mockDoctorConsultationFee.Setup(x => x.GetDoctorsByConsultationFeeAsync(100, 200)).ReturnsAsync(new OperationResult { Success = true });
-        var result = await mockDoctorConsultationFee.Object.GetDoctorsByConsultationFeeAsync(100, 200);
+      var doctor = new Doctors
+      {
+          UserId = 1,
+          SpecialtyID = 1,
+          LicenseNumber = "123456",
+          YearsOfExperience = 5,
+          ConsultationFee = 100,
+          AvailabilityModeId = 1,
+          IsActive = true,
+          LicenseExpirationDate = new DateOnly(2022, 12, 31),
+          PhoneNumber = "555-1234",
+          Education = "MD",
+          ClinicAddress = "123 Main St"
+      };
+        //act
+        var result = await _doctorsRepository.GetDoctorsByConsultationFeeAsync(100);
+
         Assert.True(result.Success);
+        Assert.Equal("Doctor con tarifa de consulta", result.Message);
+        Assert.Equal(100, doctor.ConsultationFee);
     }
     [Fact]
     public async Task GetDoctorsWithExpiringLicenseAsyncReturnExpiringLicenseAsync()
     {
-        var mockDoctorExpiringLicense = new Mock<IDoctorsRepository>();
-        mockDoctorExpiringLicense.Setup(x => x.GetDoctorsWithExpiringLicenseAsync(new DateOnly(2022, 12, 31))).ReturnsAsync(new OperationResult { Success = true });
-        var result = await mockDoctorExpiringLicense.Object.GetDoctorsWithExpiringLicenseAsync(new DateOnly(2022, 12, 31));
+
+        var doctor = new Doctors
+        {
+            UserId = 1,
+            SpecialtyID = 1,
+            LicenseNumber = "123456",
+            YearsOfExperience = 5,
+            ConsultationFee = 100,
+            AvailabilityModeId = 1,
+            IsActive = true,
+            LicenseExpirationDate = new DateOnly(2022, 12, 31),
+            PhoneNumber = "555-1234",
+            Education = "MD",
+            ClinicAddress = "123 Main St"
+        };
+        //act
+        var result = await _doctorsRepository.GetDoctorsWithExpiringLicenseAsync(new DateOnly(2022, 12, 31));
         Assert.True(result.Success);
+        Assert.Equal("Doctor con licencia expirada", result.Message);
+        Assert.Equal(new DateOnly(2022, 12, 31), doctor.LicenseExpirationDate);
     }
     [Fact]
     public async Task GetByIdAsyncReturnDoctor()
     {
-        var mockDoctor = new Mock<IDoctorsRepository>();
-        mockDoctor.Setup(x => x.GetEntityByIdAsync(1)).ReturnsAsync(new OperationResult { Success = true });
-        var result = await mockDoctor.Object.GetEntityByIdAsync(1);
+        
+        var doctor = new Doctors
+        {
+            UserId = 1,
+            SpecialtyID = 1,
+            LicenseNumber = "123456",
+            YearsOfExperience = 5,
+            ConsultationFee = 100,
+            AvailabilityModeId = 1,
+            IsActive = true,
+            LicenseExpirationDate = new DateOnly(2022, 12, 31),
+            PhoneNumber = "555-1234",
+            Education = "MD",
+            ClinicAddress = "123 Main St"
+        };
+
+        _context.Doctors.Add(doctor);
+        await _context.SaveChangesAsync();
+        //act
+        var result = await _doctorsRepository.GetEntityByIdAsync(1);
+        Assert.True(result.Success, $"Failed with message: {result.Message}");
+        Assert.Equal("Doctor encontrado", result.Message);
+        Assert.Equal(1, doctor.UserId);
+    }
+
+    [Fact]
+
+    public async Task GetActiveDoctorsAsyncReturnActiveDoctors()
+    {
+
+        var doctor = new Doctors
+        {
+            UserId = 1,
+            SpecialtyID = 1,
+            LicenseNumber = "123456",
+            YearsOfExperience = 5,
+            ConsultationFee = 100,
+            AvailabilityModeId = 1,
+            IsActive = true,
+            LicenseExpirationDate = new DateOnly(2022, 12, 31),
+            PhoneNumber = "555-1234",
+            Education = "MD",
+            ClinicAddress = "123 Main St"
+        };
+        //act
+        var result = await _doctorsRepository.GetActiveDoctorsAsync(true);
         Assert.True(result.Success);
+        Assert.Equal("Doctor activo", result.Message);
+        
     }
 }
 

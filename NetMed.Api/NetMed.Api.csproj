@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NetMed.Infraestructure\NetMed.Infraestructure.csproj" />
     <ProjectReference Include="..\NetMed.IOC\NetMed.IOC.csproj" />
   </ItemGroup>
 

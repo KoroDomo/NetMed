@@ -159,16 +159,7 @@ public class UnitTestUsersServ
                 RoleID = 1,
             },
         };
-        var mockUsersDto = new DeleteUserDto
-        {
-            UserId = 1,
-            Deleted = true,
-            FirstName = "Cris",
-            LastName = "Perez",
-            Email = "Suicide@hotmail.com",
-            Password = "0001",
-            RoleID = 1,
-        };
+        var mockUsersDto = new DeleteUserDto { UserId = 1, Deleted = true, FirstName = "Cris", LastName = "Perez", Email = "Suicide@hotmail.com", Password = "0001", RoleID = 1, };
         _mockUsersServices.Setup(x => x.Delete(It.IsAny<DeleteUserDto>())).ReturnsAsync(mockUsers);
         var result = await _mockUsersServices.Object.Delete(mockUsersDto);
 

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Infrastructure.Mapper.IRepositoryErrorMapper;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
@@ -15,128 +16,162 @@ namespace NetMed.Persistence.Repositories
     {
         private readonly NetMedContext _context;
         private readonly ILogger<PatientsRepository> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly IRepErrorMapper _repErrorMapper;
         public PatientsRepository(NetMedContext context,
             ILogger<PatientsRepository> logger,
-            IConfiguration configuration) 
+            IRepErrorMapper errorMapper)
             : base(context)
         {
             _context = context;
-            _logger = logger;
-            _configuration = configuration;
+            _repErrorMapper = errorMapper;
+        _logger = logger;
+            
         }
 
-        public async Task<OperationResult> GetByBloodTypeAsync(string bloodType)
+        public async Task<OperationResult> GetByBloodTypeAsync(char bloodType)
         {
             OperationResult result = new OperationResult();
             try
             {
-                if (result.data == null)
+                // Use Where/FirstOrDefaultAsync to find by non-primary key properties
+                var patients = await _context.Patients
+                    .Where(p => p.BloodType == bloodType)
+                    .ToListAsync();
+
+                if (patients == null || !patients.Any())
                 {
-                    result.Message = "No se encontraron datos";
+                  
                     result.Success = false;
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                 }
-                result.data = await _context.Patients.FindAsync(bloodType);
-                result.Success = true;
+                else
+                {
+                   
+                    result.data = patients;
+                    result.Success = true;
+                    result.Message = "Tipo de sangre encontrado";
+                }
             }
+        
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                if (_repErrorMapper?.ErrorPatientsRepositoryMessages != null && _repErrorMapper.ErrorPatientsRepositoryMessages.ContainsKey("GetByBloodTypeAsync"))
+                {
+                    result.Message = ex.Message + _repErrorMapper.ErrorPatientsRepositoryMessages["GetByBloodTypeAsync"];
+                }
+                else
+                {
+                    result.Message = ex.Message + " An error occurred in GetByBloodTypeAsync.";
+                }
             }
+
             return result;
         }
 
         public async Task<OperationResult> GetByInsuranceProviderAsync(int providerId)
         {
             OperationResult result = new OperationResult();
-            
-            try
-               
 
+            try
             {
-                if (result.data == null)
+                // Use Where clause instead of FindAsync for non-primary key searches
+                var patients = await _context.Patients
+                    .Where(p => p.InsuranceProviderID == providerId)
+                    .ToListAsync();
+
+                if (patients == null || !patients.Any())
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                    if (_repErrorMapper?.DataISNullErrorGlogal?["DataIsNull"] == null)
+                    {
+                        result.Message = "Error: DataIsNullErrorGlogal is not set.";
+                    }
+                    else
+                    {
+                        result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
+                    }
+                    result.Message = "Data is null";
+                }
+                else
+                {
+                    result.data = patients;
+                    result.Success = true;
+                    result.Message = "Proveedor de seguro encontrado";
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + _repErrorMapper.ErrorPatientsRepositoryMessages["GetByInsuranceProviderAsync"];
+            }
+
+            return result;
+        }
+        
+        public async Task<OperationResult> SearchByAddressAsync(string address)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                var patients = await _context.Patients
+                    .Where(p => p.Address == address)
+                    .ToListAsync();
+
+                if (patients == null || !patients.Any())
+                {
+                    result.Success = false;
+                    if (_repErrorMapper?.DataISNullErrorGlogal?["DataIsNull"] == null)
+                    {
+                        result.Message = "Error: DataIsNullErrorGlogal is not set.";
+                    }
+                    else
+                    {
+                        result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
+                    }
+                    result.Message = "Data is null";
+                }
+                else
+                {
+                    result.data = patients;
+                    result.Success = true;
+                    result.Message = "Direccion del paciente encontrada";
+                }
+            }
+           
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + _repErrorMapper.ErrorPatientsRepositoryMessages["SearchByAdress"];
+            }
+            return result;
+        }
+
+
+
+        public async Task<OperationResult> GetByEmergencyContactAsync(string EcontactInfo)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                var patients = await _context.Patients
+                    .Where(p => p.EmergencyContactName == EcontactInfo)
+                    .ToListAsync();
+                if (patients == null || !patients.Any())
+                {
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }
-                result.data = await _context.Patients.FindAsync(providerId);
-                result.Success = true;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
-            }
-            return  result;
-        }
-            public async Task<OperationResult> GetPatientsAsyncWithoutInsuranceAsync()
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                result.data = await _context.Patients.FindAsync();
-                result.Success = true;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
-            }
-            return result;
-        }
-
-        public async Task<OperationResult> SearchByAddressAsync(string addressFragment)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                result.data = await _context.Patients.FindAsync(addressFragment);
-                result.Success = true;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
-            }
-            return result;
-        }
-
-        public async Task<OperationResult> GetPatientsByAgeRangeAsync(int minAge, int maxAge)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                result.data = await _context.Patients.FindAsync(minAge, maxAge);
-             
-                result.Success = true;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
-            }
-
-            return result;
-        }
-
-        public async Task<OperationResult> GetByEmergencyContactAsync(string contactInfo)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                if (result.data == null)
-                {
-                    result.Message = "No se encontraron datos";
-                    result.Success = false;
+                else { 
+                    result.data = patients;
+                    result.Success = true;
+                    result.Message = "Contacto de emergencia encontrado";
                 }
-                result.data = await _context.Patients.FindAsync(contactInfo);
-                result.Success = true;
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + _repErrorMapper.ErrorPatientsRepositoryMessages["GetByEmergencyContactAsync"];
             }
             return result;
         }
@@ -145,42 +180,74 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-              if(result.data == null)
-                {
-                    result.Message = "No se encontraron datos";
-                    result.Success = false;
-                }   
+                var query = _context.Patients.AsQueryable();
 
-                result.data = await _context.Patients.FindAsync(allergy);
-                result.Success = true;
+                if (!string.IsNullOrEmpty(allergy))
+                {
+                    query = query.Where(p => p.Allergies != null && p.Allergies.Contains(allergy));
+                }
+                else
+                {
+                    query = query.Where(p => p.Allergies != null && p.Allergies != "");
+                }
+
+                var patients = await query.ToListAsync();
+
+                if (patients == null || !patients.Any())
+                {
+                    result.Success = false;
+                    result.Message = _repErrorMapper.ErrorPatientsRepositoryMessages["GetPatientsWithAllergiesAsync"];
+                }
+                else
+                {
+                    result.data = patients;
+                    result.Success = true;
+                    result.Message = _repErrorMapper.SuccessPatientsRepositoryMessages["GetPatientsWithAllergiesAsync"];
+                }
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+
+                string errorMessage = ex.Message;
+                if (_repErrorMapper != null &&
+                    _repErrorMapper.ErrorPatientsRepositoryMessages != null &&
+                    _repErrorMapper.ErrorPatientsRepositoryMessages.ContainsKey("GetPatientsWithAllergiesAsync"))
+                {
+                    errorMessage += _repErrorMapper.ErrorPatientsRepositoryMessages["GetPatientsWithAllergiesAsync"];
+                }
+
+                result.Message = errorMessage;
             }
+
             return result;
         }
 
-        public async Task<OperationResult> GetPatientsByGenderAsync(string gender)
+        public async Task<OperationResult> GetPatientsByGenderAsync(char gender)
         {
             OperationResult result = new OperationResult();
             try
             {
-                if (result.data == null)
+
+                var patients = await _context.Patients
+                    .Where(p => p.Gender == gender)
+                    .ToListAsync();
+                if (patients == null || !patients.Any())
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }
-                result.data = await _context.Patients.FindAsync(gender);
-             
-                result.Success = true;
+          else
+                {
+                    result.data = patients;
+                    result.Success = true;
+                    result.Message = "Pacientes encontrados por género";
+                }
             }
-            catch
-        (Exception ex)
+            catch(Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + _repErrorMapper.ErrorPatientsRepositoryMessages["GetPatientsByGenderAsync"];
             }
             return result;
         }
@@ -193,7 +260,7 @@ namespace NetMed.Persistence.Repositories
                 if (patients == null)
                 {
                     result.Success = false;
-                    result.Message = "User data is null.";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     return result;
                 }
                 _context.Patients.Add(patients);
@@ -202,9 +269,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = ex.Message + " Ocurrio un error guardando los datos.";
+                result.Message = ex.Message + _repErrorMapper.SaveEntityErrorMessage["SaveEntityError"];
                 result.Success = false;
-                _logger.LogError(ex, " error while saving patient.");
+                _logger.LogError(ex, _repErrorMapper.SaveEntityErrorMessage["SaveEntityError"]);
             }
             return result;
         }
@@ -222,7 +289,7 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = ex.Message + " Ocurrio un error actualizando los datos.";
+                result.Message = ex.Message + _repErrorMapper.UpdateEntityErrorMessage["UpdateEntityAsync"];
                 result.Success = false;
             }
             return result;
@@ -239,7 +306,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Message = ex.Message + _repErrorMapper.GetEntityByIdErrorMessage["GetAllEntitiesError"];
             }
             return result;
 
@@ -250,17 +317,27 @@ namespace NetMed.Persistence.Repositories
 
             try
             {
-                result.data = await _context.Patients.FindAsync(id);
-                result.Success = true;
+                var patient = await _context.Patients.FindAsync(id);
+                if (patient == null)
+                {
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
+                    result.Success = false;
+                }
+                else
+                {
+                    result.data = patient;
+                    result.Success = true;
+                }
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Message = ex.Message + _repErrorMapper.GetEntityByIdErrorMessage["GetEntityByIdError"];
             }
             return result;
-
         }
+
+
 
         public override async Task<bool> ExistsAsync(Expression<Func<Patients, bool>> filter)
         {
@@ -278,7 +355,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"];
                 _logger.LogError(ex.Message);
             }
             return result;

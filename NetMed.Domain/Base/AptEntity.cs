@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 namespace NetMed.Domain.Base
 {
-    public abstract class AptEntity
+    public abstract class AptEntity 
     {
 
        protected AptEntity() 

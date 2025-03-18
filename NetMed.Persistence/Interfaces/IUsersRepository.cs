@@ -14,13 +14,7 @@ namespace NetMed.Persistence.Interfaces
 
         Task<OperationResult> GetByRoleByIDAsync(int roleID);
 
-        Task<OperationResult> SearchByNameAsync(string firstName);
-
-        Task<OperationResult> GetUsersRegisteredInRangeAsync(DateTime startDate, DateTime endDate);
-
-        Task<OperationResult> GetPhoneNumberAsync(string phoneNumber);
-
-        Task<OperationResult> GetAddressAsync(string address);
+        Task<OperationResult> SearchByNameAsync(string firstName, string lasName);
       
         Task<OperationResult> GetPasswordAsync(string password);
     }

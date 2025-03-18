@@ -6,6 +6,7 @@ using NetMed.Application.Dtos.UsersDto;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Repositories;
 
 namespace NetMed.Application.Services
 {
@@ -22,16 +23,16 @@ namespace NetMed.Application.Services
 
         public async Task<OperationResult> Add(AddUserDto dto)
         {
-                OperationResult result = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
                 var user = new Users
                 {
-                    FirstName = dto.FirstName,
+                    FirstName = dto.FirstName ?? string.Empty,
                     RoleID = dto.RoleID,
-                    LastName = dto.LastName,
+                    LastName = dto.LastName ?? string.Empty,
                     Email = dto.Email,
-                    Password = dto.Password,
+                    Password = dto.Password ?? string.Empty,
                 };
                 result = await _usersRepository.SaveEntityAsync(user);
             }
@@ -45,17 +46,17 @@ namespace NetMed.Application.Services
 
         public async Task<OperationResult> Delete(DeleteUserDto dto)
         {
-           OperationResult result = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
                 var user = new Users
                 {
                     UserId = dto.UserId,
-                    FirstName = dto.FirstName,
+                    FirstName = dto.FirstName ?? string.Empty,
                     RoleID = dto.RoleID,
-                    LastName = dto.LastName,
+                    LastName = dto.LastName ?? string.Empty,
                     Email = dto.Email,
-                    Password = dto.Password,
+                    Password = dto.Password ?? string.Empty,
                 };
                 result = await _usersRepository.DeleteEntityAsync(user);
             }
@@ -67,14 +68,15 @@ namespace NetMed.Application.Services
             return result;
         }
 
-  
+
 
         public async Task<OperationResult> GetById(int id)
         {
             OperationResult result = new OperationResult();
             try
             {
-                var user = await _usersRepository.GetEntityByIdAsync(id);
+                result = await _usersRepository.GetEntityByIdAsync(id);
+                result.Success = true;
             }
             catch (Exception ex)
             {
@@ -84,7 +86,8 @@ namespace NetMed.Application.Services
             return result;
         }
 
-       
+
+
 
         public async Task<OperationResult> GetAllData()
         {
@@ -102,7 +105,7 @@ namespace NetMed.Application.Services
         }
 
     
-        public async Task<OperationResult> Update(UpdateUserDto dto)
+public async Task<OperationResult> Update(UpdateUserDto dto)
         {
             OperationResult result = new OperationResult();
             try
@@ -110,11 +113,11 @@ namespace NetMed.Application.Services
                 var user = new Users
                 {
                     UserId = dto.UserId,
-                    FirstName = dto.FirstName,
+                    FirstName = dto.FirstName ?? string.Empty,
                     RoleID = dto.RoleID,
-                    LastName = dto.LastName,
+                    LastName = dto.LastName ?? string.Empty,
                     Email = dto.Email,
-                    Password = dto.Password,
+                    Password = dto.Password ?? string.Empty,
                 };
                 result = await _usersRepository.UpdateEntityAsync(user);
             }

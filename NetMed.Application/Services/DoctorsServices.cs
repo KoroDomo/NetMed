@@ -1,14 +1,10 @@
-﻿
-using System.Numerics;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using NetMed.Application.Base;
 using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.Doctors;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Repositories;
 
 namespace NetMed.Application.Services
 {
@@ -28,25 +24,7 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
-                var doctor = await _doctorsRepository.GetEntityByIdAsync(id);
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
-            }
-            return result;
-
-        }   
-
-        public async Task<OperationResult> GetAllData()
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-
-                result = await _doctorsRepository.GetAllAsync();
-
+                result = await _doctorsRepository.GetEntityByIdAsync(id);
             }
             catch (Exception ex)
             {
@@ -55,16 +33,32 @@ namespace NetMed.Application.Services
             }
             return result;
         }
-       
-     public async Task<OperationResult> Add(AddDoctorsDto dto)
+
+
+        public async Task<OperationResult> GetAllData()
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                result = await _doctorsRepository.GetAllAsync();
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+            }
+            return result;
+        }
+
+        public async Task<OperationResult> Add(AddDoctorsDto dto)
         {
             OperationResult result = new OperationResult();
             try
             {
                 var doctor = new Doctors
                 {
-                    UserId = dto.UserId,
-                    SpecialtyID = dto.SpecialtyID,
+       
+                    SpecialtyID = (short)dto.SpecialtyID,
                     LicenseNumber = dto.LicenseNumber,
                     PhoneNumber = dto.PhoneNumber,
                     YearsOfExperience = dto.YearsOfExperience,
@@ -72,10 +66,13 @@ namespace NetMed.Application.Services
                     Bio = dto.Bio,
                     ConsultationFee = dto.ConsultationFee,
                     ClinicAddress = dto.ClinicAddress,
-                    LicenseExpirationDate = dto.LicenseExpirationDate
+                    LicenseExpirationDate = dto.LicenseExpirationDate,
+                    AvailabilityModeId = (short)dto.AvailabilityModeId,
+                    CreatedAt = DateTime.Now,
+                    IsActive = true
                 };
 
-                var doc = await _doctorsRepository.SaveEntityAsync(doctor);
+                result = await _doctorsRepository.SaveEntityAsync(doctor);
             }
             catch (Exception ex)
             {
@@ -84,7 +81,6 @@ namespace NetMed.Application.Services
             }
             return result;
         }
-
 
         public async Task<OperationResult> Update(UpdateDoctorsDto dto)
         {
@@ -103,9 +99,12 @@ namespace NetMed.Application.Services
                     Bio = dto.Bio,
                     ConsultationFee = dto.ConsultationFee,
                     ClinicAddress = dto.ClinicAddress,
-                    LicenseExpirationDate = dto.LicenseExpirationDate
+                    LicenseExpirationDate = dto.LicenseExpirationDate,
+                    AvailabilityModeId = (short)dto.AvailabilityModeId
                 };
                 var doc = await _doctorsRepository.UpdateEntityAsync(doctor);
+                result.data = doc;
+                result.Success = true;
             }
             catch (Exception ex)
             {
@@ -123,18 +122,19 @@ namespace NetMed.Application.Services
             {
                 var doctor = new Doctors
                 {
-                    UserId = dto.UserId,
-                    SpecialtyID = dto.SpecialtyID,
-                    LicenseNumber = dto.LicenseNumber,
-                    PhoneNumber = dto.PhoneNumber,
-                    YearsOfExperience = dto.YearsOfExperience,
-                    Education = dto.Education,
-                    Bio = dto.Bio,
-                    ConsultationFee = dto.ConsultationFee,
+                    LicenseExpirationDate = dto.LicenseExpirationDate,
                     ClinicAddress = dto.ClinicAddress,
-                    LicenseExpirationDate = dto.LicenseExpirationDate
+                    PhoneNumber = dto.PhoneNumber,
+                    LicenseNumber = dto.LicenseNumber,
+                    UserId = dto.UserId,
+                    Education = dto.Education,
+                    SpecialtyID = dto.SpecialtyID,
+                    AvailabilityModeId = (short)dto.AvailabilityModeId
+
                 };
                 var doc = await _doctorsRepository.DeleteEntityAsync(doctor);
+                result.data = doc;
+                result.Success = true;
             }
             catch (Exception ex)
             {

@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
+using NetMed.Infrastructure.Mapper.RepositoryErrorMapper;
 using NetMed.IOC.Dependencies;
 
 namespace NetMed.IOC

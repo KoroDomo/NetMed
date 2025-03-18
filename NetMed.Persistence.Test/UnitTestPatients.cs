@@ -1,15 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NetMed.Domain.Base;
+using NetMed.Domain.Entities;
+using NetMed.Infrastructure.Mapper.RepositoryErrorMapper;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Repositories;
 
 namespace NetMed.Persistence.Test;
 
 public class UnitTestPatients
 {
-    private readonly Mock<IPatientsRepository> _mockPatientRepository;
+    private readonly PatientsRepository _patientsRepository;
     private readonly NetMedContext _context;
+    private readonly RepErrorMapper _repErrorMapper;
 
     public UnitTestPatients()
     {
@@ -17,68 +22,149 @@ public class UnitTestPatients
             .UseInMemoryDatabase(databaseName: "MedicalAppointment")
             .Options;
         _context = new NetMedContext(options);
-        _mockPatientRepository = new Mock<IPatientsRepository>();
+        var logger = new Mock<ILogger<PatientsRepository>>().Object;
+        _repErrorMapper = new RepErrorMapper(); // Initialize _repErrorMapper before using it
+        _patientsRepository = new PatientsRepository(_context, logger, _repErrorMapper);
     }
-
     [Fact]
     public async Task GetByBloodTypeAsyncReturnTypeOfBlood()
     {
-        var mockPatientBloodType = new Mock<IPatientsRepository>();
-        mockPatientBloodType.Setup(x => x.GetByBloodTypeAsync("A+")).ReturnsAsync(new OperationResult { Success = true });
+        // Create a test patient
+        var patient = new Patients
+        {
+            UserId = 1,
+            BloodType = 'O',
+            DateOfBirth = new DateOnly(1990, 12, 31),
+            EmergencyContactPhone = "123-456-7890",
+            EmergencyContactName = "Juan Perez",
+            Allergies = "none",
+            PhoneNumber = "123-456-7890",
+        };
 
+        // Add the patient to your context
+        await _context.Patients.AddAsync(patient);
+        await _context.SaveChangesAsync();
 
-
-        var result = await mockPatientBloodType.Object.GetByBloodTypeAsync("A+");
-
+        // Now test
+        var result = await _patientsRepository.GetByBloodTypeAsync('O');
+        Assert.NotNull(result);
         Assert.True(result.Success);
+        Assert.Equal("Tipo de sangre encontrado", result.Message);
+
     }
 
     [Fact]
     public async Task GetByInsuranceProviderAsyncReturnInsuranceProvider()
     {
-        var mockPatientInsuranceProvider = new Mock<IPatientsRepository>();
-        mockPatientInsuranceProvider.Setup(x => x.GetByInsuranceProviderAsync(1)).ReturnsAsync(new OperationResult { Success = true });
+        var patient = new Patients
+        {
+            UserId = 1,
+            BloodType = 'O',
+            DateOfBirth = new DateOnly(1990, 12, 31),
+            EmergencyContactPhone = "123-456-7890",
+            EmergencyContactName = "Juan Perez",
+            Allergies = "none",
+            PhoneNumber = "123-456-7890",
+            InsuranceProviderID = 304
+        };
 
-        var result = await mockPatientInsuranceProvider.Object.GetByInsuranceProviderAsync(1);
+        await _context.Patients.AddAsync(patient);
+        await _context.SaveChangesAsync();
 
+        var result = await _patientsRepository.GetByInsuranceProviderAsync(304);
+        Assert.NotNull(result);
         Assert.True(result.Success);
+        Assert.Equal("Proveedor de seguro encontrado", result.Message);
     }
 
     [Fact]
     public async Task GetPatientsWithAllergiesAsyncReturnAllergies()
     {
-        var mockPatientAllergies = new Mock<IPatientsRepository>();
-        mockPatientAllergies.Setup(x => x.GetPatientsWithAllergiesAsync("Alergias")).ReturnsAsync(new OperationResult { Success = true });
 
-        var result = await mockPatientAllergies.Object.GetPatientsWithAllergiesAsync("Alergias");
+        var patient = new Patients
+        {
+            UserId = 1,
+            BloodType = 'O',
+            DateOfBirth = new DateOnly(1990, 12, 31),
+            EmergencyContactPhone = "123-456-7890",
+            EmergencyContactName = "Juan Perez",
+            Allergies = "none",
+            PhoneNumber = "123-456-7890"
+        };
 
+        await _context.Patients.AddAsync(patient);
+        await _context.SaveChangesAsync();
+
+        var result = await _patientsRepository.GetPatientsWithAllergiesAsync("none");
+        Assert.NotNull(result);
         Assert.True(result.Success);
     }
 
     [Fact]
     public async Task GetPatientsByGenderAsyncReturnGender()
     {
-        var mockPatientGender = new Mock<IPatientsRepository>();
-        mockPatientGender.Setup(x => x.GetPatientsByGenderAsync("Masculino")).ReturnsAsync(new OperationResult { Success = true });
+        var patients = new Patients
 
-        var result = await mockPatientGender.Object.GetPatientsByGenderAsync("Masculino");
+        {
+            UserId = 1,
+            BloodType = 'O',
+            DateOfBirth = new DateOnly(1990, 12, 31),
+            EmergencyContactPhone = "123-456-7890",
+            EmergencyContactName = "Juan Perez",
+            Allergies = "none",
+            PhoneNumber = "123-456-7890",
+            Gender = 'M'
 
+        };
+        await _context.Patients.AddAsync(patients);
+        await _context.SaveChangesAsync();
+
+        var result = await _patientsRepository.GetPatientsByGenderAsync('M');
+
+        Assert.NotNull(result);
         Assert.True(result.Success);
     }
+
     [Fact]
-    public async Task GetPatientsByAgeRangeAsyncReturnAgeRange()
+
+    public async Task GetPatientsAddressAsyncReturnAddress()
     {
-        var mockPatientAgeRange = new Mock<IPatientsRepository>();
-        mockPatientAgeRange.Setup(x => x.GetPatientsByAgeRangeAsync(18, 65)).ReturnsAsync(new OperationResult { Success = true });
-        var result = await mockPatientAgeRange.Object.GetPatientsByAgeRangeAsync(18, 65);
+        var patients = new Patients
+        {
+            UserId = 1,
+            BloodType = 'O',
+            DateOfBirth = new DateOnly(1990, 12, 31),
+            EmergencyContactPhone = "123-456-7890",
+            EmergencyContactName = "Juan Perez",
+            Allergies = "none",
+            PhoneNumber = "123-456-7890",
+            Address = "123 Main St"
+        };
+        await _context.Patients.AddAsync(patients);
+        await _context.SaveChangesAsync();
+        var result = await _patientsRepository.SearchByAddressAsync("123 Main St");
+        Assert.NotNull(result);
         Assert.True(result.Success);
     }
+
     [Fact]
-    public  async Task GetPatientsAsyncWithoutInsuranceAsyncReturnPatients()
+    public async Task GetEmergencyContactAsyncReturnEmergencyContact()
     {
-        var mockPatientInsurance = new Mock<IPatientsRepository>();
-        mockPatientInsurance.Setup(x => x.GetPatientsAsyncWithoutInsuranceAsync()).ReturnsAsync(new OperationResult { Success = true });
-        var result = await mockPatientInsurance.Object.GetPatientsAsyncWithoutInsuranceAsync();
+        var patients = new Patients
+        {
+            UserId = 1,
+            BloodType = 'O',
+            DateOfBirth = new DateOnly(1990, 12, 31),
+            EmergencyContactPhone = "123-456-7890",
+            EmergencyContactName = "Juan Perez",
+            Allergies = "none",
+            PhoneNumber = "123-456-7890",
+            Address = "123 Main St"
+        };
+        await _context.Patients.AddAsync(patients);
+        await _context.SaveChangesAsync();
+        var result = await _patientsRepository.GetByEmergencyContactAsync("Juan Perez");
+        Assert.NotNull(result);
         Assert.True(result.Success);
     }
 }

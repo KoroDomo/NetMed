@@ -2,6 +2,10 @@
 using NetMed.Persistence.Interfaces;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Repositories;
+using NetMed.Application.Contracts;
+using NetMed.Application.Dtos.Doctors;
+using NetMed.Application.Services;
+using NetMed.Application.Dtos.UsersDto;
 
 namespace NetMed.Api.Controllers
 {
@@ -10,12 +14,11 @@ namespace NetMed.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly ILogger<UsersController> _logger;
-        private readonly IUsersRepository _userRepository;
-            
-        public UsersController(IUsersRepository usersRepository,
+        private readonly IUsersServices _usersServices;
+        public UsersController(IUsersServices usersServices,
             ILogger<UsersController> logger)
         {
-            _userRepository = usersRepository;
+            _usersServices = usersServices;
             _logger = logger;
         }
 
@@ -24,7 +27,7 @@ namespace NetMed.Api.Controllers
 
         public async Task<IActionResult> Get()
         {
-            var user = await _userRepository.GetAllAsync();
+            var user = await _usersServices.GetAllData();
             return Ok(user);
         }
 
@@ -32,32 +35,48 @@ namespace NetMed.Api.Controllers
         [HttpGet("GetUserById/{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var users = await _userRepository.GetEntityByIdAsync(id);
+            var users = await _usersServices.GetById(id);
             return Ok(users);
         }
 
         // POST api/<UsersController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Users users)
+        public async Task<IActionResult> Post([FromBody] AddUserDto usersDto) // Updated parameter type
         {
 
-            var result = await _userRepository.SaveEntityAsync(users);
-            return Ok(users);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            var result = await _usersServices.Add(usersDto);
+            if (result.Success)
+            {
+                return Ok(result.data);
+            }
+            return BadRequest(result.Message);
         }
-            // PUT api/<UsersController>/5
-            [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Put([FromBody] Users users)
+        // PUT api/<UsersController>/5
+        [HttpPut("Update/{id}")]
+        public async Task<IActionResult> Put([FromBody] UpdateUserDto usersDto) // Updated parameter type
         {
-            var use = await _userRepository.GetAllAsync();
-            return Ok(use);
-        }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            var result = await _usersServices.Update(usersDto);
+            if (result.Success)
+            {
+                return Ok(result.data);
+            }
+            return BadRequest(result.Message);
+        }
         // DELETE api/<UsersController>/5
         [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> DeleteAsync(Users users)
+        public async Task<IActionResult> DeleteAsync(DeleteUserDto usersDto) // Updated parameter type
         {
-            var usuario = await _userRepository.DeleteEntityAsync(users);
+            var usuario = await _usersServices.Delete(usersDto);
             return Ok(usuario);
         }
     }

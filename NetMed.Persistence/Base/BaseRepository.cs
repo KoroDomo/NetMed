@@ -11,7 +11,7 @@ namespace NetMed.Persistence.Base
     {
         private readonly NetMedContext _context;
 
-        private DbSet<TEntity> Entity { get; set; }
+        private DbSet<TEntity> Entity { get; }
         protected BaseRepository(NetMedContext context)
         {
             _context = context;
@@ -45,8 +45,17 @@ namespace NetMed.Persistence.Base
             OperationResult result = new OperationResult();
             try
             {
-                result.data = await _context.Doctors.FindAsync(id);
-                result.Success = true;
+                var entity = await Entity.FindAsync(id);
+                if (entity == null)
+                {
+                    result.Message = "No se encontraron datos";
+                    result.Success = false;
+                }
+                else
+                {
+                    result.data = entity;
+                    result.Success = true;
+                }
             }
             catch (Exception ex)
             {
@@ -55,6 +64,9 @@ namespace NetMed.Persistence.Base
             }
             return result;
         }
+
+
+
 
 
         public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)

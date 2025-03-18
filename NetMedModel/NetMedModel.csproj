@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NetMed.Infraestructure\NetMed.Infraestructure.csproj" />
+    <ProjectReference Include="..\NetMed.Infraestructure\NetMed.Infrastructure.csproj" />
     <ProjectReference Include="..\NetMed.Persistence\NetMed.Persistence.csproj" />
   </ItemGroup>
 
