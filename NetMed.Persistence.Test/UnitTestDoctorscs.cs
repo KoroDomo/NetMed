@@ -76,6 +76,17 @@ public class UnitTestDoctorscs
         mockDoctor.Setup(x => x.GetEntityByIdAsync(1)).ReturnsAsync(new OperationResult { Success = true });
         var result = await mockDoctor.Object.GetEntityByIdAsync(1);
         Assert.True(result.Success);
+
+    }
+
+    [Fact]
+
+    public async Task GetActiveDoctorsAsyncReturnActiveDoctors()
+    {
+        var mockDoctorActive = new Mock<IDoctorsRepository>();
+        mockDoctorActive.Setup(x => x.GetActiveDoctorsAsync(true)).ReturnsAsync(new OperationResult { Success = true });
+        var result = await mockDoctorActive.Object.GetActiveDoctorsAsync(true);
+        Assert.True(result.Success);
     }
 }
 

@@ -9,25 +9,26 @@ using System.Linq.Expressions;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using Microsoft.Extensions.Configuration;
+using NetMed.Infrastructure.Mapper.IRepositoryErrorMapper;
 
 namespace NetMed.Persistence.Repositories
 {
-    public class UsersRepository : BaseRepository<Users>, IUsersRepository
+    public class UsersRepository : BaseRepository<AddUsersDto>, IUsersRepository
     {
         private readonly NetMedContext _context;
         private readonly ILogger<UsersRepository> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly IRepErrorMapper _repErrorMapper;
 
 
         public UsersRepository(NetMedContext context,
-         ILogger<UsersRepository> logger, IConfiguration configuration) : base(context)
+         ILogger<UsersRepository> logger, IRepErrorMapper repErrorMapper) : base(context)
         {
             _context = context;
             _logger = logger;
-            _configuration = configuration;
+            _repErrorMapper = repErrorMapper;
         }
 
- 
+
         public async Task<OperationResult> GetEmailAsync(string email)
         {
             OperationResult result = new OperationResult();
@@ -37,7 +38,7 @@ namespace NetMed.Persistence.Repositories
                     var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
                     if (user == null)
                     {
-                        result.Message = "No se encontraron datos";
+                        result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                         result.Success = false;
                     }
                     else
@@ -50,7 +51,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetEmailAsync"];
             }
             return result;
         }
@@ -64,7 +65,7 @@ namespace NetMed.Persistence.Repositories
                 var users = await _context.Users.Where(x => x.IsActive == isActive).ToListAsync();
                 if (users == null)
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }
                 else
@@ -76,7 +77,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetActiveUsersAsync"];
             }
             return result;
         }
@@ -89,7 +90,7 @@ namespace NetMed.Persistence.Repositories
             {
                 if (result.data == null)
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }
                 result.data = await _context.Users.Where(x => x.RoleID == roleID).FirstOrDefaultAsync();
@@ -98,7 +99,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetByRoleByIDAsync"];
             }
             return result;
         }
@@ -110,7 +111,7 @@ namespace NetMed.Persistence.Repositories
             {
                 if (result.data == null)
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }
                 result.data = await _context.Users.Where(x => x.FirstName.Contains(firstName)).FirstOrDefaultAsync();
@@ -120,7 +121,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["SearchByNameAsync"];
             }
             return result;
         }
@@ -131,7 +132,7 @@ namespace NetMed.Persistence.Repositories
             {
                 if (result.data == null)
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }
                 result.data = await _context.Users.Where(x => x.CreatedAt >= startDate && x.CreatedAt <= endDate).FirstOrDefaultAsync();
@@ -140,7 +141,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetUsersRegisteredInRangeAsync"];
             }
             return result;
         }
@@ -153,7 +154,7 @@ namespace NetMed.Persistence.Repositories
             {
                 if (result.data == null)
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }
                 result.data = await _context.Users.Where(x => x.PhoneNumber == phoneNumber).FirstOrDefaultAsync();
@@ -162,7 +163,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetPhoneNumberAsync"];
             }
             return result;
         }
@@ -174,7 +175,7 @@ namespace NetMed.Persistence.Repositories
             {
                 if (result.data == null)
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }
                 result.data = await _context.Users.Where(x => x.Address == address).FirstOrDefaultAsync();
@@ -183,7 +184,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetAddressAsync"];
             }
             return result;
         }
@@ -196,7 +197,7 @@ namespace NetMed.Persistence.Repositories
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Password == password);
                 if (user == null)
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }
                 else
@@ -208,11 +209,11 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetPasswordAsync"];
             }
             return result;
         }
-        public override async Task<OperationResult> GetAllAsync(Expression<Func<Users, bool>> filter)
+        public override async Task<OperationResult> GetAllAsync(Expression<Func<AddUsersDto, bool>> filter)
         {
             OperationResult result = new OperationResult();
             try
@@ -223,7 +224,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"];
             }
             return result;
 
@@ -234,23 +235,28 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                if (result.data == null)
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }
-                result.data = await _context.Users.FindAsync(id);
-                result.Success = true;
+                else
+                {
+                    result.data = user;
+                    result.Success = true;
+                }
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Message = ex.Message + _repErrorMapper.GetEntityByIdErrorMessage["GetEntityByIdError"];
             }
             return result;
         }
 
-        public override async Task<bool> ExistsAsync(Expression<Func<Users, bool>> filter)
+
+        public override async Task<bool> ExistsAsync(Expression<Func<AddUsersDto, bool>> filter)
         {
             return await _context.Users.AnyAsync(filter);
         }
@@ -270,40 +276,42 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
-                _logger.LogError("Error obteniendo los datos" + ex.Message.ToString());
+                result.Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"];
+                _logger.LogError(_repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"] + ex.Message.ToString());
             }
-
+          
             return result;
         }
 
-        public override async Task<OperationResult> SaveEntityAsync(Users users)
+        public override async Task<OperationResult> SaveEntityAsync(AddUsersDto users)
         {
             OperationResult result = new OperationResult();
             try
 
             {
+
                 if (users == null)
                 {
                     result.Success = false;
-                    result.Message = "User data is null.";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     return result;
                 }
+                users.UserId = 0;
                 _context.Users.Add(users);
                 await _context.SaveChangesAsync();
                 result.Success = true;
             }
             catch (Exception ex)
             {
-                result.Message = ex.Message + " Ocurrio un error guardando los datos.";
+                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["SaveEntityAsync"];
                 result.Success = false;
-                _logger.LogError(ex, " error while saving user. ");
+                _logger.LogError(ex, _repErrorMapper.ErrorUsersRepositoryMessages["SaveEntityAsync"]);
             }
 
             return result;
         }
 
-        public override async Task<OperationResult> UpdateEntityAsync(Users entity)
+        public override async Task<OperationResult> UpdateEntityAsync(AddUsersDto entity)
         {
             OperationResult result = new OperationResult();
             try
@@ -314,11 +322,10 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = ex.Message + " Ocurrio un error actualizando los datos.";
+                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["UpdateEntityAsync"];
                 result.Success = false;
             }
             return result;
         }
-
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NetMed.Domain.Entities;
-using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Repositories;
+using NetMed.Application.Contracts;
+using NetMed.Application.Dtos.PatientsDto;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -11,19 +10,19 @@ namespace NetMed.Api.Controllers
     [ApiController]
     public class PatientsController : ControllerBase
     {
-        private readonly IPatientsRepository _patientsRepository;
+        private readonly IPatientsServices _patientsServices;
         private readonly ILogger<PatientsController> _logger;
-        public PatientsController(IPatientsRepository patientsRepository,
+        public PatientsController(IPatientsServices patientsServices,
             ILogger<PatientsController> logger)
         {
-            _patientsRepository = patientsRepository;
+            _patientsServices = patientsServices;
             _logger = logger;
         }
         // GET: api/<PatientsController>
         [HttpGet("GetPatients")]
         public async Task<IActionResult> Get()
         {
-           var patients = await _patientsRepository.GetAllAsync();
+           var patients = await _patientsServices.GetAllData();
             return Ok(patients);
         }
 
@@ -31,32 +30,34 @@ namespace NetMed.Api.Controllers
         [HttpGet("GetPatientsById/{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var patient = await _patientsRepository.GetEntityByIdAsync(id);
+            var patient = await _patientsServices.GetById(id);
             return Ok(patient);
         }
 
 
         // POST api/<PatientsController>
         [HttpPost("SavePatients")]
-        public async Task<IActionResult> Post([FromBody] Patients patients)
+        public async Task<IActionResult> Post([FromBody] AddPatientDto patientsDto)
         {
-            var pacient = await _patientsRepository.SaveEntityAsync(patients);
+            var pacient = await _patientsServices.Add(patientsDto);
             return Ok(pacient);
         }
 
         // PUT api/<PatientsController>/5
         [HttpPut("UpdatePatient/{id}")]
-        public async Task<IActionResult> Put([FromBody] Patients patients)
+        public async Task<IActionResult> Put([FromBody] UpdatePatientDto patientsDto)
 
         {
-            var pacients = await _patientsRepository.UpdateEntityAsync(patients);
+            var pacients = await _patientsServices.Update(patientsDto);
             return Ok(pacients);
         }
 
         // DELETE api/<PatientsController>/5
         [HttpDelete("DeletePatient/{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteAsync(DeletePatientDto patientsDto)
         {
+            var doc = await _patientsServices.Delete(patientsDto);
+            return Ok(doc);
         }
     }
 }

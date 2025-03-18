@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Infrastructure.Mapper.IRepositoryErrorMapper;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
@@ -15,15 +16,15 @@ namespace NetMed.Persistence.Repositories
     {
         private readonly NetMedContext _context;
         private readonly ILogger<PatientsRepository> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly IRepErrorMapper _repErrorMapper;
         public PatientsRepository(NetMedContext context,
             ILogger<PatientsRepository> logger,
-            IConfiguration configuration) 
+            IRepErrorMapper repErrorMapper)
             : base(context)
         {
             _context = context;
             _logger = logger;
-            _configuration = configuration;
+            _repErrorMapper = repErrorMapper;
         }
 
         public async Task<OperationResult> GetByBloodTypeAsync(string bloodType)
@@ -33,7 +34,7 @@ namespace NetMed.Persistence.Repositories
             {
                 if (result.data == null)
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }
                 result.data = await _context.Patients.FindAsync(bloodType);
@@ -42,7 +43,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + _repErrorMapper.ErrorPatientsRepositoryMessages["GetByBloodTypeAsync"];
             }
             return result;
         }
@@ -52,21 +53,21 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             
             try
-               
+            { 
+                result.data = await _context.Patients.FindAsync(providerId);
 
-            {
+            
                 if (result.data == null)
                 {
-                    result.Message = "No se encontraron datos";
                     result.Success = false;
+                    result.Message  = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                 }
-                result.data = await _context.Patients.FindAsync(providerId);
-                result.Success = true;
+                result.Message = _repErrorMapper.SuccessPatientsRepositoryMessages["GetByInsuranceProviderAsync"];
             }
-            catch (Exception ex)
+            catch (Exception )
             {
-                result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Success = true;
+               
             }
             return  result;
         }
@@ -81,7 +82,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + _repErrorMapper.ErrorPatientsRepositoryMessages["GetPatientsAsyncWithoutInsuranceAsync"];
             }
             return result;
         }
@@ -97,7 +98,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + _repErrorMapper.ErrorPatientsRepositoryMessages["SearchByAdress"];
             }
             return result;
         }
@@ -107,14 +108,19 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
+                if (result.data == null)
+                {
+                    result.Success = false;
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
+                }
                 result.data = await _context.Patients.FindAsync(minAge, maxAge);
-             
+
                 result.Success = true;
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + _repErrorMapper.ErrorPatientsRepositoryMessages["GetPatientsByAgeRangeAsync"];
             }
 
             return result;
@@ -127,7 +133,7 @@ namespace NetMed.Persistence.Repositories
             {
                 if (result.data == null)
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }
                 result.data = await _context.Patients.FindAsync(contactInfo);
@@ -136,7 +142,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + _repErrorMapper.ErrorPatientsRepositoryMessages["GetByEmergencyContactAsync"];
             }
             return result;
         }
@@ -147,7 +153,7 @@ namespace NetMed.Persistence.Repositories
             {
               if(result.data == null)
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }   
 
@@ -157,7 +163,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + _repErrorMapper.ErrorPatientsRepositoryMessages["GetPatientsWithAllergiesAsync"];
             }
             return result;
         }
@@ -169,7 +175,7 @@ namespace NetMed.Persistence.Repositories
             {
                 if (result.data == null)
                 {
-                    result.Message = "No se encontraron datos";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
                 }
                 result.data = await _context.Patients.FindAsync(gender);
@@ -180,7 +186,7 @@ namespace NetMed.Persistence.Repositories
         (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + "Ocurrio un error al buscar los datos";
+                result.Message = ex.Message + _repErrorMapper.ErrorPatientsRepositoryMessages["GetPatientsByGenderAsync"];
             }
             return result;
         }
@@ -193,7 +199,7 @@ namespace NetMed.Persistence.Repositories
                 if (patients == null)
                 {
                     result.Success = false;
-                    result.Message = "User data is null.";
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     return result;
                 }
                 _context.Patients.Add(patients);
@@ -202,9 +208,9 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = ex.Message + " Ocurrio un error guardando los datos.";
+                result.Message = ex.Message + _repErrorMapper.SaveEntityErrorMessage["SaveEntityError"];
                 result.Success = false;
-                _logger.LogError(ex, " error while saving patient.");
+                _logger.LogError(ex, _repErrorMapper.SaveEntityErrorMessage["SaveEntityError"]);
             }
             return result;
         }
@@ -222,7 +228,7 @@ namespace NetMed.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                result.Message = ex.Message + " Ocurrio un error actualizando los datos.";
+                result.Message = ex.Message + _repErrorMapper.UpdateEntityErrorMessage["UpdateEntityAsync"];
                 result.Success = false;
             }
             return result;
@@ -239,7 +245,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Message = ex.Message + _repErrorMapper.GetEntityByIdErrorMessage["GetAllEntitiesError"];
             }
             return result;
 
@@ -250,17 +256,27 @@ namespace NetMed.Persistence.Repositories
 
             try
             {
-                result.data = await _context.Patients.FindAsync(id);
-                result.Success = true;
+                var patient = await _context.Patients.FindAsync(id);
+                if (patient == null)
+                {
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
+                    result.Success = false;
+                }
+                else
+                {
+                    result.data = patient;
+                    result.Success = true;
+                }
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Message = ex.Message + _repErrorMapper.GetEntityByIdErrorMessage["GetEntityByIdError"];
             }
             return result;
-
         }
+
+
 
         public override async Task<bool> ExistsAsync(Expression<Func<Patients, bool>> filter)
         {
@@ -278,7 +294,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"];
                 _logger.LogError(ex.Message);
             }
             return result;

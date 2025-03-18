@@ -72,23 +72,12 @@ namespace NetMed.Application.Services
             return result;
         }
 
-       
         public async Task<OperationResult> GetById(int id)
         {
             OperationResult result = new OperationResult();
             try
             {
-                var patient = await _patientsRepository.GetEntityByIdAsync(id);
-                if (patient != null)
-                {
-                    result.data = patient;
-                    result.Success = true;
-                }
-                else
-                {
-                    result.Success = false;
-                    result.Message = "Patient not found.";
-                }
+                result = await _patientsRepository.GetEntityByIdAsync(id);
             }
             catch (Exception ex)
             {
@@ -98,7 +87,7 @@ namespace NetMed.Application.Services
             return result;
         }
 
-      
+
 
         public async Task<OperationResult> GetAllData()
         {

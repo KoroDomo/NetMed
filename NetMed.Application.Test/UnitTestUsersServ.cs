@@ -33,9 +33,9 @@ public class UnitTestUsersServ
         var mockUsers = new OperationResult
         {
             Success = true,
-            data = new List<Users>
+            data = new List<AddUsersDto>
             {
-                new Users
+                new AddUsersDto
                 {
                     UserId = 1,
                     FirstName = "Juan",
@@ -59,9 +59,9 @@ public class UnitTestUsersServ
         var mockUsers = new OperationResult
         {
             Success = true,
-            data = new List<Users>
+            data = new List<AddUsersDto>
             {
-                new Users{
+                new AddUsersDto{
                 UserId = 1,
                 FirstName = "Pedro",
                 LastName = "Gomez",
@@ -86,7 +86,7 @@ public class UnitTestUsersServ
         var mockUsers = new OperationResult
         {
             Success = true,
-            data = new Users
+            data = new AddUsersDto
             {
                 UserId = 1,
                 FirstName = "Cris",
@@ -117,7 +117,7 @@ public class UnitTestUsersServ
         var mockUsers = new OperationResult
         {
             Success = true,
-            data = new Users
+            data = new AddUsersDto
             {
                 UserId = 1,
                 FirstName = "Cris",
@@ -149,7 +149,7 @@ public class UnitTestUsersServ
         var mockUsers = new OperationResult
         {
             Success = true,
-            data = new Users
+            data = new AddUsersDto
             {
                 UserId = 1,
                 FirstName = "Cris",
@@ -159,16 +159,7 @@ public class UnitTestUsersServ
                 RoleID = 1,
             },
         };
-        var mockUsersDto = new DeleteUserDto
-        {
-            UserId = 1,
-            Deleted = true,
-            FirstName = "Cris",
-            LastName = "Perez",
-            Email = "Suicide@hotmail.com",
-            Password = "0001",
-            RoleID = 1,
-        };
+        var mockUsersDto = new DeleteUserDto { UserId = 1, Deleted = true, FirstName = "Cris", LastName = "Perez", Email = "Suicide@hotmail.com", Password = "0001", RoleID = 1, };
         _mockUsersServices.Setup(x => x.Delete(It.IsAny<DeleteUserDto>())).ReturnsAsync(mockUsers);
         var result = await _mockUsersServices.Object.Delete(mockUsersDto);
 

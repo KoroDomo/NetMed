@@ -6,7 +6,7 @@ using NetMed.Domain.Repository;
 
 namespace NetMed.Persistence.Interfaces
 {
-    public interface IUsersRepository : IBaseRepository<Users>
+    public interface IUsersRepository : IBaseRepository<AddUsersDto>
     {
         Task<OperationResult> GetEmailAsync(string email);
 

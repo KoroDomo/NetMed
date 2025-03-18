@@ -8,18 +8,18 @@ namespace NetMed.Persistence.Interfaces
 {
     public interface IDoctorsRepository : IBaseRepository<Doctors>
     {
-        Task<OperationResult> GetByAvailabilityModeAsync(int availabilityModeId);
+        Task<OperationResult> GetByAvailabilityModeAsync(short availabilityModeId);
 
         Task<OperationResult> GetBySpecialtyAsync(int specialtyId);
 
         Task<OperationResult> GetByLicenseNumberAsync(string licenseNumber);
-      
-      
+
+        Task<OperationResult> GetActiveDoctorsAsync(bool isActive);
+
         Task<OperationResult> GetDoctorsByExperienceAsync(int minYears, int maxYears);
 
         Task<OperationResult> GetDoctorsByConsultationFeeAsync(decimal minFee, decimal maxFee);
 
         Task<OperationResult> GetDoctorsWithExpiringLicenseAsync(DateOnly expirationDate);
-        
     }
 }

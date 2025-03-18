@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{425FD406-B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.Domain", "NetMed.Domain\NetMed.Domain.csproj", "{2EBBF8FA-1DFC-47B0-AADB-2E7CD901B093}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infraestructure", "Infraestructure", "{0106386F-3792-4DA2-BC9A-F98C8C236881}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{0106386F-3792-4DA2-BC9A-F98C8C236881}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{4E8129B0-1FE0-434E-B17A-862BAF4046D1}"
 EndProject
@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{9CCE20E7-4F4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.Application", "NetMed.Application\NetMed.Application.csproj", "{D16ECF7D-E69A-49FD-A94E-F55E6D92183F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.Infraestructure", "NetMed.Infraestructure\NetMed.Infraestructure.csproj", "{13F5A5C8-CC94-4335-A8B8-DB72F8438460}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.Infrastructure", "NetMed.Infraestructure\NetMed.Infrastructure.csproj", "{13F5A5C8-CC94-4335-A8B8-DB72F8438460}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.Web", "NetMed.Web\NetMed.Web.csproj", "{AB4AD127-D43C-4CA9-8A2C-2C8156507AC9}"
 EndProject

@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using NetMed.Persistence.Context;
-using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Repositories;
-using NetMed.IOC.Dependencies;
 using NetMed.IOC;
+using NetMed.Persistence.BaseLoger.Interface;
+using NetMed.Persistence.BaseLoger.Loger;
+using NetMed.Infrastructure.Mapper.IRepositoryErrorMapper;
+using NetMed.Infrastructure.Mapper.RepositoryErrorMapper;
 
 
 namespace NetMed.Api
@@ -28,6 +29,10 @@ namespace NetMed.Api
 
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddSingleton<ILoggerCustom, Loger>();
+
+            builder.Services.AddSingleton<IRepErrorMapper, RepErrorMapper>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -44,5 +49,5 @@ namespace NetMed.Api
             app.Run();
         }
     }
-    
+
 }

@@ -6,7 +6,7 @@ namespace NetMed.Domain.Entities
 {
 
     [Table("Users", Schema = "users")]
-    public sealed class Users : PersonEntity
+    public sealed class AddUsersDto : PersonEntity
     {
         [Key]
         [Required]

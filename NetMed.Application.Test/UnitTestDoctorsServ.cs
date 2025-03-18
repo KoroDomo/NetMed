@@ -34,7 +34,7 @@ namespace NetMed.Application.Test
             var mockData = new OperationResult
             {
                 Success = true,
-                data = new List<Doctors> { new Doctors { UserId = 6, SpecialtyID = 3, LicenseNumber = "133333", PhoneNumber = "809333892", YearsOfExperience = 10, Education = "Medical School", Bio = "Experienced doctor", ConsultationFee = 1000, ClinicAddress = "147 Clinton Av", LicenseExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)) } }
+                data = new List<Doctors> { new Doctors { UserId = 6, SpecialtyID = 3, LicenseNumber = "133333", PhoneNumber = "809333892", YearsOfExperience = 10, Education = "Medical School", Bio = "Experienced doctor", ConsultationFee = 1000, ClinicAddress = "147 Clinton Av", LicenseExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)), AvailabilityModeId = 1 } }
             };
             _mockDoctorsServices.Setup(x => x.GetAllData()).ReturnsAsync(mockData);
 
@@ -53,7 +53,7 @@ namespace NetMed.Application.Test
             var mockData = new OperationResult
             {
                 Success = true,
-                data = new Doctors { UserId = 1, SpecialtyID = 1, LicenseNumber = "12345", PhoneNumber = "1234567890", YearsOfExperience = 5, Education = "Medical School", Bio = "Experienced doctor", ConsultationFee = 100, ClinicAddress = "123 Clinic St", LicenseExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)) }
+                data = new Doctors { UserId = 1, SpecialtyID = 1, LicenseNumber = "12345", PhoneNumber = "1234567890", YearsOfExperience = 5, Education = "Medical School", Bio = "Experienced doctor", ConsultationFee = 100, ClinicAddress = "123 Clinic St", LicenseExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)), AvailabilityModeId = 1 }
             };
             _mockDoctorsServices.Setup(x => x.GetById(1)).ReturnsAsync(mockData);
             // Act
@@ -69,7 +69,7 @@ namespace NetMed.Application.Test
             var mockData = new OperationResult
             {
                 Success = true,
-                data = new Doctors { UserId = 9, SpecialtyID = 2, LicenseNumber = "59343", PhoneNumber = "849222013", YearsOfExperience = 2, Education = "UCE", Bio = "Recommended Doctor", ConsultationFee = 400, ClinicAddress = "Santo Domingo", LicenseExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)) }
+                data = new Doctors { UserId = 9, SpecialtyID = 2, LicenseNumber = "59343", PhoneNumber = "849222013", YearsOfExperience = 2, Education = "UCE", Bio = "Recommended Doctor", ConsultationFee = 400, ClinicAddress = "Santo Domingo", LicenseExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)) , AvailabilityModeId = 1 }
             };
 
             var addDoctorsDto = new AddDoctorsDto
@@ -83,7 +83,8 @@ namespace NetMed.Application.Test
                 Bio = mockData.data.Bio,
                 ConsultationFee = mockData.data.ConsultationFee,
                 ClinicAddress = mockData.data.ClinicAddress,
-                LicenseExpirationDate = mockData.data.LicenseExpirationDate
+                LicenseExpirationDate = mockData.data.LicenseExpirationDate,
+                AvailabilityModeId = mockData.data.AvailabilityModeId
             };
 
             _mockDoctorsServices.Setup(x => x.Add(It.IsAny<AddDoctorsDto>())).ReturnsAsync(mockData);
@@ -103,7 +104,7 @@ namespace NetMed.Application.Test
             var mockData = new OperationResult
             {
                 Success = true,
-                data = new Doctors { UserId = 9, SpecialtyID = 2, LicenseNumber = "59343", PhoneNumber = "849222013", YearsOfExperience = 2, Education = "UCE", Bio = "Recommended Doctor", ConsultationFee = 400, ClinicAddress = "Santo Domingo", LicenseExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)) }
+                data = new Doctors { UserId = 9, SpecialtyID = 2, LicenseNumber = "59343", PhoneNumber = "849222013", YearsOfExperience = 2, Education = "UCE", Bio = "Recommended Doctor", ConsultationFee = 400, ClinicAddress = "Santo Domingo", LicenseExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)) , AvailabilityModeId = 1 }
             };
 
             var updateDoctorsDto = new UpdateDoctorsDto
@@ -117,7 +118,8 @@ namespace NetMed.Application.Test
                 Bio = mockData.data.Bio,
                 ConsultationFee = mockData.data.ConsultationFee,
                 ClinicAddress = mockData.data.ClinicAddress,
-                LicenseExpirationDate = mockData.data.LicenseExpirationDate
+                LicenseExpirationDate = mockData.data.LicenseExpirationDate,
+                AvailabilityModeId = mockData.data.AvailabilityModeId
             };
 
             _mockDoctorsServices.Setup(x => x.Update(It.IsAny<UpdateDoctorsDto>())).ReturnsAsync(mockData);
@@ -137,7 +139,7 @@ namespace NetMed.Application.Test
             var mockData = new OperationResult
             {
                 Success = true,
-                data = new Doctors { UserId = 9, SpecialtyID = 2, LicenseNumber = "59343", PhoneNumber = "849222013", YearsOfExperience = 2, Education = "UCE", Bio = "Recommended Doctor", ConsultationFee = 400, ClinicAddress = "Santo Domingo", LicenseExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)) }
+                data = new Doctors { UserId = 9, SpecialtyID = 2, LicenseNumber = "59343", PhoneNumber = "849222013", YearsOfExperience = 2, Education = "UCE", Bio = "Recommended Doctor", ConsultationFee = 400, ClinicAddress = "Santo Domingo", LicenseExpirationDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)), AvailabilityModeId = 1 }
             };
 
             var deleteDoctorDto = new DeleteDoctorDto
@@ -151,7 +153,8 @@ namespace NetMed.Application.Test
                 Bio = mockData.data?.Bio ?? string.Empty,
                 ConsultationFee = mockData.data?.ConsultationFee ?? 0,
                 ClinicAddress = mockData.data?.ClinicAddress ?? string.Empty,
-                LicenseExpirationDate = mockData.data?.LicenseExpirationDate ?? DateOnly.MinValue
+                LicenseExpirationDate = mockData.data?.LicenseExpirationDate ?? DateOnly.MinValue,
+                AvailabilityModeId = mockData.data?.AvailabilityModeId ?? 0
             };
 
             _mockDoctorsServices.Setup(x => x.Delete(It.IsAny<DeleteDoctorDto>())).ReturnsAsync(mockData);
@@ -164,5 +167,7 @@ namespace NetMed.Application.Test
             Assert.True(result.Success);
         }
 
+       
     }
+    
 }
