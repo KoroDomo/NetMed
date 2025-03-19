@@ -86,7 +86,7 @@ namespace NetMed.Persistence.Repositories
                 await base.GetAllAsync();
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(GetAllAsync), true);
-
+                return result;
             }
             catch (Exception ex)
             {

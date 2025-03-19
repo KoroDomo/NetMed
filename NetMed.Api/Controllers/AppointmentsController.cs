@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
 using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Repositories;
 
 namespace NetMed.Api.Controllers
 {
@@ -25,7 +25,7 @@ namespace NetMed.Api.Controllers
         public async Task<IActionResult> Get()
         {
             var appointments = await _appointmentsRespository.GetAllAsync();
-            return Ok(appointments);
+            return Ok(appointments); 
         }
         [HttpGet("GetAppointmentById")]
         public async Task<IActionResult> Get(int id)

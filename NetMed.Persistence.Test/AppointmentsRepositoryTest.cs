@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Humanizer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
@@ -22,13 +23,11 @@ namespace NetMed.Tests
 
         public AppointmentsRepositoryTests()
         {
-            // Configura el contexto en memoria
             var options = new DbContextOptionsBuilder<NetMedContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // Usa un nombre único para cada prueba
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
                 .Options;
             _context = new NetMedContext(options);
 
-            // Mock de ILogger y IConfiguration
             var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             _logger = new LoggerSystem(loggerFactory.CreateLogger<LoggerSystem>());
             _validations = new Validations();
@@ -78,7 +77,7 @@ namespace NetMed.Tests
             DateTime appointmentDate = DateTime.Now.AddDays(1);
             int statusId = 1;
 
-            // Agregar una cita existente en la base de datos
+            // Cita existente en la base de datos
             var existingAppointment = new Appointments
             {
                 PatientID = patientId,
@@ -144,7 +143,6 @@ namespace NetMed.Tests
         {
             // Arrange
             Appointments appointments = null;
-
 
             // Act
             var result = await _repository.UpdateEntityAsync(appointments);
@@ -463,7 +461,7 @@ namespace NetMed.Tests
             Assert.Equal("El Id debe ser mayor que cero", result.Message);
         }
         [Fact]
-        public async Task GetAppointmentsByDoctorAsync_ShouldReturnError_WhenPatientNoExist()
+        public async Task GetAppointmentsByDoctorAsync_ShouldReturnError_WhenDoctorNoExist()
         {
             // Arrange
             var appointment = new Appointments
@@ -483,7 +481,92 @@ namespace NetMed.Tests
             Assert.Equal("No existe este registro en el sistema", result.Message);
 
         }
-        //Aqui debajo
+        [Fact]
+        public async Task GetAppointmentsByStatusAsync_ShouldReturnAppointment()
+        {
+            // Arrange
+            var appointment = new Appointments
+            {
+                Id = 0,
+                PatientID = 1,
+                DoctorID = 1,
+                AppointmentDate = DateTime.Now,
+                StatusID = 2
+            };
+            _context.Appointments.Add(appointment);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetAppointmentsByStatusAsync(appointment.StatusID);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Equal("Cita encontrada con exito", result.Message);
+        }
+        [Fact]
+        public async Task GetAppointmentsByStatusAsync_ShouldReturnError_WhenIdIsInvalid()
+        {
+            // Arrange
+            var appointment = new Appointments
+            {
+                PatientID = 1,
+                DoctorID = 1,
+                AppointmentDate = DateTime.Now.AddDays(1),
+                StatusID = -2    
+            };
+            _context.Appointments.Add(appointment);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetAppointmentsByStatusAsync(-2);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+        }
+        [Fact]
+        public async Task GetAppointmentsByDateAsync_ShouldReturnAppointment()
+        {
+            // Arrange
+            var appointment = new Appointments
+            {
+                Id = 0,
+                PatientID = 1,
+                DoctorID = 1,
+                AppointmentDate = DateTime.Now,
+                StatusID = 2
+            };
+            _context.Appointments.Add(appointment);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetAppointmentsByDateAsync(appointment.AppointmentDate);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Equal("Lista de todas las citas en esta fecha", result.Message);
+        }
+        [Fact]
+        public async Task GetAppointmentsByDateAsync_ShouldReturnError_WhenDateIsInvalid()
+        {
+            // Arrange
+            var appointment = new Appointments
+            {
+                PatientID = 1,
+                DoctorID = 1,
+                AppointmentDate = DateTime.Now.AddDays(-21),
+                StatusID = -2
+            };
+            _context.Appointments.Add(appointment);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetAppointmentsByDateAsync(DateTime.Now.AddDays(-21));
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Equal("La fecha debe ser mayor a la fecha actual", result.Message);
+        }
         [Fact]
         public async Task CancelAppointmentAsync_ShouldCancelAppointment()
         {
@@ -494,7 +577,7 @@ namespace NetMed.Tests
                 PatientID = 1,
                 DoctorID = 1,
                 AppointmentDate = DateTime.Now,
-                StatusID = 2 // Estado activo
+                StatusID = 2 
             };
             _context.Appointments.Add(appointment);
             await _context.SaveChangesAsync();
@@ -505,8 +588,67 @@ namespace NetMed.Tests
             // Assert
             Assert.True(result.Success);
             Assert.Equal("Cita cancelada con exito.", result.Message);
-            Assert.Equal(2, _context.Appointments.First().StatusID); // Estado cancelado
-        }
+            Assert.Equal(2, _context.Appointments.First().StatusID); 
+        }       
+        [Fact]
+        public async Task CancelAppointmentAsync_ShouldReturnError_WhenIdIsInvalid()
+        {
+            // Arrange
+            var appointment = new Appointments
+            {
+                PatientID = -1,
+                DoctorID = 1,
+                AppointmentDate = DateTime.Now.AddDays(1)
+            };
+            _context.Appointments.Add(appointment);
+            await _context.SaveChangesAsync();
 
+            // Act
+            var result = await _repository.CancelAppointmentAsync(-1);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+        }
+        [Fact]
+        public async Task GetAppointmentsByDoctorAndDateAsync_ShouldAppointments()
+        {
+            // Arrange
+            var appointment = new Appointments
+            {
+                PatientID = 10,
+                DoctorID = 1,
+                AppointmentDate = DateTime.Now.AddDays(1)
+            };
+            _context.Appointments.Add(appointment);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetAppointmentsByDoctorAndDateAsync(1, DateTime.Now.AddDays(1));
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Equal("Cita encontrada con exito", result.Message);
+        }
+        [Fact]
+        public async Task GetAppointmentsByDoctorAndDateAsync_ShouldReturnFailure_WhenAppointmentDateIsInvalid()
+        {
+            // Arrange
+            var appointment = new Appointments
+            {
+                PatientID = 10,
+                DoctorID = 1,
+                AppointmentDate = DateTime.Now.AddDays(-1)
+            };
+            _context.Appointments.Add(appointment);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.GetAppointmentsByDoctorAndDateAsync(1, DateTime.Now.AddDays(-1));
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Equal("La fecha debe ser mayor a la fecha actual", result.Message);
+        }
     }
 }
