@@ -14,7 +14,7 @@ namespace NetMed.Persistence.Repositories
             {
                 Id = ip.Id,
                 Name = ip.Name,
-                ContactNumber = ip.PhoneNumber,
+                ContactNumber = ip.ContactNumber,
                 Email = ip.Email,
                 Website = ip.Website,
                 Address = ip.Address,

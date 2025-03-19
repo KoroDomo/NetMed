@@ -117,17 +117,13 @@ namespace NetMed.Application.Services
                 var insuranceProvider = _mapper.Map<InsuranceProviders>(dto);
                 
                 var result= await _insuranceProviderRepository.UpdateEntityAsync(insuranceProvider);
-                if (result.Success)
-                {
-                    dto.ChangeUserID = dto.ChangeUserID;
-                    return _operations.SuccessResult(null, "Insurances", "RemoveInsurenProvider");
-                }
+                
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _operations.GetErrorMessage("Operations", "SaveFailed"));
-                return _operations.HandleException("Operations", "SaveFailed");
+                _logger.LogError(ex, _operations.GetErrorMessage("Operations", "UpdateFailed"));
+                return _operations.HandleException("Operations", "UpdateFailed");
             }
         }
     }

@@ -17,7 +17,6 @@ namespace NetMed.Persistence.Repositories
         private readonly ICustomLogger _logger;
         private readonly IInsuranceProviderValidator _operations;
 
-
         public InsuranceProviderRepository(NetMedContext context, 
                                            ICustomLogger logger) : base(context)
         {
@@ -110,14 +109,14 @@ namespace NetMed.Persistence.Repositories
                 _context.Entry(Provider).CurrentValues.SetValues(provider);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_operations.GetSuccesMessage("Operations", "SaveSuccess"));
-                return _operations.SuccessResult(provider, "Operations", "SaveSuccess");
+                _logger.LogInformation(_operations.GetSuccesMessage("Operations", "UpdateSuccess"));
+                return _operations.SuccessResult(provider, "Operations", "UpdateSuccess");
             }
             catch (Exception ex)
             {
 
-                _logger.LogError(ex, _operations.GetErrorMessage("Operations", "SaveFailed"));
-                return _operations.HandleException("Operations", "SaveFailed");
+                _logger.LogError(ex, _operations.GetErrorMessage("Operations", "UpdateFailed"));
+                return _operations.HandleException("Operations", "UpdateFailed");
             }
         }
 
@@ -242,7 +241,7 @@ namespace NetMed.Persistence.Repositories
                     return _operations.HandleException("Entitys", "NotFound");
                 }
 
-                return _operations.SuccessResult(providers, "Insurances", "GetPreferredInsuranceProviders");
+                return _operations.SuccessResult(providers, "Insurances", "GetActiveInsuranceProviders");
             }
             catch (Exception ex)
             {

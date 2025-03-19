@@ -5,11 +5,11 @@ namespace NetMed.Infraestructure.Validators.Implementations
 {
     public class BaseValidator : IBaseValidator
     {
-        private readonly MessageMapper _messageMapper;
+        private readonly JsonMessage _messageMapper;
 
         public BaseValidator()
         {
-            _messageMapper = new MessageMapper();
+            _messageMapper = new JsonMessage();
         }
 
         public OperationResult SuccessResult(dynamic result, string className, string methodName)

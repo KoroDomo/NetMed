@@ -18,32 +18,45 @@ namespace NetMed.Infraestructure.Validators.Implementations
         {
             try
             {
+
                 var result = _operationValidator.isNull(insuranceProvider);
-                if (!result.Success)
+                if (result.Success == false)
                 {
-                    result.Message = "El insuranceProvider es nulo.";
+                    result.Message = _operationValidator.GetErrorMessage("Insurances", "isNull");
                     return result;
                 }
 
-                result = ValidateStringProperties(insuranceProvider);
-                if (!result.Success)
-                    return result;
-
-                result = ValidateNumericProperties(insuranceProvider);
-                if (!result.Success)
-                    return result;
 
                 result = IsValidEmail(insuranceProvider.Email);
-                if (!result.Success)
+                if (result.Success == false)
+                {
                     return result;
+                }
 
-                result = IsValidPhoneNumber(insuranceProvider.PhoneNumber);
-                if (!result.Success)
+                result = ValidateNumericProperties(insuranceProvider);
+                if (result.Success == false)
+                {
                     return result;
+                }
+
+                result = IsValidPhoneNumber(insuranceProvider.ContactNumber);
+                if (result.Success == false)
+                {
+                    return result;
+                }
 
                 result = IsValidPhoneNumber(insuranceProvider.CustomerSupportContact);
-                if (!result.Success)
+                if (result.Success == false)
+                {
                     return result;
+                }
+                result = ValidateStringProperties(insuranceProvider);
+                if (result.Success==false)
+                {
+                    return result;
+                }
+
+
 
                 return new OperationResult { Success = true, Result = insuranceProvider, Message = result.Message };
             }
@@ -58,7 +71,6 @@ namespace NetMed.Infraestructure.Validators.Implementations
             var validations = new (string Value, int MaxLength, string FieldName)[]
             {
                 (insuranceProvider.Name, 100, nameof(insuranceProvider.Name)),
-                (insuranceProvider.PhoneNumber, 15, nameof(insuranceProvider.PhoneNumber)),
                 (insuranceProvider.Email, 100, nameof(insuranceProvider.Email)),
                 (insuranceProvider.Website, 255, nameof(insuranceProvider.Website)),
                 (insuranceProvider.Address, 255, nameof(insuranceProvider.Address)),
@@ -66,17 +78,17 @@ namespace NetMed.Infraestructure.Validators.Implementations
                 (insuranceProvider.State, 100, nameof(insuranceProvider.State)),
                 (insuranceProvider.Country, 100, nameof(insuranceProvider.Country)),
                 (insuranceProvider.ZipCode, 10, nameof(insuranceProvider.ZipCode)),
-                (insuranceProvider.CustomerSupportContact, 15, nameof(insuranceProvider.CustomerSupportContact)),
                 (insuranceProvider.AcceptedRegions, 255, nameof(insuranceProvider.AcceptedRegions))
             };
 
             foreach (var validation in validations)
             {
                 var result = _operationValidator.ValidateStringLength(validation.Value, validation.MaxLength);
-                if (!result.Success)
+                if (result.Success == false)
                 {
-                    result.Message = $"El campo {validation.FieldName} excede la longitud máxima permitida.";
+                    result.Message = $"El campo {validation.FieldName} excede la longitud maxima permitida.";
                     result.Success = false;
+
                     return result;
                 }
             }
@@ -87,9 +99,9 @@ namespace NetMed.Infraestructure.Validators.Implementations
         private OperationResult ValidateNumericProperties(InsuranceProviders insuranceProvider)
         {
             var result = _operationValidator.IsInt(insuranceProvider, insuranceProvider.NetworkTypeID);
-            if (!result.Success)
+            if (result.Success == false)
             {
-                result.Message = "El campo NetworkTypeID debe ser un número entero.";
+                result.Message = _operationValidator.GetErrorMessage("Insurances", "NetworkTypeID");
                 result.Success = false;
                 return result;
             }
@@ -99,7 +111,7 @@ namespace NetMed.Infraestructure.Validators.Implementations
                 return new OperationResult
                 {
                     Success = false,
-                    Message = "El campo MaxCoverageAmount debe ser un valor positivo."
+                    Message = _operationValidator.GetErrorMessage("Insurances", "MaxCoverageAmount")
                 };
             }
 
@@ -113,7 +125,7 @@ namespace NetMed.Infraestructure.Validators.Implementations
                 return new OperationResult
                 {
                     Success = false,
-                    Message = "Ya existe un InsuranceProvider con este nombre."
+                    Message = _operationValidator.GetErrorMessage("Insurances", "Name")
                 };
             }
 

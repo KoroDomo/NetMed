@@ -22,6 +22,7 @@ namespace NetMed.Persistence.Test
             .Options;
 
             _context = new NetMedContext(options);
+
             _mockLogger = new Mock<ICustomLogger>();
             _repository = new NetworkTypeRepository(_context, _mockLogger.Object);
         }
@@ -76,8 +77,27 @@ namespace NetMed.Persistence.Test
             Assert.Contains("Ya existe un NetworkType con este nombre.", result.Message);
         }
 
-        [Fact] //GetInsurenProviderById
-        public async Task GetInsurenProviderById_ShouldReturnProvider_WhenProviderExists()
+        [Fact]
+        public async Task SaveEntityAsync_InvalidName_ReturnsError()
+        {
+            // Arrange
+            var network = new NetworkType
+            {
+                Name = "ExistingNetwRETTTTTTTTTTTTTTrtttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttTTTTTRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRfgggggggggggggggggggggggggggggggRRRRRRRork",
+                Description = "Description",
+                IsActive = true
+            };
+
+            // Act
+            var result = await _repository.SaveEntityAsync(network);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Contains("El campo Name excede la longitud maxima permitida.", result.Message);
+        }
+
+        [Fact] //GetNetworkTypeById
+        public async Task GetNetworkTypeById_ShouldReturnProvider_WhenProviderExists()
         {
             // Arrange
             int networkId = 3;
@@ -101,11 +121,12 @@ namespace NetMed.Persistence.Test
             Assert.NotNull(result.Result);
             Assert.Equal(networkId, result.Result[0].Id);
             Assert.Equal("Network2", result.Result[0].Name);
+            Assert.Contains("Network/s obtenido exitosamente.", result.Message);
 
         }
 
         [Fact]
-        public async Task GetInsurenProviderById_ShouldReturnNotFound_WhenProviderDoesNotExist()
+        public async Task GetNetworkTypeById_ShouldReturnNotFound_WhenNetworkDoesNotExist()
         {
             // Arrange
             
@@ -129,7 +150,7 @@ namespace NetMed.Persistence.Test
         }
 
         [Fact] //GettAllAsync
-        public async Task GetAllAsync_ReturnsProviders()
+        public async Task GetAllAsync_ReturnsNetworks()
         {
             // Arrange
             var network1 = new NetworkType
@@ -161,11 +182,11 @@ namespace NetMed.Persistence.Test
             // Assert
             Assert.True(result.Success);
             Assert.NotNull(result);
-            //Assert.Contains("Proveedores de seguros obtenidos exitosamente.", result.Message);
+            Assert.Contains("Network/s obtenido exitosamente.", result.Message);
         }
 
-        [Fact]
-        public async Task UpdateEntityAsync_ValidProvider_ReturnsSuccess()
+        [Fact]//UpdateEntityAsync
+        public async Task UpdateEntityAsync_ValidNetwork_ReturnsSuccess()
         {
             // Arrange
             var network = new NetworkType
@@ -188,10 +209,11 @@ namespace NetMed.Persistence.Test
             // Assert
             Assert.True(result.Success);
             Assert.Equal("Network Actualizado", ((NetworkType)result.Result).Name);
+            Assert.Contains("Registro actualizado exitosamente.", result.Message);
         }
 
         [Fact]
-        public async Task UpdateEntityAsync_NonExistentProvider_ReturnsError()
+        public async Task UpdateEntityAsync_NonExistentNetwork_ReturnsError()
         {
             // Arrange
             var network = new NetworkType
@@ -211,8 +233,8 @@ namespace NetMed.Persistence.Test
             Assert.Contains("Registro no encontrado.", result.Message);
         }
 
-        [Fact] //RemoveInsuranceProviderAsync
-        public async Task RemoveInsuranceProviderAsync_ValidId_DeactivatesProvider()
+        [Fact] //RemoveNetworkTypeAsync
+        public async Task RemoveNetworkTypeAsync_ValidId_DeactivatesProvider()
         {
             // Arrange
             var network = new NetworkType
@@ -233,10 +255,11 @@ namespace NetMed.Persistence.Test
             // Assert
             Assert.True(result.Success);
             Assert.False(network.IsActive);
+            Assert.Contains("Network eliminado exitosamente.", result.Message);
         }
 
         [Fact]
-        public async Task RemoveInsuranceProviderAsync_InvalidId_ReturnsNotFound()
+        public async Task RemoveNetworkTypeAsync_InvalidId_ReturnsNotFound()
         {
             // Act
             var result = await _repository.RemoveNetworkTypeAsync(999);

@@ -30,14 +30,14 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 var operationR = _operations.ValidateNameExists(network, _context);
-                if (!operationR.Success)
+                if (operationR.Success == false)
                 {
                     _logger.LogWarning(operationR.Message);
                     return operationR;
                 }
 
                 operationR =_operations.ValidateNetworkType(network);
-                if (!operationR.Success)
+                if (operationR.Success == false)
                 {
                     _logger.LogWarning(operationR.Message);
                     return operationR;
@@ -74,15 +74,15 @@ namespace NetMed.Persistence.Repositories
 
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_operations.GetSuccesMessage("Insurances", "RemoveInsurenProvider"));
+                _logger.LogInformation(_operations.GetSuccesMessage("Networks", "RemoveNetworkType"));
 
-                return _operations.SuccessResult(network, "Insurances", "RemoveInsurenProvider");
+                return _operations.SuccessResult(network, "Networks", "RemoveNetworkType");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _operations.GetErrorMessage("Insurances", "RemoveInsurenProvider"));
+                _logger.LogError(ex, _operations.GetErrorMessage("Networks", "RemoveNetworkType"));
 
-                return _operations.HandleException("Insurances", "RemoveInsurenProvider");
+                return _operations.HandleException("Networks", "RemoveNetworkType");
             }
         }
         public async override Task<OperationResult> UpdateEntityAsync(NetworkType network)
@@ -91,7 +91,7 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 var result = _operations.ValidateNameExists(network, _context);
-                if (!result.Success)
+                if (result.Success == false)
                 {
                     _logger.LogWarning(result.Message);
                     return result;
@@ -107,14 +107,14 @@ namespace NetMed.Persistence.Repositories
                 _context.Entry(Network).CurrentValues.SetValues(network);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_operations.GetSuccesMessage("Operations", "SaveSuccess"));
-                return _operations.SuccessResult(Network, "Operations", "SaveSuccess");
+                _logger.LogInformation(_operations.GetSuccesMessage("Operations", "UpdateSuccess"));
+                return _operations.SuccessResult(Network, "Operations", "UpdateSuccess");
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _operations.GetErrorMessage("Operations", "SaveFailed"));
-                return _operations.HandleException("Operations", "SaveFailed");
+                _logger.LogError(ex, _operations.GetErrorMessage("Operations", "UpdateSuccess"));
+                return _operations.HandleException("Operations", "UpdateSuccess");
             }
         }
         public async Task<OperationResult> GetNetworkTypeById(int networkTypeId)
@@ -132,14 +132,14 @@ namespace NetMed.Persistence.Repositories
                     return _operations.HandleException("Entitys", "NotFound");
                 }
 
-                return _operations.SuccessResult(networkTypes, "Insurances", "GetInsurenProvider");
+                return _operations.SuccessResult(networkTypes, "Networks", "GetNetworkType");
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _operations.GetErrorMessage("Insurances", "GetInsurenProvider"));
+                _logger.LogError(ex, _operations.GetErrorMessage("Networks", "GetNetworkType"));
 
-                return _operations.HandleException("Insurances", "GetInsurenProvider");
+                return _operations.HandleException("Networks", "GetNetworkType");
             }
         }
         public override async Task<OperationResult> GetAllAsync()
@@ -158,13 +158,13 @@ namespace NetMed.Persistence.Repositories
                     return _operations.HandleException("Entitys", "NotFound");
 
                 }
-                return _operations.SuccessResult(network, "Insurances", "GetInsurenProvider");
+                return _operations.SuccessResult(network, "Networks", "GetNetworkType");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _operations.GetErrorMessage("Insurances", "GetInsurenProvider"));
+                _logger.LogError(ex, _operations.GetErrorMessage("Networks", "GetNetworkType"));
 
-                return _operations.HandleException("Insurances", "GetInsurenProvider");
+                return _operations.HandleException("Networks", "GetNetworkType");
             }
         }
         public override async Task<OperationResult> GetAllAsync(Expression<Func<NetworkType, bool>> filter)

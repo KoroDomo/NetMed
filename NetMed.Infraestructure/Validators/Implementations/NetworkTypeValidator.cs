@@ -15,18 +15,27 @@ namespace NetMed.Infraestructure.Validators.Implementations
 
         public OperationResult ValidateNetworkType(NetworkType networkType)
         {
-            var result = _operationValidator.isNull(networkType);
-            if (!result.Success)
+            try
             {
-                result.Message = "El networkType es nulo.";
-                return result;
+                var result = _operationValidator.isNull(networkType);
+                if (result.Success==false)
+                {
+                    result.Message = _operationValidator.GetErrorMessage("Networks", "isNull");
+                    return result;
+                }
+
+                result = ValidateStringProperties(networkType);
+                if (result.Success==false) 
+                {
+                    return result;
+                }
+
+                return new OperationResult { Success = true, Result = networkType };
             }
-
-            result = ValidateStringProperties(networkType);
-            if (!result.Success)
-                return result;
-
-            return new OperationResult { Success = true, Result = networkType };
+            catch (Exception ex)
+            {
+                return new OperationResult { Message = ex.Message };
+            }
         }
 
         public OperationResult ValidateStringProperties(NetworkType networkType)
@@ -39,9 +48,9 @@ namespace NetMed.Infraestructure.Validators.Implementations
             foreach (var validation in validations)
             {
                 var result = _operationValidator.ValidateStringLength(validation.Value, validation.MaxLength);
-                if (!result.Success)
+                if (result.Success == false)
                 {
-                    result.Message = $"El campo {validation.FieldName} excede la longitud máxima permitida.";
+                    result.Message = $"El campo {validation.FieldName} excede la longitud maxima permitida.";
                     return result;
                 }
             }
@@ -56,7 +65,7 @@ namespace NetMed.Infraestructure.Validators.Implementations
                 return new OperationResult
                 {
                     Success = false,
-                    Message = "Ya existe un NetworkType con este nombre."
+                    Message = _operationValidator.GetErrorMessage("Networks", "Name")
                 };
             }
 

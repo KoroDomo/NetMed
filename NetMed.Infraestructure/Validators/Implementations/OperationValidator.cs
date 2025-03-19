@@ -114,7 +114,7 @@ namespace NetMed.Infraestructure.Validators.Implementations
         {
             var result = new OperationResult();
 
-            if (entityName == null && entityName.Length > maxLength)
+            if (entityName.Length > maxLength)
             {
                 result.Success = false;
                 result.Message = $"{entityName} no puede tener más de {maxLength} caracteres.";

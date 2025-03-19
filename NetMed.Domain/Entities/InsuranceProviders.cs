@@ -11,8 +11,7 @@ namespace NetMed.Domain.Entities
         [Column("InsuranceProviderID")]
         [Key]
         public override int Id { get; set; }
-        [Column("ContactNumber")] 
-        public new string PhoneNumber { get; set; }
+        public string ContactNumber { get; set; }
         public string Name { get; set; }
         public string? Website { get; set; }
         public string? City { get; set; }
