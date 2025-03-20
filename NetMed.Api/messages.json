@@ -184,6 +184,57 @@
       "method": "UpdateAvailabilityInRealTimeAsync",
       "success": false,
       "message": "Estas intentando agregar datos ya existentes"
+    },
+    {
+      "method": "GetAll",
+      "success": true,
+      "message": "Datos obtenidos con éxito"
+    },
+    {
+      "method": "GetAll",
+      "success": false,
+      "message": "Error al obtener los datos"
+    },
+    {
+      "method": "GetById",
+      "success": true,
+      "message": "Datos obtenidos con éxito"
+    },
+    {
+      "method": "GetById",
+      "success": false,
+      "message": "Error al obtener los datos"
+    },
+    {
+      "method": "Remove",
+      "success": true,
+      "message": "Datos eliminados con éxito"
+    },
+    {
+      "method": "Remove",
+      "success": false,
+      "message": "Error al eliminar los datos"
+    },
+    {
+      "method": "Save",
+      "success": true,
+      "message": "Datos guardados con éxito"
+    },
+    {
+      "method": "Save",
+      "success": false,
+      "message": "Error al guardar los datos"
+    },
+    {
+      "method": "Update",
+      "success": true,
+      "message": "Datos actualizados con éxito"
+    },
+    {
+      "method": "Update",
+      "success": false,
+      "message": "Error al actualizar los datos"
     }
+
   ]
   }

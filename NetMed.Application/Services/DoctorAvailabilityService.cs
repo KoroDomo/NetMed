@@ -1,29 +1,28 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+﻿
 using NetMed.Application.Dtos.DoctorAvailability;
 using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.Logger;
+using NetMed.Infraestructure.Messages;
 using NetMed.Infraestructure.Validators;
 using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Repositories;
-
 
 namespace NetMed.Application.Services
 {
     public class DoctorAvailabilityService : IDoctorAvailabilityService
     {
         private readonly IDoctorAvailabilityRepository _doctorAvailabilityRepository;
-        private readonly ILogger<DoctorAvailabilityService> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly ILoggerSystem _logger;
         private readonly IValidations _validations;
+        private readonly IMessageService _messageService;
 
-        public DoctorAvailabilityService(IDoctorAvailabilityRepository doctorAvailabilityRepository , ILogger<DoctorAvailabilityService> logger, IConfiguration configuration, IValidations validations)
+        public DoctorAvailabilityService(IDoctorAvailabilityRepository doctorAvailabilityRepository , ILoggerSystem logger, IValidations validations, IMessageService messageService)
         {
             _doctorAvailabilityRepository = doctorAvailabilityRepository;
             _logger = logger;
-            _configuration = configuration;
             _validations = validations;
+            _messageService = messageService;
         }
         public async Task<OperationResult> GetAll()
         {
@@ -31,13 +30,16 @@ namespace NetMed.Application.Services
             try
             {
                 var doctorAvailability = await _doctorAvailabilityRepository.GetAllAsync();
+                result.Success = true;
+                result.Message = _messageService.GetMessage(nameof(GetAll), true);
+                result.Data = doctorAvailability;
 
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["DoctorAvailabilityServiceError: GetAll"];
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                result.Message = _messageService.GetMessage(nameof(GetAll), false);               
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -53,12 +55,15 @@ namespace NetMed.Application.Services
                 if (!result.Success) return result;
 
                 var doctorAvailability = await _doctorAvailabilityRepository.GetEntityByIdAsync(Id);
+                result.Success = true;
+                result.Message = _messageService.GetMessage(nameof(GetById), true);
+                result.Data = doctorAvailability;        
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["DoctorAvailabilityServiceError: GetById"];
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                result.Message= _messageService.GetMessage(nameof(GetById), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -75,14 +80,14 @@ namespace NetMed.Application.Services
 
                 var doctorAvailability = await _doctorAvailabilityRepository.RemoveAsync(Id);
                 result.Success = true;
-                result.Message = "Datos desactivados con exito";
+                result.Message = _messageService.GetMessage(nameof(Remove), true);
+                result.Data= doctorAvailability;
             }
             catch (Exception ex)
             {
-
-                result.Message = _configuration["DoctorAvailabilityServiceError: Remove"];
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                result.Message = _messageService.GetMessage(nameof(Remove), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -100,13 +105,14 @@ namespace NetMed.Application.Services
                 };
                 await _doctorAvailabilityRepository.SaveEntityAsync(doctorAvailability);
                 result.Success = true;
-                result.Message = "Datos guardados cone exito";
+                result.Message = _messageService.GetMessage(nameof(Save), true);
+                result.Data = doctorAvailability;   
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["DoctorAvailabilityServiceError: Save"];
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                result.Message = _messageService.GetMessage(nameof(Save), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
@@ -125,15 +131,17 @@ namespace NetMed.Application.Services
                 };
                 await _doctorAvailabilityRepository.UpdateEntityAsync(doctorAvailability);
                 result.Success = true;
-                result.Message = "Datos actualizados cone exito";
+                result.Message = _messageService.GetMessage(nameof(Update), true);
+                result.Data = doctorAvailability;
             }
             catch (Exception ex)
             {
-                result.Message = _configuration["DoctorAvailabilityServiceError: Save"];
                 result.Success = false;
-                _logger.LogError(result.Message, ex.ToString());
+                result.Message = _messageService.GetMessage(nameof(Update), false);
+                _logger.LogError(ex, result.Message);
             }
             return result;
         }
+        
     }
 }
