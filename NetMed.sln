@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.Api", "NetMed.Api\Ne
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.Persistence.Test", "NetMed.Persistence.Test\NetMed.Persistence.Test.csproj", "{F81C9CC6-210F-4208-B226-E42BC22157E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.Infraestructura.Test", "NetMed.Infraestructura.Test\NetMed.Infraestructura.Test.csproj", "{8554FEFF-218C-477A-AA1B-AC09998164DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{F81C9CC6-210F-4208-B226-E42BC22157E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F81C9CC6-210F-4208-B226-E42BC22157E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F81C9CC6-210F-4208-B226-E42BC22157E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8554FEFF-218C-477A-AA1B-AC09998164DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8554FEFF-218C-477A-AA1B-AC09998164DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8554FEFF-218C-477A-AA1B-AC09998164DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8554FEFF-218C-477A-AA1B-AC09998164DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +97,7 @@ Global
 		{3EE93F14-13D4-45D4-8778-E04B6A487F09} = {425FD406-BA63-492B-BC62-8581FA219EDD}
 		{98BE6D5F-087A-43E6-83DC-0F86CCACE34C} = {0754C759-8CB2-4AC3-A381-90AC7B2947E6}
 		{F81C9CC6-210F-4208-B226-E42BC22157E1} = {5EA639D5-C646-4D59-940A-011D8A676DA6}
+		{8554FEFF-218C-477A-AA1B-AC09998164DD} = {5EA639D5-C646-4D59-940A-011D8A676DA6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E95875F1-A7C7-4CBC-AC20-D0AC4EEBC7E9}

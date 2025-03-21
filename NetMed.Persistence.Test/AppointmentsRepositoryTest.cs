@@ -1,4 +1,4 @@
-﻿using Humanizer;
+﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NetMed.Domain.Entities;
