@@ -112,6 +112,9 @@ public class UnitTestUsers
             RoleID = 0,
         };
 
+        await _context.Users.AddAsync(users);
+           await _context.SaveChangesAsync();
+
         var result = await _usersRepository.GetPasswordAsync("1234");
         Assert.NotNull(result);
         Assert.True(result.Success);

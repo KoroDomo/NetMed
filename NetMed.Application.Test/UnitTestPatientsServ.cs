@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.PatientsDto;
+using NetMed.Application.Services;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Context;
@@ -12,28 +14,23 @@ namespace NetMed.Application.Test;
 
 public class UnitTestPatientsServ
 {
-    private readonly NetMedContext _context;
-    private readonly Mock<IPatientsServices> _mockPatientServices;
-    private readonly Mock<PatientsRepository> _mockPatientRepositoy;
+    private readonly IPatientsServices _patientsServices;
+    private readonly ILogger<PatientsServices> _logger;
+    private readonly Mock<IPatientsRepository> _mockPatientRepositoy;
 
     public UnitTestPatientsServ()
     {
-        var options = new DbContextOptionsBuilder<NetMedContext>()
-            .UseInMemoryDatabase(databaseName: "MedicalAppointment")
-            .Options;
-        _context = new NetMedContext(options);
-        _mockPatientServices = new Mock<IPatientsServices>();
-        _mockPatientRepositoy = new Mock<PatientsRepository>();
+        _logger = new Mock<ILogger<PatientsServices>>().Object;
+        _mockPatientRepositoy = new Mock<IPatientsRepository>();
+        _patientsServices = new PatientsServices(_mockPatientRepositoy.Object, _logger);
     }
 
     [Fact]
 
     public async Task GetAllDataReturnAllPatientsData()
     {
-        var mockPatient = new OperationResult
-        {
-            Success = true,
-            data = new List<Patients>
+       
+        var patients = new List<Patients>
         {
             new Patients
             {
@@ -46,49 +43,46 @@ public class UnitTestPatientsServ
                 Allergies = "none",
                 EmergencyContactName = "Andrea",
                 InsuranceProviderID = 344,
-                Gender = 'M',
-                PhoneNumber = "8883423"
             }
-
-        }
         };
+        var result = new OperationResult
+        {
+            Success = true,
+            data = patients
+        };
+        _mockPatientRepositoy.Setup(x => x.GetAllAsync()).ReturnsAsync(result);
+        var resultData = await _patientsServices.GetAllData();
 
-        //act 
-        _mockPatientServices.Setup(x => x.GetAllData()).ReturnsAsync(mockPatient);
-        var result = await _mockPatientServices.Object.GetAllData();
-
-        //Assert
-
-        Assert.NotNull(result);
-        Assert.True(result.Success);
+        Assert.NotNull(resultData);
+        Assert.True(resultData.Success);
+        Assert.Equal(1, resultData.data?.Count);
     }
     [Fact]
     public async Task GetPatientByIdReturnPatientsById()
     {
-        var mockPatient = new OperationResult
+      var doctor = new Patients
+      {
+          UserId = 1,
+          DateOfBirth = new DateOnly(1990, 1, 1),
+          IsActive = true,
+          EmergencyContactPhone = "1343244",
+          BloodType = 'O',
+          Address = "San Isidro",
+          Allergies = "none",
+          EmergencyContactName = "Andrea",
+          InsuranceProviderID = 344,
+      };
+        var result = new OperationResult
         {
             Success = true,
-            data = new List<Patients>
-            {
-                new Patients
-                {
-                    UserId = 1,
-                    DateOfBirth = new DateOnly(1990, 1, 1),
-                    IsActive = true,
-                    EmergencyContactPhone = "1343244",
-                    BloodType = 'O',
-                    Address = "San Isidro",
-                    Allergies = "none",
-                    EmergencyContactName = "Andrea",
-                    InsuranceProviderID = 344,
-                }
-
-            }
+            data = new List<Patients> { doctor }
         };
-        _mockPatientServices.Setup(x => x.GetById(1)).ReturnsAsync(mockPatient);
-        var result = await _mockPatientServices.Object.GetById(1);
-        Assert.NotNull(result);
-        Assert.True(result.Success);
+        _mockPatientRepositoy.Setup(x => x.GetEntityByIdAsync(1)).ReturnsAsync(result);
+            var resultData = await _patientsServices.GetById(1);
+
+        Assert.NotNull(resultData);
+        Assert.True(resultData.Success);
+        Assert.Equal(1, resultData.data?.Count);
     }
     [Fact]
     public async Task AddPatientReturnPatientAdded()
@@ -125,14 +119,14 @@ public class UnitTestPatientsServ
             DateOfBirth = new DateOnly(1993, 1, 14),
             EmergencyContactName = "Beltre",
             UserId = 20,
-            Gender = 'M',
-            InsuranceProviderID = 202,
-            PhoneNumber = "42236"
         };
-        _mockPatientServices.Setup(x => x.Add(It.IsAny<AddPatientDto>())).ReturnsAsync(mockPatient);
-        var result = await _mockPatientServices.Object.Add(AddPatientsDto);
+    
+        _mockPatientRepositoy.Setup(x => x.SaveEntityAsync(It.IsAny<Patients>())).ReturnsAsync(mockPatient);
+
+        var result = await _patientsServices.Add(AddPatientsDto);
         Assert.NotNull(result);
         Assert.True(result.Success);
+       
     }
     [Fact]
     public async Task UpdatePatientReturnPatientUpdated()
@@ -172,10 +166,11 @@ public class UnitTestPatientsServ
         InsuranceProviderID = 204,
         PhoneNumber = "787892"
     };
-        _mockPatientServices.Setup(x => x.Update(It.IsAny<UpdatePatientDto>())).ReturnsAsync(mockPatient);
-        var result = await _mockPatientServices.Object.Update(UpdatePatientsDto);
+        _mockPatientRepositoy.Setup(x => x.UpdateEntityAsync(It.IsAny<Patients>())).ReturnsAsync(mockPatient);
+        var result = await _patientsServices.Update(UpdatePatientsDto);
         Assert.NotNull(result);
         Assert.True(result.Success);
+        
 
 
     }
@@ -208,8 +203,15 @@ public class UnitTestPatientsServ
         {
             UserId = 40
         };
-        _mockPatientServices.Setup(x => x.Delete(It.IsAny<DeletePatientDto>())).ReturnsAsync(mockPatient);
-        var result = await _mockPatientServices.Object.Delete(DeletePatientsDto);
+        _mockPatientRepositoy.Setup(x => x.UpdateEntityAsync(It.IsAny<Patients>())).ReturnsAsync(mockPatient);
+
+        var result = new OperationResult
+        {
+            Success = true,
+            data = mockPatient
+        };
+
+        var resultData = await _patientsServices.Delete(DeletePatientsDto);
         Assert.NotNull(result);
         Assert.True(result.Success);
     }

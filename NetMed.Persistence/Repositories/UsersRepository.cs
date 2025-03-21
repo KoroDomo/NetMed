@@ -10,10 +10,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using Microsoft.Extensions.Configuration;
 using NetMed.Infrastructure.Mapper.IRepositoryErrorMapper;
+using System.Linq;
+
 
 namespace NetMed.Persistence.Repositories
 {
-    public class UsersRepository : BaseRepository<AddUsersDto>, IUsersRepository
+    public class UsersRepository : BaseRepository<Users>, IUsersRepository
     {
         private readonly NetMedContext _context;
         private readonly ILogger<UsersRepository> _logger;
@@ -38,17 +40,16 @@ namespace NetMed.Persistence.Repositories
 
                 if (user == null)
                 {
-<<<<<<< HEAD
                     result.Success = true;
                     result.Message = "Correo disponible";
                 }
                 else
                 {
-                    result.data = user;
+
                     result.Success = false;
                     result.Message = "Email ya registrado";
-=======
-                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+                    var userMail = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
                     if (user == null)
                     {
                         result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
@@ -56,10 +57,10 @@ namespace NetMed.Persistence.Repositories
                     }
                     else
                     {
-                        result.data = user;
+                        result.data = userMail;
                         result.Success = true;
                     }
->>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
+
                 }
             }
             catch (Exception ex)
@@ -161,26 +162,7 @@ namespace NetMed.Persistence.Repositories
         }
 
 
-<<<<<<< HEAD
 
-=======
-            try
-            {
-                if (result.data == null)
-                {
-                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-                    result.Success = false;
-                }
-                result.data = await _context.Users.Where(x => x.PhoneNumber == phoneNumber).FirstOrDefaultAsync();
-                result.Success = true;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetPhoneNumberAsync"];
-            }
-            return result;
-        }
 
         public async Task<OperationResult> GetAddressAsync(string address)
         {
@@ -202,7 +184,7 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
->>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
+
 
         public async Task<OperationResult> GetPasswordAsync(string password)
         {
@@ -213,14 +195,14 @@ namespace NetMed.Persistence.Repositories
 
                 if (user != null)
                 {
-                   
+
                     result.data = user;
                     result.Success = true;
                     result.Message = "Contraseña válida";
                 }
                 else
                 {
-                    
+
                     result.Success = false;
                     result.Message = "Contraseña no encontrada";
                 }
@@ -232,12 +214,30 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-        public override async Task<OperationResult> GetAllAsync(Expression<Func<Users,bool>> filter)
+        public override async Task<OperationResult> GetAllAsync()
         {
             OperationResult result = new OperationResult();
             try
             {
-                result.data = await _context.Users.Where(filter).ToListAsync();
+                var consult = await _context.Users.ToListAsync();
+                result.data = consult;
+                result.Success = true; // Add this since it was missing
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"];
+                _logger.LogError(_repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"] + ex.Message.ToString());
+            }
+            return result;
+        }
+
+        public override async Task<OperationResult> GetAllAsync(Expression<Func<Users, bool>> filter)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                result.data = await _context.Set<Users>().Where(filter).ToListAsync();
                 result.Success = true;
             }
             catch (Exception ex)
@@ -246,48 +246,6 @@ namespace NetMed.Persistence.Repositories
                 result.Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"];
             }
             return result;
-
-        }
-
-        public override async Task<OperationResult> GetEntityByIdAsync(int id)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                var user = await _context.Users.FindAsync(id);
-                if (user == null)
-                {
-                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-                    result.Success = false;
-                }
-                else
-                {
-                    result.data = user;
-                    result.Success = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetPasswordAsync"];
-            }
-            return result;
-        }
-        public override async Task<OperationResult> GetAllAsync(Expression<Func<AddUsersDto, bool>> filter)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                result.data = await _context.Users.Where(filter).ToListAsync();
-                result.Success = true;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"];
-            }
-            return result;
-
         }
 
         public override async Task<OperationResult> GetEntityByIdAsync(int id)
@@ -315,69 +273,65 @@ namespace NetMed.Persistence.Repositories
             return result;
         }
 
+    
 
-        public override async Task<bool> ExistsAsync(Expression<Func<AddUsersDto, bool>> filter)
-        {
-            return await _context.Users.AnyAsync(filter);
-        }
-
-        public override async Task<OperationResult> GetAllAsync()
-        {
-
-            OperationResult result = new OperationResult();
-            try
-            {
-
-                var consult = await _context.Users.ToListAsync();
-
-                result.data = consult;
-
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"];
-                _logger.LogError(_repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"] + ex.Message.ToString());
-            }
-          
-            return result;
-        }
-
-        public override async Task<OperationResult> SaveEntityAsync(AddUsersDto users)
+public override async Task<OperationResult> SaveEntityAsync(Users user)
         {
             OperationResult result = new OperationResult();
             try
             {
-
-                if (users == null)
+                if (user == null)
                 {
                     result.Success = false;
                     result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     return result;
                 }
-                users.UserId = 0;
-                _context.Users.Add(users);
+
+             
+
                 await _context.SaveChangesAsync();
                 result.Success = true;
             }
             catch (Exception ex)
             {
-                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["SaveEntityAsync"];
+                result.Message = ex.Message + _repErrorMapper.SaveEntityErrorMessage["SaveEntityError"];
                 result.Success = false;
-                _logger.LogError(ex, _repErrorMapper.ErrorUsersRepositoryMessages["SaveEntityAsync"]);
+                _logger.LogError(ex, "Error while saving User.");
             }
 
             return result;
         }
 
-        public override async Task<OperationResult> UpdateEntityAsync(AddUsersDto entity)
+        public override async Task<OperationResult> UpdateEntityAsync(Users user)
         {
             OperationResult result = new OperationResult();
             try
             {
-                _context.Users.Update(entity);
-                await _context.SaveChangesAsync();
-                result.Success = true;
+                var existingUser = await _context.Users.FindAsync(user.UserId);
+                if (existingUser == null)
+                {
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
+                    result.Success = false;
+                }
+                else
+                {
+                    // Update properties
+                    existingUser.FirstName = user.FirstName;
+                    existingUser.LastName = user.LastName;
+                    existingUser.Email = user.Email;
+                    existingUser.Password = user.Password;
+                    existingUser.RoleID = user.RoleID;
+                    existingUser.Address = user.Address;
+                    existingUser.PhoneNumber = user.PhoneNumber;
+                    existingUser.IsActive = user.IsActive;
+                    existingUser.UpdatedAt = DateTime.UtcNow;
+
+                    _context.Users.Update(existingUser);
+                    await _context.SaveChangesAsync();
+
+                    result.data = existingUser; // Return the updated entity
+                    result.Success = true;
+                }
             }
             catch (Exception ex)
             {
@@ -386,5 +340,6 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
+
     }
 }

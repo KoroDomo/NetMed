@@ -16,13 +16,9 @@ namespace NetMed.Persistence.Interfaces
 
         Task<OperationResult> GetActiveDoctorsAsync(bool isActive);
 
-        Task<OperationResult> GetDoctorsByExperienceAsync(int minYears, int maxYears);
->>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
+        Task<OperationResult> GetDoctorsByExperienceAsync(int expYears);
 
-        Task<OperationResult> GetActiveDoctorsAsync(bool isActive);
-
-        Task<OperationResult> GetDoctorsByExperienceAsync(int Years);
-
+    
         Task<OperationResult> GetDoctorsByConsultationFeeAsync(decimal avrFee);
 
         Task<OperationResult> GetDoctorsWithExpiringLicenseAsync(DateOnly expirationDate);

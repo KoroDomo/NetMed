@@ -14,8 +14,7 @@ namespace NetMed.Application.Services
     {
         private readonly IUsersRepository _usersRepository;
         public UsersServices(IUsersRepository usersRepository,
-            ILogger<UsersServices> logger,
-            IConfiguration configuration)
+            ILogger<UsersServices> logger)
         {
             this._usersRepository = usersRepository;
         }

@@ -32,7 +32,7 @@ public class UnitTestPatients
         // Create a test patient
         var patient = new Patients
         {
-            UserId = 1,
+            UserId = 9,
             BloodType = 'O',
             DateOfBirth = new DateOnly(1990, 12, 31),
             EmergencyContactPhone = "123-456-7890",
@@ -58,7 +58,7 @@ public class UnitTestPatients
     {
         var patient = new Patients
         {
-            UserId = 1,
+            UserId = 6,
             BloodType = 'O',
             DateOfBirth = new DateOnly(1990, 12, 31),
             EmergencyContactPhone = "123-456-7890",
@@ -83,7 +83,7 @@ public class UnitTestPatients
 
         var patient = new Patients
         {
-            UserId = 1,
+            UserId = 7,
             BloodType = 'O',
             DateOfBirth = new DateOnly(1990, 12, 31),
             EmergencyContactPhone = "123-456-7890",
@@ -106,7 +106,7 @@ public class UnitTestPatients
         var patients = new Patients
 
         {
-            UserId = 1,
+            UserId = 0,
             BloodType = 'O',
             DateOfBirth = new DateOnly(1990, 12, 31),
             EmergencyContactPhone = "123-456-7890",
@@ -131,7 +131,7 @@ public class UnitTestPatients
     {
         var patients = new Patients
         {
-            UserId = 1,
+            UserId = 12,
             BloodType = 'O',
             DateOfBirth = new DateOnly(1990, 12, 31),
             EmergencyContactPhone = "123-456-7890",
@@ -152,7 +152,7 @@ public class UnitTestPatients
     {
         var patients = new Patients
         {
-            UserId = 1,
+            UserId = 2,
             BloodType = 'O',
             DateOfBirth = new DateOnly(1990, 12, 31),
             EmergencyContactPhone = "123-456-7890",

@@ -30,17 +30,17 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-<<<<<<< HEAD
+
                 result.data = await _context.Doctors.Where(x => x.AvailabilityModeId == availabilityModeId)
                     .ToListAsync();
 
                 // Add this line to set the success message
                 result.Message = "Doctor disponible";
-=======
+
 
                 result.data = await _context.Doctors.Where(x => x.AvailabilityModeId == availabilityModeId) 
                     .ToListAsync();
->>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
+
             }
             catch (Exception ex)
             {
@@ -126,10 +126,8 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-<<<<<<< HEAD
                 result.data = await _context.Doctors.Where(x => x.YearsOfExperience >= expYears).ToListAsync();
-=======
-                result.data = await _context.Doctors.Where(x => x.YearsOfExperience >= minYears && x.YearsOfExperience <= maxYears).ToListAsync();
+               
                 if (result.data == null)
                 {
                     result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
@@ -139,6 +137,7 @@ namespace NetMed.Persistence.Repositories
                 {
                     result.Success = true;
                 }
+                result.Message = "Doctor con experiencia";  
             }
             catch (Exception ex)
             {
@@ -154,7 +153,6 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result.data = await _context.Doctors.Where(x => x.ConsultationFee >= minFee && x.ConsultationFee <= maxFee).ToListAsync();
->>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
                 if (result.data == null)
                 {
                     result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
@@ -169,7 +167,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-<<<<<<< HEAD
+
                 result.Message = ex.Message + _repErrorMapper.ErrorDoctorsRepositoryMessages["GetDoctorsByExperienceAsync"];
             }
             return result;
@@ -195,8 +193,7 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-=======
->>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
+
                 result.Message = ex.Message + _repErrorMapper.ErrorDoctorsRepositoryMessages["GetDoctorsByConsultationFeeAsync"];
             }
             return result;
@@ -328,30 +325,24 @@ namespace NetMed.Persistence.Repositories
                 if (doctor == null)
                 {
                     result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-<<<<<<< HEAD
-=======
 
->>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
                     result.Success = false;
                 }
                 else
                 {
                     result.data = doctor;
                     result.Success = true;
-<<<<<<< HEAD
                     result.Message = "Doctor encontrado";
-=======
->>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
+
                 }
             }
             catch (Exception ex)
             {
                 result.Success = false;
-<<<<<<< HEAD
+
                 result.Message = ex.Message + _repErrorMapper.ErrorDoctorsRepositoryMessages["GetDoctorById"];
-=======
-                result.Message = ex.Message + _repErrorMapper.ErrorDoctorsRepositoryMessages["GetAllAsync"];
->>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
+
+
             }
             return result;
         }

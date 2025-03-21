@@ -15,13 +15,14 @@ namespace NetMed.Application.Services
 {
     public class PatientsServices : IPatientsServices
     {
+        private readonly ILogger<PatientsServices> _logger;
         private readonly IPatientsRepository _patientsRepository;
 
         public PatientsServices(IPatientsRepository patientsRepository,
-            ILogger<PatientsServices> logger,
-      IConfiguration configuration)
+            ILogger<PatientsServices> logger)
         {
             this._patientsRepository = patientsRepository;
+            this._logger = logger;
 
         }
 

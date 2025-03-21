@@ -12,8 +12,8 @@ namespace NetMed.Application.Services
     {
         private readonly IDoctorsRepository _doctorsRepository;
         public DoctorsServices(IDoctorsRepository doctorsRepository,
-            ILogger<DoctorsServices> logger,
-            IConfiguration configuration)
+            ILogger<DoctorsServices> logger)
+          
         {
 
             this._doctorsRepository = doctorsRepository;
