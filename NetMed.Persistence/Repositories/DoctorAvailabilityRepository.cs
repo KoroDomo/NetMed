@@ -51,6 +51,9 @@ namespace NetMed.Persistence.Repositories
                 result = _validations.IsNullOrWhiteSpace(entity);
                 if (!result.Success) return result;
 
+                result = _validations.CheckDate(entity.AvailableDate);
+                if (!result.Success) return result;
+
                 await base.SaveEntityAsync(entity);
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(SaveEntityAsync), true);
@@ -92,6 +95,7 @@ namespace NetMed.Persistence.Repositories
             {
                 result = _validations.IsNullOrWhiteSpace(filter);
                 if (!result.Success) return result;
+
                 await base.ExistsAsync(filter);
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(ExistsAsync), true);
@@ -132,6 +136,12 @@ namespace NetMed.Persistence.Repositories
                 result = _validations.IsNullOrWhiteSpace(Id);
                 if (!result.Success) return result;
 
+                result = await _validations.ExistsEntity(Id, async (id) =>
+                {
+                    return await _context.DoctorAvailability.AnyAsync(a => a.Id == id);
+                });
+                if (!result.Success) return result;
+
                 result = _validations.IsInt(Id);
                 if (!result.Success) return result;
 
@@ -152,9 +162,6 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result = _validations.IsInt(Id);
-                if (!result.Success) return result;
-
                 result = _validations.IsNullOrWhiteSpace(Id);
                 if (!result.Success) return result;
 
@@ -162,6 +169,9 @@ namespace NetMed.Persistence.Repositories
                 {
                     return await _context.DoctorAvailability.AnyAsync(a => a.Id == id);
                 });
+                if (!result.Success) return result;
+
+                result = _validations.IsInt(Id);
                 if (!result.Success) return result;
 
                 await base.RemoveAsync(Id);

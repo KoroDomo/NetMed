@@ -142,6 +142,11 @@
     },
     {
       "method": "GetAvailabilityByDoctorAndDateAsync",
+      "success": true,
+      "message": "Disponibilidad obtenida con exito"
+    },
+    {
+      "method": "GetAvailabilityByDoctorAndDateAsync",
       "success": false,
       "message": "Error al obtener la disponibilidad del doctor en esta fecha"
     },

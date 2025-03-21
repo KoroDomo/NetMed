@@ -252,7 +252,211 @@ namespace NetMed.Tests
             // Assert
             Assert.False(result.Success);
             Assert.Equal("No existe este registro en el sistema", result.Message);
+        }       
+        [Fact]
+        public async Task RemoveAsync_ShouldReturnError_WhenIdIsNullOrWhiteSpace()
+        {
+            // Arrange
+            int invalidId = 0;
+
+            // Act
+            var result = await _repository.RemoveAsync(invalidId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            Assert.Equal("El Id debe ser mayor que cero", result.Message);
         }
+        [Fact]
+        public async Task RemoveAsync_ShouldReturnError_WhenIdIsNotInteger()
+        {
+            // Arrange
+            int invalidId = -1; 
+
+            // Act
+            var result = await _repository.RemoveAsync(invalidId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+        }
+        [Fact]
+        public async Task RemoveAsync_ShouldReturnSuccess_WhenIdExists()
+        {
+            // Arrange
+            int existingId = 2; 
+
+            // Act
+            var result = await _repository.RemoveAsync(existingId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.True(result.Success);
+            Assert.Equal("Datos desactivados con exito", result.Message);
+        }
+
+        [Fact]
+        public async Task SetAvailabilityAsync_ShouldReturnError_WhenDoctorIdIsInvalid()
+        {
+            // Arrange
+            int invalidDoctorId = 0;
+            var availableDate = DateOnly.FromDateTime(DateTime.Now);
+            var startTime = new TimeOnly(10, 0);
+            var endTime = new TimeOnly(12, 0);
+
+            // Act
+            var result = await _repository.SetAvailabilityAsync(invalidDoctorId, availableDate, startTime, endTime);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+        }
+        [Fact]
+        public async Task SetAvailabilityAsync_ShouldReturnError_WhenTimeIsInvalid()
+        {
+            // Arrange
+            int doctorId = 1;
+            var availableDate = DateOnly.FromDateTime(DateTime.Now);
+            TimeOnly startTime = TimeOnly.Parse("22:00:00");
+            TimeOnly endTime = TimeOnly.Parse("09:15:00");
+
+            // Act
+            var result = await _repository.SetAvailabilityAsync(doctorId, availableDate, startTime, endTime);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Equal("La hora de inicio debe ser anterior a la hora de finalización.", result.Message);
+        }
+
+        [Fact]
+        public async Task SetAvailabilityAsync_ShouldReturnSuccess_WhenDataIsValid()
+        {
+            // Arrange
+            int doctorId = 1;
+            var availableDate = DateOnly.FromDateTime(DateTime.Now);
+            var startTime = new TimeOnly(10, 0);
+            var endTime = new TimeOnly(12, 0);
+
+            // Act
+            var result = await _repository.SetAvailabilityAsync(doctorId, availableDate, startTime, endTime);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.True(result.Success);
+            Assert.Equal("Disponibilidad establecida correctamente.", result.Message);
+        }
+        [Fact]
+        public async Task GetAvailabilityByDoctorAndDateAsync_ShouldReturnError_WhenDoctorIdIsInvalid()
+        {
+            // Arrange
+            int invalidDoctorId = -5;
+            var availableDate = DateOnly.FromDateTime(DateTime.Now);
+
+            // Act
+            var result = await _repository.GetAvailabilityByDoctorAndDateAsync(invalidDoctorId, availableDate);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+        }
+
+        [Fact]
+        public async Task GetAvailabilityByDoctorAndDateAsync_ShouldReturnSuccess_WhenDataExists()
+        {
+            // Arrange
+            int doctorId = 1;
+            var availableDate = DateOnly.FromDateTime(DateTime.Now);
+
+            // Act
+            var result = await _repository.GetAvailabilityByDoctorAndDateAsync(doctorId, availableDate);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Equal("Disponibilidad obtenida con exito", result.Message);
+
+        }
+        [Fact]
+        public async Task UpdateAvailabilityAsync_ShouldReturnError_WhenAvailabilityIdIsInvalid()
+        {
+            // Arrange
+            int invalidAvailabilityId = 0;
+            int doctorId = 1;
+            var availableDate = DateOnly.FromDateTime(DateTime.Now);
+            var startTime = new TimeOnly(10, 0);
+            var endTime = new TimeOnly(12, 0);
+
+            // Act
+            var result = await _repository.UpdateAvailabilityAsync(invalidAvailabilityId, doctorId, availableDate, startTime, endTime);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+        }
+        [Fact]
+        public async Task RemoveAvailabilityAsync_ShouldReturnError_WhenAvailabilityIdIsInvalid()
+        {
+            // Arrange
+            int invalidAvailabilityId = -1;
+
+            // Act
+            var result = await _repository.RemoveAvailabilityAsync(invalidAvailabilityId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+        }
+        [Fact]
+        public async Task IsDoctorAvailableAsync_ShouldReturnFalse_WhenDoctorHasOverlappingAvailability()
+        {
+            // Arrange
+            int doctorId = 1;
+            var availableDate = DateOnly.FromDateTime(DateTime.Now);
+            var startTime = new TimeOnly(10, 0);
+            var endTime = new TimeOnly(12, 0);
+
+            var overlappingAvailability = new DoctorAvailability
+            {
+                DoctorID = doctorId,
+                AvailableDate = availableDate,
+                StartTime = new TimeOnly(9, 30),  
+                EndTime = new TimeOnly(10, 30)
+            };
+
+            _context.DoctorAvailability.Add(overlappingAvailability);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _repository.IsDoctorAvailableAsync(doctorId, availableDate, startTime, endTime);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            Assert.Equal("El doctor no está disponible para este horario.", result.Message);
+        }
+
+        [Fact]
+        public async Task UpdateAvailabilityInRealTimeAsync_ShouldReturnError_WhenDoctorIdIsInvalid()
+        {
+            // Arrange
+            int invalidDoctorId = 0;
+            var availableDate = DateOnly.FromDateTime(DateTime.Now);
+            var startTime = new TimeOnly(10, 0);
+            var endTime = new TimeOnly(12, 0);
+
+            // Act
+            var result = await _repository.UpdateAvailabilityInRealTimeAsync(invalidDoctorId, availableDate, startTime, endTime);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.False(result.Success);
+            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+        }
+
 
     }
 }

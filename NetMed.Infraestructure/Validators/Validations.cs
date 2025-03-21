@@ -104,6 +104,7 @@ namespace NetMed.Infraestructure.Validators
             {
                 result.Success = false;
                 result.Message = "La hora de inicio debe ser anterior a la hora de finalización.";
+                return result;
             }
             result.Success = true;
             return result;
