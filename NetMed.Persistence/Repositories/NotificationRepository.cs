@@ -1,33 +1,35 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.Validator.Implementations;
+using NetMed.Infraestructure.Validator.Interfaz;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Context.Interfaces;
-using NetMed.Persistence.Interfaces;
 
 namespace NetMed.Persistence.Repositories
 {
     public class NotificationRepository : BaseRepository<Notification>, INotificationRepository
     {
         private readonly NetmedContext _context;
-        private readonly ILogger<NotificationRepository> _logger;
+        private readonly ILoggerCustom _logger;
         private readonly JsonMessage _jsonMessage;
+        private readonly INotificationValidator _notificationValidator;
 
         public NotificationRepository(NetmedContext context,
-                                     ILogger<NotificationRepository> logger,
-                                     JsonMessage messageMapper) : base(context, logger, messageMapper)
+                                     ILoggerCustom logger,
+                                     JsonMessage messageMapper) : base(context)
         {
             _context = context;
             _logger = logger;
             _jsonMessage = messageMapper;
+            _notificationValidator = new NotificationValidator(logger, messageMapper);
         }
 
         public override async Task<OperationResult> SaveEntityAsync(Notification notification)
         {
-            var validationResult = EntityValidator.ValidateNotNull(notification, _jsonMessage.ErrorMessages["NullEntity"]);
+            var validationResult = _notificationValidator.ValidateIsEntityIsNull(notification, _jsonMessage.ErrorMessages["NullEntity"]);
 
             if (!validationResult.Success)
             {
@@ -52,7 +54,9 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> GetNotificationsByUserIdAsync(int userId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(userId, _jsonMessage.ErrorMessages["InvalidId"]);
+
+            var validationResult = _notificationValidator.ValidateNumberEntityIsNegative(userId, _jsonMessage.ErrorMessages["InvalidId"]);
+
 
             if (!validationResult.Success)
             {
@@ -64,13 +68,7 @@ namespace NetMed.Persistence.Repositories
             {
                 var notifications = await _context.Notifications
                     .Where(n => n.UserID == userId)
-                    .ToListAsync();
-
-                if (notifications == null || !notifications.Any())
-                {
-                    _logger.LogWarning(_jsonMessage.ErrorMessages["NotificationNotFound"], userId);
-                    return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["NotificationNotFound"], Data = userId };
-                }
+                    .ToListAsync(); 
 
                 _logger.LogInformation(_jsonMessage.SuccessMessages["NotificationFound"], nameof(Notification), userId);
                 return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["NotificationFound"], Data = notifications };
@@ -84,7 +82,8 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> GetNotificationByIdAsync(int notificationId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(notificationId, _jsonMessage.ErrorMessages["InvalidId"]);
+
+            var validationResult = _notificationValidator.ValidateNumberEntityIsNegative(notificationId, _jsonMessage.ErrorMessages["InvalidId"]);
 
             if (!validationResult.Success)
             {
@@ -111,15 +110,21 @@ namespace NetMed.Persistence.Repositories
                 return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["DatabaseError"] };
             }
         }
-
         public async Task<OperationResult> CreateNotificationAsync(Notification notification)
         {
-            var validationResult = EntityValidator.ValidateNotNull(notification, _jsonMessage.ErrorMessages["NullEntity"]);
-
-            if (!validationResult.Success)
+            var nullValidationResult = _notificationValidator.ValidateNotificationIsNotNull(notification, _jsonMessage.ErrorMessages["NotificationNull"]);
+            if (!nullValidationResult.Success)
             {
-                _logger.LogError(validationResult.Message);
-                return validationResult;
+                _logger.LogError(nullValidationResult.Message);
+                return nullValidationResult;
+            }
+
+            var idValidationResult = _notificationValidator.ValidateNotificationIdAndUserId(notification.Id, notification.UserID, _jsonMessage.ErrorMessages["InvalidId"]);
+
+            if (!idValidationResult.Success)
+            {
+                _logger.LogError(idValidationResult.Message);
+                return idValidationResult;
             }
 
             try
@@ -127,19 +132,29 @@ namespace NetMed.Persistence.Repositories
                 await _context.Notifications.AddAsync(notification);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_jsonMessage.SuccessMessages["NotificationCreated"], nameof(Notification), notification.Id);
-                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["NotificationCreated"], Data = notification };
+                _logger.LogInformation(_jsonMessage.SuccessMessages["NotificationCreated"],nameof(Notification),notification.Id);
+
+                return new OperationResult{Success = true, Message = _jsonMessage.SuccessMessages["NotificationCreated"], Data = notification};
+
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, _jsonMessage.ErrorMessages["DatabaseError"]);
-                return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["DatabaseError"] };
+                return new OperationResult{Success = false,Message = _jsonMessage.ErrorMessages["DatabaseError"]};
             }
         }
 
         public async Task<OperationResult> UpdateNotificationAsync(Notification notification)
         {
-            var validationResult = EntityValidator.ValidateNotNull(notification, _jsonMessage.ErrorMessages["NullEntity"]);
+
+            var nullValidationResult = _notificationValidator.ValidateNotificationIsNotNull(notification, _jsonMessage.ErrorMessages["NotificationNull"]);
+            if (!nullValidationResult.Success)
+            {
+                _logger.LogError(nullValidationResult.Message);
+                return nullValidationResult;
+            }
+
+            var validationResult = _notificationValidator.ValidateNotificationIdAndUserId(notification.Id, notification.UserID, _jsonMessage.ErrorMessages["InvalidId"]);
 
             if (!validationResult.Success)
             {
@@ -164,28 +179,22 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> DeleteNotificationAsync(int notificationId)
         {
-            var validationResult = EntityValidator.ValidatePositiveNumber(notificationId, _jsonMessage.ErrorMessages["InvalidId"]);
-
-            if (!validationResult.Success)
+            var nullValidationResult = _notificationValidator.ValidateNumberEntityIsNegative (notificationId, _jsonMessage.ErrorMessages["NotificationNull"]);
+            if (!nullValidationResult.Success)
             {
-                _logger.LogError(validationResult.Message);
-                return validationResult;
+                _logger.LogError(nullValidationResult.Message);
+                return nullValidationResult;
             }
 
             try
             {
                 var notification = await _context.Notifications.FindAsync(notificationId);
 
-                if (notification == null)
-                {
-                    _logger.LogWarning(_jsonMessage.ErrorMessages["NotificationNotFound"], notificationId);
-                    return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["NotificationNotFound"], Data = notificationId };
-                }
 
                 _context.Notifications.Remove(notification);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_jsonMessage.SuccessMessages["NotificationDeleted"], nameof(Notification), notificationId);
+                _logger.LogInformation(_jsonMessage.SuccessMessages["NotificationDeleted"], nameof(Notification), notification);
                 return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["NotificationDeleted"], Data = notification };
             }
             catch (Exception ex)

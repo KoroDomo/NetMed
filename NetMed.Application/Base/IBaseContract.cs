@@ -1,4 +1,5 @@
 ﻿using NetMed.Domain.Base;
+using NetMed.Domain.Entities;
 
 namespace NetMed.Application.Base
 {
@@ -6,10 +7,10 @@ namespace NetMed.Application.Base
     {
 
         Task<OperationResult> GetAllDto();
-        Task<OperationResult> GetDtoById(int id);
+        Task<OperationResult> GetDtoById(Notification notification);
         Task<OperationResult> UpdateDto(TDtoUpdate dtoUpdate);
         Task<OperationResult> SaveDto(TDtoSave dtoSave);
-        Task<OperationResult> DeleteDto(int dtoDelete);
+        Task<OperationResult> DeleteDto(TDtoDelete dtoDelete);
 
 
     }

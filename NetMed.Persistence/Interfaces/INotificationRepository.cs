@@ -7,8 +7,6 @@ namespace NetMed.Persistence.Context.Interfaces
 {
     public interface INotificationRepository : IBaseRepository<Notification>
     {
-        
-          
             Task <OperationResult> GetNotificationsByUserIdAsync(int userId);
 
             Task<OperationResult> GetNotificationByIdAsync(int notificationId);
@@ -17,6 +15,8 @@ namespace NetMed.Persistence.Context.Interfaces
 
             Task<OperationResult> UpdateNotificationAsync(Notification notification);
 
-            Task<OperationResult> DeleteNotificationAsync(int notificationId);
+            Task<OperationResult> DeleteNotificationAsync(int notification);
+
+
     }
 }

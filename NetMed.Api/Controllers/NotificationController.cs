@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Context.Interfaces;
-using NetMed.Persistence.Interfaces;
 
 namespace NetMed.Api.Controllers
 {

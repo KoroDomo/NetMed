@@ -1,12 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using NetMed.Application.Contracts;
+﻿using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.Notification;
+using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.Validator.Implementations;
+using NetMed.Infraestructure.Validator.Interfaz;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Context.Interfaces;
-using NetMed.Persistence.Interfaces;
 
 
 namespace NetMed.Application.Services
@@ -16,17 +16,19 @@ namespace NetMed.Application.Services
 
         private readonly NetmedContext _context;
         private readonly INotificationRepository _notificationRepository;
-        private readonly ILogger<NotificationServices> _logger;
+        private readonly ILoggerCustom _logger;
         private readonly JsonMessage _jsonMessageMapper;
+        private readonly INotificationValidator _notificationValidator;
 
         public  NotificationServices(NetmedContext context,INotificationRepository notificationRepository,
-                                                           ILogger<NotificationServices> logger,
-                                                           JsonMessage jsonMessageMapper)
+                                                           ILoggerCustom logger,
+                                                           JsonMessage jsonMessageMapper) 
         {
             _context = context;
             _logger = logger;
             _notificationRepository = notificationRepository;
             _jsonMessageMapper = jsonMessageMapper;
+            _notificationValidator = new NotificationValidator(logger, jsonMessageMapper);
 
         }
 
@@ -51,13 +53,13 @@ namespace NetMed.Application.Services
             
         }
 
-        public async Task<OperationResult> GetDtoById(int id)
+        public async Task<OperationResult> GetDtoById(Notification notification)
         {
             OperationResult result = new OperationResult();
 
             try
             {
-             result = EntityValidator.ValidatePositiveNumber(id, _jsonMessageMapper.ErrorMessages["InvalidId"]);
+                result = _notificationValidator.ValidateNotificationIdAndUserId(notification.Id,notification.UserID, _jsonMessageMapper.ErrorMessages["InvalidId"]);
 
                 if (!result.Success)
                 {
@@ -126,12 +128,20 @@ namespace NetMed.Application.Services
             }
             return result;
         }
-        public async Task<OperationResult> DeleteDto(int dtoDelete)
+      
+
+        public async Task<OperationResult> DeleteDto(DeleteNotificationDto dtoDelete)
         {
+            var notification = new Notification
+            {
+                Id = dtoDelete.NotificationId
+               
+            };
+
             try
             {
                 _logger.LogInformation(_jsonMessageMapper.SuccessMessages["NotificationDeleted"], nameof(Notification));
-                var notificationUp = await _notificationRepository.DeleteNotificationAsync(dtoDelete);
+                var notificationUp = await _notificationRepository.DeleteNotificationAsync(notification.Id);
                 return new OperationResult { Success = true, Message = _jsonMessageMapper.SuccessMessages["NotificationDeleted"] };
             }
             catch (Exception ex)
@@ -139,7 +149,6 @@ namespace NetMed.Application.Services
                 _logger.LogError(ex, _jsonMessageMapper.ErrorMessages["DatabaseError"]);
                 return new OperationResult { Success = false, Message = _jsonMessageMapper.ErrorMessages["DatabaseError"] };
             }
-
         }
     }
 }

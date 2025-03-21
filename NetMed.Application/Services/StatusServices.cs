@@ -6,7 +6,6 @@ using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Context.Interfaces;
-using NetMed.Persistence.Interfaces;
 
 namespace NetMed.Application.Services
 {
@@ -55,8 +54,6 @@ namespace NetMed.Application.Services
 
             try
             {
-                result = EntityValidator.ValidateNotNull(id, _jsonMessageMapper.ErrorMessages ["NullEntity"]);
-                result = EntityValidator.ValidatePositiveNumber(id, _jsonMessageMapper.ErrorMessages["InvalidId"]);
 
                 if (!result.Success)
                 {
@@ -139,6 +136,14 @@ namespace NetMed.Application.Services
             }
         }
 
+        public Task<OperationResult> GetDtoById(Notification notification)
+        {
+            throw new NotImplementedException();
+        }
 
+        public Task<OperationResult> DeleteDto(DeleteStatusDto dtoDelete)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

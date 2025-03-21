@@ -51,18 +51,14 @@ namespace NetMed.Api.Controllers
             [HttpPut("UpdateRole")]
             public async Task<IActionResult> Put([FromBody] Roles role)
             {
-
-
                 var roles = await _rolesRepository.UpdateRoleAsync(role);
                 return Ok(roles);
-
-
             }
 
             [HttpDelete("DeleteRole")]
-            public async Task<IActionResult> DeleteRole([FromBody] int roleId)
+            public async Task<IActionResult> DeleteRole([FromBody] Roles role)
             {
-                var roles = await _rolesRepository.DeleteRoleAsync(roleId);
+                var roles = await _rolesRepository.DeleteRoleAsync(role);
                 return Ok(roles);
             }
         }

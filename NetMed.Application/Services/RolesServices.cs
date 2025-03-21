@@ -1,13 +1,13 @@
 ﻿
 
-using Microsoft.Extensions.Logging;
 using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.Roles;
+using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
+using NetMed.Infraestructure.Validator.Interfaz;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Context.Interfaces;
-using NetMed.Persistence.Interfaces;
 
 namespace NetMed.Application.Services
 {
@@ -15,12 +15,13 @@ namespace NetMed.Application.Services
     {
         private readonly NetmedContext _context;
         private readonly IRolesRepository _rolesRepository;
-        private readonly ILogger<RolesServices> _logger;
+        private readonly ILoggerCustom _logger;
         private readonly JsonMessage _jsonMessageMapper;
+        private readonly IRolesValidator _rolesValidator;
 
 
         public RolesServices(NetmedContext context,IRolesRepository rolesRepository,
-                             ILogger<RolesServices> logger,
+                             ILoggerCustom logger,
                              JsonMessage jsonMessageMapper) 
         {
           _context = context;
@@ -28,12 +29,10 @@ namespace NetMed.Application.Services
           _logger = logger;
           _jsonMessageMapper = jsonMessageMapper;
 
+
         }
 
-
-        
-
-        public async Task<OperationResult> DeleteDto(int dtoDelete)
+        public async Task<OperationResult> DeleteDto(Roles dtoDelete)
         {
             try
             {
@@ -47,6 +46,11 @@ namespace NetMed.Application.Services
                 _logger.LogError(ex, _jsonMessageMapper.ErrorMessages["DatabaseError"]);
                 return new OperationResult { Success = false, Message = _jsonMessageMapper.ErrorMessages["DatabaseError"] };
             }
+        }
+
+        public Task<OperationResult> DeleteDto(DeleteRolesDto dtoDelete)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<OperationResult> GetAllDto()
@@ -75,7 +79,6 @@ namespace NetMed.Application.Services
 
             try
             {
-                result = EntityValidator.ValidatePositiveNumber(id,_jsonMessageMapper.ErrorMessages["InvalidId"]);
 
                 if (!result.Success)
                 {
@@ -94,6 +97,11 @@ namespace NetMed.Application.Services
 
             }
 
+        }
+
+        public Task<OperationResult> GetDtoById(Notification notification)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<OperationResult> SaveDto(SaveRolesDto dtoSave)

@@ -12,6 +12,10 @@ namespace NetMed.Domain.Base
         // Diccionario de mensajes de éxito.
         public Dictionary<string, string> SuccessMessages { get; }
 
+        public Dictionary<string, string> ErrorNotification { get; }
+
+
+
         public JsonMessage()
         {
             ErrorMessages = new Dictionary<string, string>
@@ -27,12 +31,20 @@ namespace NetMed.Domain.Base
                 ["EntityNotFound"] = "No se encontró la entidad ",
                 ["EntityNotCreated"] = "La entidad no pudo ser creada ",
                 ["EntityNotUpdated"] = "La entidad no pudo ser actualizada",
-                ["EntityNotDeleted"] = "La entidad no pudo ser desactivada"
+                ["EntityNotDeleted"] = "La entidad no pudo ser desactivada",
+                ["NotificationNull"] = "La notificacion no puede ser nula",
+                ["RolesNull"] = "Los roles no puede ser nula",
+                ["StatusNull"] = "El estado no puede ser nula",
+                ["NotificationMessage"] = "El mensaje no puede pasar de los 600 caracteres",
+                ["RolesMessage"] = "Los roles no puede pasar de 20 caracteres",
+                ["NotificationSentAt"] = "No puede sobrepasar el tiempo mano",
+                ["RoleIsNotActive"] = " El rol no esta activo",
+                ["RegexIsNull"] = "La entrada no puede ser nula o vacía."
             };
 
             SuccessMessages = new Dictionary<string, string>
             {
-                ["EntityRetrieved"] = "Entidad recumeerada con exito",
+                ["EntityRetrieved"] = "Entidad recumperada con exito",
                 ["GetAllEntity"] = "Valores extraídos con éxito ",
                 ["EntityCreated"] = "Entidad guardada con éxito ",
                 ["EntityUpdated"] = "Entidad actualizada con éxito",
@@ -52,8 +64,19 @@ namespace NetMed.Domain.Base
                 ["NotificationRetrieved"] = "Notificación obtenida con éxito ",
                 ["NotificationCreated"] = "Notificación creada con éxito ",
                 ["NotificationUpdated"] = "Notificación actualizada con éxito ",
-                ["NotificationDeleted"] = "Notificación desactivada con éxito "
+                ["NotificationDeleted"] = "Notificación desactivada con éxito ",
+                ["RoleIsActive"] = " El rol esta activo",
+                ["RegexSuccess"] = "La entrada es válida."
+
             };
+
+          ErrorNotification = new Dictionary<string, string>
+          {
+              ["NotificationNotFound"] = "No se encontró la notificación",
+              ["NotificationNotCreated"] = "La notificación no pudo ser creada",
+              ["NotificationNotUpdated"] = "La notificación no pudo ser actualizada",
+              ["NotificationNotDeleted"] = "La notificación no pudo ser desactivada"
+          };
         }
 
        

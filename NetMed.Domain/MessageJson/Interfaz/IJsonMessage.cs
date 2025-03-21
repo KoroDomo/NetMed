@@ -8,5 +8,7 @@ namespace NetMed.Domain.MessageJson.Interfaz
 
         public Dictionary<string, string> SuccessMessages { get; }
 
+        public Dictionary<string, string> ErrorNotification { get; }
+
     }
 }

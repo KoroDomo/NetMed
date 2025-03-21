@@ -16,24 +16,17 @@ namespace NetMed.Persistence.Base
 
         private DbSet<TEntity> Entity { get; set; }
 
-        protected BaseRepository(NetmedContext context, ILogger<BaseRepository<TEntity>> logger, JsonMessage messageMapper)
+        protected BaseRepository(NetmedContext context)
         {
             _context = context;
-            _logger = logger;
             Entity = _context.Set<TEntity>();
-            _messageMapper = messageMapper;
         }
 
-        public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> filter)
+       
+        public virtual async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> filter)
         {
-            try
-            {
+            { 
                 return await Entity.AnyAsync(filter);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, _messageMapper.ErrorMessages["DatabaseError"], ex.Message);
-                throw; 
             }
         }
 

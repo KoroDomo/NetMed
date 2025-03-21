@@ -1,7 +1,5 @@
-﻿
-
-using Microsoft.Extensions.Logging;
-using NetMed.Infrastructure.Loggin.NetMed.Application.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using NetMed.Application.Interfaces;
 
 namespace NetMed.Infraestructure.Loggin.Base
 {
@@ -9,27 +7,31 @@ namespace NetMed.Infraestructure.Loggin.Base
     {
         private readonly ILogger<LoggerCustom> _logger;
 
+     
+
+
+
         public LoggerCustom(ILogger<LoggerCustom> logger)
         {
             _logger = logger;
         }
 
-        public void LogError(string message)
+        public void LogError(string message, params object[] args)
         {
            _logger.LogError(message);
         }
 
-        public void LogError(Exception ex, string message)
+        public void LogError(Exception ex, string message , params object[] args)
         {
             _logger.LogError(ex, message);
         }
 
-        public void LogInformation(string message)
+        public void LogInformation(string message, params object[] args)
         {
             _logger.LogInformation(message);
         }
 
-        public void LogWarning(string message)
+        public void LogWarning(string message, params object[] args)
         {
             _logger.LogWarning(message);
         }
