@@ -53,13 +53,13 @@ namespace NetMed.Application.Services
             
         }
 
-        public async Task<OperationResult> GetDtoById(Notification notification)
+        public async Task<OperationResult> GetDtoById(int notification)
         {
             OperationResult result = new OperationResult();
 
             try
             {
-                result = _notificationValidator.ValidateNotificationIdAndUserId(notification.Id,notification.UserID, _jsonMessageMapper.ErrorMessages["InvalidId"]);
+                result = _notificationValidator.ValidateNumberEntityIsNegative(notification, _jsonMessageMapper.ErrorMessages["InvalidId"]);
 
                 if (!result.Success)
                 {
@@ -130,11 +130,11 @@ namespace NetMed.Application.Services
         }
       
 
-        public async Task<OperationResult> DeleteDto(DeleteNotificationDto dtoDelete)
+        public async Task<OperationResult> DeleteDto(int dtoDelete)
         {
             var notification = new Notification
             {
-                Id = dtoDelete.NotificationId
+                Id = dtoDelete
                
             };
 
@@ -150,5 +150,7 @@ namespace NetMed.Application.Services
                 return new OperationResult { Success = false, Message = _jsonMessageMapper.ErrorMessages["DatabaseError"] };
             }
         }
+
+       
     }
 }

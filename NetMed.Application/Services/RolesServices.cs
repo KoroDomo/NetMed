@@ -32,7 +32,7 @@ namespace NetMed.Application.Services
 
         }
 
-        public async Task<OperationResult> DeleteDto(Roles dtoDelete)
+        public async Task<OperationResult> DeleteDto(int dtoDelete)
         {
             try
             {
@@ -48,10 +48,6 @@ namespace NetMed.Application.Services
             }
         }
 
-        public Task<OperationResult> DeleteDto(DeleteRolesDto dtoDelete)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<OperationResult> GetAllDto()
         {
@@ -99,10 +95,7 @@ namespace NetMed.Application.Services
 
         }
 
-        public Task<OperationResult> GetDtoById(Notification notification)
-        {
-            throw new NotImplementedException();
-        }
+      
 
         public async Task<OperationResult> SaveDto(SaveRolesDto dtoSave)
         {
