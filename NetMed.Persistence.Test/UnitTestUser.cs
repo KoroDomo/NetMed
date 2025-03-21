@@ -37,21 +37,16 @@ public class UnitTestUsers
             Email = "rrr@gmail.com",
             Password = "1234",
             RoleID = 0,
-
-
-
         };
 
         var result = await _usersRepository.GetActiveUsersAsync();
         Assert.NotNull(result);
         Assert.True(result.Success);
-       
     }
 
     [Fact]
     public async Task GetEmailAsyncReturnsEmail()
     {
-
         var users = new Users
         {
             UserId = 1,
@@ -71,7 +66,6 @@ public class UnitTestUsers
     [Fact]
     public async Task GetByRoleByIDAsyncReturnsRole()
     {
-
         var users = new Users
         {
             UserId = 1,
@@ -83,17 +77,13 @@ public class UnitTestUsers
         };
 
         var result = await _usersRepository.GetByRoleByIDAsync(2);
-
         Assert.NotNull(result);
         Assert.True(result.Success);
-
-
     }
 
     [Fact]
     public async Task SearchByNameAsyncReturnsName()
     {
-
         var users = new Users
         {
             UserId = 1,
@@ -103,6 +93,7 @@ public class UnitTestUsers
             Password = "1234",
             RoleID = 0,
         };
+
         var result = await _usersRepository.SearchByNameAsync("Juan", "Perez");
         Assert.NotNull(result);
         Assert.True(result.Success);
@@ -121,14 +112,9 @@ public class UnitTestUsers
             RoleID = 0,
         };
 
-    _context.Users.Add(users);
-         await _context.SaveChangesAsync();
         var result = await _usersRepository.GetPasswordAsync("1234");
         Assert.NotNull(result);
         Assert.True(result.Success);
     }
-
-
-
 }
 

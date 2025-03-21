@@ -223,8 +223,21 @@ public class UnitTestDoctorscs
         //act
         var result = await _doctorsRepository.GetActiveDoctorsAsync(true);
         Assert.True(result.Success);
+
         Assert.Equal("Doctor activo", result.Message);
-        
+
+
+    }
+
+    [Fact]
+
+    public async Task GetActiveDoctorsAsyncReturnActiveDoctors()
+    {
+        var mockDoctorActive = new Mock<IDoctorsRepository>();
+        mockDoctorActive.Setup(x => x.GetActiveDoctorsAsync(true)).ReturnsAsync(new OperationResult { Success = true });
+        var result = await mockDoctorActive.Object.GetActiveDoctorsAsync(true);
+        Assert.True(result.Success);
+
     }
 }
 

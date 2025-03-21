@@ -28,11 +28,12 @@ namespace NetMed.Application.Services
             {
                 var user = new Users
                 {
-                    FirstName = dto.FirstName ?? string.Empty,
-                    RoleID = dto.RoleID,
-                    LastName = dto.LastName ?? string.Empty,
-                    Email = dto.Email,
-                    Password = dto.Password ?? string.Empty,
+                    FirstName = "Cris",
+                    LastName = "Perez",
+                    Email = "fsf@rfrg",
+                    Password = "3203",
+                    RoleID = 2,
+                        
                 };
                 result = await _usersRepository.SaveEntityAsync(user);
             }
@@ -51,12 +52,12 @@ namespace NetMed.Application.Services
             {
                 var user = new Users
                 {
-                    UserId = dto.UserId,
-                    FirstName = dto.FirstName ?? string.Empty,
-                    RoleID = dto.RoleID,
-                    LastName = dto.LastName ?? string.Empty,
-                    Email = dto.Email,
-                    Password = dto.Password ?? string.Empty,
+                    UserId = 4,
+                    FirstName = "Cris",
+                    LastName = "Perez",
+                    Email = "fsf@rfrg",
+                    Password = "3203",
+                    RoleID = 2,
                 };
                 result = await _usersRepository.DeleteEntityAsync(user);
             }
@@ -112,12 +113,12 @@ public async Task<OperationResult> Update(UpdateUserDto dto)
             {
                 var user = new Users
                 {
-                    UserId = dto.UserId,
-                    FirstName = dto.FirstName ?? string.Empty,
-                    RoleID = dto.RoleID,
-                    LastName = dto.LastName ?? string.Empty,
-                    Email = dto.Email,
-                    Password = dto.Password ?? string.Empty,
+                   UserId = 3,
+                    FirstName = "Cris",
+                    LastName = "Perez",
+                    Email = "fsf@rfrg",
+                    Password = "3203",
+                    RoleID = 2,
                 };
                 result = await _usersRepository.UpdateEntityAsync(user);
             }

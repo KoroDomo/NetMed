@@ -9,15 +9,6 @@ namespace NetMed.Infrastructure.Validations.Implementations
 {
     public class DoctorValidation : OperationValidator, IDoctorValidations
     {
-
-        private readonly OperationValidator _operationValidator;
-
-        public DoctorValidation()
-        {
-            _operationValidator = new OperationValidator();
-
-            
-        }
         public OperationResult ValidateDoctorAvailability(Doctors doctors)
         {
             if(doctors.AvailabilityModeId < 1 && doctors.AvailabilityModeId < 0 )
@@ -139,7 +130,6 @@ namespace NetMed.Infrastructure.Validations.Implementations
                 Success = false
             };
         }
-
 
     }
 }

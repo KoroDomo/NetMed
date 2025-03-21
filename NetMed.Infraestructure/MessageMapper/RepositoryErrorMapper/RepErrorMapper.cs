@@ -27,8 +27,12 @@ namespace NetMed.Infrastructure.Mapper.RepositoryErrorMapper
                 ["GetDoctorByConsultationFeeAsync"] = "Error al obtener el precio de consulta",
                 ["GetDoctorWithExpiringLicenseAsync"] = "Error al obtener la fecha de expiracion",
                 ["GetActiveDoctorsAsync"] = "Error al obtener doctores activos",
+<<<<<<< HEAD
                 ["GetDoctorsByExperienceAsync"] = "Error al obtener doctor por experiencia",
                
+=======
+                ["GetDoctorsByExperienceAsync"] = "Error al obtener doctor por experiencia"
+>>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
             });
 
             ErrorPatientsRepositoryMessages = InitializeDictionary(new Dictionary<string, string>

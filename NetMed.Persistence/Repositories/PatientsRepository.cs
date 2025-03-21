@@ -19,13 +19,12 @@ namespace NetMed.Persistence.Repositories
         private readonly IRepErrorMapper _repErrorMapper;
         public PatientsRepository(NetMedContext context,
             ILogger<PatientsRepository> logger,
-            IRepErrorMapper errorMapper)
+            IRepErrorMapper repErrorMapper)
             : base(context)
         {
             _context = context;
-            _repErrorMapper = errorMapper;
-        _logger = logger;
-            
+            _logger = logger;
+            _repErrorMapper = repErrorMapper;
         }
 
         public async Task<OperationResult> GetByBloodTypeAsync(char bloodType)
@@ -40,19 +39,16 @@ namespace NetMed.Persistence.Repositories
 
                 if (patients == null || !patients.Any())
                 {
-                  
                     result.Success = false;
                     result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                 }
                 else
                 {
-                   
                     result.data = patients;
                     result.Success = true;
                     result.Message = "Tipo de sangre encontrado";
                 }
             }
-        
             catch (Exception ex)
             {
                 result.Success = false;
@@ -91,7 +87,6 @@ namespace NetMed.Persistence.Repositories
                     {
                         result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     }
-                    result.Message = "Data is null";
                 }
                 else
                 {
@@ -108,7 +103,7 @@ namespace NetMed.Persistence.Repositories
 
             return result;
         }
-        
+
         public async Task<OperationResult> SearchByAddressAsync(string address)
         {
             OperationResult result = new OperationResult();
@@ -129,7 +124,6 @@ namespace NetMed.Persistence.Repositories
                     {
                         result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     }
-                    result.Message = "Data is null";
                 }
                 else
                 {
@@ -138,7 +132,6 @@ namespace NetMed.Persistence.Repositories
                     result.Message = "Direccion del paciente encontrada";
                 }
             }
-           
             catch (Exception ex)
             {
                 result.Success = false;
@@ -146,8 +139,6 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-
-
 
         public async Task<OperationResult> GetByEmergencyContactAsync(string EcontactInfo)
         {
@@ -159,10 +150,11 @@ namespace NetMed.Persistence.Repositories
                     .ToListAsync();
                 if (patients == null || !patients.Any())
                 {
-                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                 }
-                else { 
+                else
+                {
                     result.data = patients;
                     result.Success = true;
                     result.Message = "Contacto de emergencia encontrado";
@@ -175,6 +167,7 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
+
         public async Task<OperationResult> GetPatientsWithAllergiesAsync(string? allergy = null)
         {
             OperationResult result = new OperationResult();
@@ -228,32 +221,31 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-
                 var patients = await _context.Patients
                     .Where(p => p.Gender == gender)
                     .ToListAsync();
                 if (patients == null || !patients.Any())
                 {
-                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     result.Success = false;
+                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                 }
-          else
+                else
                 {
                     result.data = patients;
                     result.Success = true;
                     result.Message = "Pacientes encontrados por género";
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message + _repErrorMapper.ErrorPatientsRepositoryMessages["GetPatientsByGenderAsync"];
             }
             return result;
         }
+
         public override async Task<OperationResult> SaveEntityAsync(Patients patients)
         {
-           
             OperationResult result = new OperationResult();
             try
             {
@@ -276,15 +268,13 @@ namespace NetMed.Persistence.Repositories
             return result;
         }
 
-
         public override async Task<OperationResult> UpdateEntityAsync(Patients patients)
         {
-
             OperationResult result = new OperationResult();
             try
             {
                 _context.Patients.Update(patients);
-                 await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 result.Success = true;
             }
             catch (Exception ex)
@@ -309,12 +299,11 @@ namespace NetMed.Persistence.Repositories
                 result.Message = ex.Message + _repErrorMapper.GetEntityByIdErrorMessage["GetAllEntitiesError"];
             }
             return result;
-
         }
+
         public override async Task<OperationResult> GetEntityByIdAsync(int id)
         {
             OperationResult result = new OperationResult();
-
             try
             {
                 var patient = await _context.Patients.FindAsync(id);
@@ -337,8 +326,6 @@ namespace NetMed.Persistence.Repositories
             return result;
         }
 
-
-
         public override async Task<bool> ExistsAsync(Expression<Func<Patients, bool>> filter)
         {
             return await _context.Patients.AnyAsync(filter);
@@ -346,7 +333,7 @@ namespace NetMed.Persistence.Repositories
 
         public override async Task<OperationResult> GetAllAsync()
         {
-         OperationResult result = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
                 result.data = await _context.Patients.ToListAsync();
@@ -360,7 +347,6 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-
     }
 
 
