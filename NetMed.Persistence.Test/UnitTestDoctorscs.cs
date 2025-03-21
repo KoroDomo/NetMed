@@ -229,15 +229,5 @@ public class UnitTestDoctorscs
 
     }
 
-    [Fact]
-
-    public async Task GetActiveDoctorsAsyncReturnActiveDoctors()
-    {
-        var mockDoctorActive = new Mock<IDoctorsRepository>();
-        mockDoctorActive.Setup(x => x.GetActiveDoctorsAsync(true)).ReturnsAsync(new OperationResult { Success = true });
-        var result = await mockDoctorActive.Object.GetActiveDoctorsAsync(true);
-        Assert.True(result.Success);
-
-    }
 }
 

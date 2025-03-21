@@ -325,7 +325,6 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-
         public override async Task<bool> ExistsAsync(Expression<Func<Patients, bool>> filter)
         {
             return await _context.Patients.AnyAsync(filter);

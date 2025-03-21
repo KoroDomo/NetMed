@@ -6,15 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using NetMed.Persistence.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
-<<<<<<< HEAD
-using NetMed.Infrastructure.Mapper.IRepositoryErrorMapper;
-
-=======
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using Microsoft.Extensions.Configuration;
 using NetMed.Infrastructure.Mapper.IRepositoryErrorMapper;
->>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
 
 namespace NetMed.Persistence.Repositories
 {
@@ -141,8 +136,6 @@ namespace NetMed.Persistence.Repositories
             {
                 result.Success = false;
                 result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["SearchByNameAsync"];
-<<<<<<< HEAD
-=======
             }
             return result;
         }
@@ -163,7 +156,6 @@ namespace NetMed.Persistence.Repositories
             {
                 result.Success = false;
                 result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetUsersRegisteredInRangeAsync"];
->>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
             }
             return result;
         }
@@ -277,8 +269,6 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
-<<<<<<< HEAD
-=======
                 result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetPasswordAsync"];
             }
             return result;
@@ -320,18 +310,13 @@ namespace NetMed.Persistence.Repositories
             catch (Exception ex)
             {
                 result.Success = false;
->>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
                 result.Message = ex.Message + _repErrorMapper.GetEntityByIdErrorMessage["GetEntityByIdError"];
             }
             return result;
         }
 
 
-<<<<<<< HEAD
-        public override async Task<bool> ExistsAsync(Expression<Func<Users, bool>>filter)
-=======
         public override async Task<bool> ExistsAsync(Expression<Func<AddUsersDto, bool>> filter)
->>>>>>> 7429c8c09c80462f0e67b22146091a9a5c5357e4
         {
             return await _context.Users.AnyAsync(filter);
         }
