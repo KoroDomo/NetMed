@@ -23,7 +23,7 @@
     {
       "method": "GetAllAsync",
       "success": true,
-      "message": "Datos Obtenidos con exito"
+      "message": "Datos Obtenidos con éxito"
     },
     {
       "method": "GetAllAsync",
@@ -43,7 +43,7 @@
     {
       "method": "GetEntityByIdAsync",
       "success": true,
-      "message": "Datos Obtenidos con exito"
+      "message": "Datos Obtenidos con éxito"
     },
     {
       "method": "GetEntityByIdAsync",

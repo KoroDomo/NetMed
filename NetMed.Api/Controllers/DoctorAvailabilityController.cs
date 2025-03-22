@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NetMed.Application.Dtos.DoctorAvailability;
 using NetMed.Application.Interfaces;
+using NetMed.Application.Services;
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
@@ -35,19 +36,21 @@ namespace NetMed.Api.Controllers
             return Ok(doctorAvailability);
         }
         [HttpPost("SaveDoctorAvailability")]
-        public async Task<IActionResult> Post([FromBody] DoctorAvailabilityDto doctorAvaility)
+        public async Task<IActionResult> Post(SaveDoctorAvailabilityDto saveDoctorAvailability)
         {
-            var saveDoctorAvailability = new SaveDoctorAvailabilityDto();
-
             var doctorAvailability = await _doctorAvailabilityService.Save(saveDoctorAvailability);
             return Ok(doctorAvailability);
         }
-        [HttpPost("UpdateDoctorAvailability")]
-        public async Task<IActionResult> Put([FromBody] DoctorAvailabilityDto doctorAvaility)
+        [HttpPut("UpdateDoctorAvailability")]
+        public async Task<IActionResult> Put(UpdateDoctorAvailabilityDto updateDoctorAvailability)
         {
-            var updateDoctorAvailability = new UpdateDoctorAvailabilityDto();
-
             var doctorAvailability = await _doctorAvailabilityService.Update(updateDoctorAvailability);
+            return Ok(doctorAvailability);
+        }
+        [HttpDelete("RemoveDoctorAvailability")]
+        public async Task<IActionResult> Remove(int id)
+        {
+            var doctorAvailability = await _doctorAvailabilityService.Remove(id);
             return Ok(doctorAvailability);
         }
     }

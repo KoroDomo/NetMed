@@ -141,7 +141,6 @@ namespace NetMed.Application.Services
                 _logger.LogError(ex, result.Message);
             }
             return result;
-        }
-        
+        }       
     }
 }

@@ -31,9 +31,10 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                await base.GetAllAsync();
+                var datos = await _context.DoctorAvailability.ToListAsync();
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(GetAllAsync), true);
+                result.Data = datos;
             }
             catch (Exception ex)
             {
@@ -54,9 +55,10 @@ namespace NetMed.Persistence.Repositories
                 result = _validations.CheckDate(entity.AvailableDate);
                 if (!result.Success) return result;
 
-                await base.SaveEntityAsync(entity);
+                var datos = await base.SaveEntityAsync(entity);
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(SaveEntityAsync), true);
+                result.Data = datos;
             }
 
             catch (Exception ex)
@@ -75,9 +77,10 @@ namespace NetMed.Persistence.Repositories
                 result = _validations.IsNullOrWhiteSpace(entity);
                 if (!result.Success) return result;
 
-                await base.UpdateEntityAsync(entity);
+                var datos = await base.UpdateEntityAsync(entity);
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(UpdateEntityAsync), true);
+                result.Data = datos;
             }
             catch (Exception ex)
             {

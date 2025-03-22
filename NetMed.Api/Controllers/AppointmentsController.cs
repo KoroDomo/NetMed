@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NetMed.Application.Dtos.Appointments;
 using NetMed.Application.Interfaces;
-using NetMed.Domain.Base;
-using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
-using NetMed.Persistence.Interfaces;
 
 namespace NetMed.Api.Controllers
 {
@@ -36,18 +33,21 @@ namespace NetMed.Api.Controllers
             return Ok(appointments);
         }
         [HttpPost("SaveAppointement")]
-        public async Task<IActionResult> Post([FromBody] AppoinmentsDto appointment)
+        public async Task<IActionResult> Post(SaveAppointmentsDto saveAppointmentsDto)
         {
-            var saveAppointmentsDto = new SaveAppointmentsDto();
-
             var appointments = await _appointmentsService.Save(saveAppointmentsDto);
             return Ok(appointments);
         }
-        [HttpPost("UpdateAppointment")]
-        public async Task<IActionResult> Put([FromBody] AppoinmentsDto appointment)
+        [HttpPut("UpdateAppointment")]
+        public async Task<IActionResult> Put(UpdateAppointmentsDto updateAppointmentsDto)
         {
-            var updateAppointmentsDto = new UpdateAppointmentsDto();
             var appointments = await _appointmentsService.Update(updateAppointmentsDto);
+            return Ok(appointments);
+        }
+        [HttpDelete("RemoveAppointment")]
+        public async Task<IActionResult> Remove(int id)
+        {
+            var appointments = await _appointmentsService.Remove(id);
             return Ok(appointments);
         }
     }

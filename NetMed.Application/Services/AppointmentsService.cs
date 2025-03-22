@@ -35,8 +35,7 @@ namespace NetMed.Application.Services
                 var appointments = await _appointmentsRespository.GetAllAsync();
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(GetAll), true);
-                result.Data = appointments;
-                
+                result.Data = appointments;         
             }
             catch (Exception ex )
             {

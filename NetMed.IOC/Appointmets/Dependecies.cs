@@ -16,8 +16,8 @@ namespace NetMed.IOC.Dependencias
         public static IServiceCollection AddDependencies(this IServiceCollection services)
         {
             services.AddScoped<IAppointmentsRespository, AppointmentsRepository>();
-            services.AddTransient<IAppointmentsService, AppointmentsService>();
             services.AddScoped<IDoctorAvailabilityRepository, DoctorAvailabilityRepository>();
+            services.AddTransient<IAppointmentsService, AppointmentsService>();
             services.AddTransient<IDoctorAvailabilityService, DoctorAvailabilityService>();
             services.AddScoped<ILoggerSystem, LoggerSystem>();
             services.AddScoped<IValidations, Validations>();           

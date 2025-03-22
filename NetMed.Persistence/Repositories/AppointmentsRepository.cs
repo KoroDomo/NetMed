@@ -44,9 +44,10 @@ namespace NetMed.Persistence.Repositories
                 result = _validations.CheckDate(entity.AppointmentDate);
                 if (!result.Success) return result;
 
-                await base.SaveEntityAsync(entity);
+                var datos = await base.SaveEntityAsync(entity);
                 result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(SaveEntityAsync), true);
+                result.Message = _messageService.GetMessage(nameof(SaveEntityAsync), true);        
+                result.Data = datos;
             }
             catch (Exception ex)
             {
@@ -82,10 +83,10 @@ namespace NetMed.Persistence.Repositories
         {
             OperationResult result = new OperationResult();
             try
-            {                                  
-                await base.GetAllAsync();
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(GetAllAsync), true);
+            {         
+                var datos = await _context.Appointments.ToListAsync();
+                result.Message = result.Message = _messageService.GetMessage(nameof(GetAllAsync), true);
+                result.Data = datos;
                 return result;
             }
             catch (Exception ex)
@@ -106,7 +107,7 @@ namespace NetMed.Persistence.Repositories
 
                 await base.GetAllAsync(filter);
                 result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(GetAllAsync), true);
+                result.Message = _messageService.GetMessage(nameof(GetAllAsync), true);                
             }
             catch (Exception ex)
             {
@@ -150,9 +151,10 @@ namespace NetMed.Persistence.Repositories
                 });
                 if (!result.Success) return result;
 
-                await base.GetEntityByIdAsync(Id);
+                var datos = await _context.Appointments.Where(a => a.Id == Id).FirstAsync();
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(GetEntityByIdAsync), true);
+                result.Data = datos;
             }
             catch (Exception ex)
             {

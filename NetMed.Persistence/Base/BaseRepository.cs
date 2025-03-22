@@ -10,7 +10,7 @@ namespace NetMed.Persistence.Base
     {
         private readonly NetMedContext _context;
 
-        private DbSet<TEntity> Entity { get; set; }  
+        protected DbSet<TEntity> Entity { get;}  
 
         public BaseRepository(NetMedContext context) 
         {
@@ -51,7 +51,8 @@ namespace NetMed.Persistence.Base
             OperationResult result = new OperationResult();
             try
             {
-               await Entity.ToListAsync();
+                var datos = await Entity.ToListAsync();
+                return result;
             } 
             catch (Exception)
             {
