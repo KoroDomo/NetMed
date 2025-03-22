@@ -2,6 +2,7 @@
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Validators.Interfaces;
 using NetMed.Persistence.Context;
+using System.Timers;
 
 namespace NetMed.Infraestructure.Validators.Implementations
 {
@@ -19,13 +20,13 @@ namespace NetMed.Infraestructure.Validators.Implementations
             try
             {
 
+
                 var result = _operationValidator.isNull(insuranceProvider);
                 if (result.Success == false)
                 {
                     result.Message = _operationValidator.GetErrorMessage("Insurances", "isNull");
                     return result;
                 }
-
 
                 result = IsValidEmail(insuranceProvider.Email);
                 if (result.Success == false)

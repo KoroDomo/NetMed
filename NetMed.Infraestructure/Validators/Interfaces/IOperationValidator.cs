@@ -12,5 +12,6 @@ namespace NetMed.Infraestructure.Validators.Interfaces
         public OperationResult ValidateStringLength(string entityName, int maxLength);
         public OperationResult IsValidEmail(string email);
         public OperationResult IsValidPhoneNumber(string phoneNumber);
+        public OperationResult ValideteIdIsNotNull(int ID);
     }
 }

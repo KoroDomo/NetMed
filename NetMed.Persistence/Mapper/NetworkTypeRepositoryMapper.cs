@@ -5,7 +5,7 @@ using NetMed.Model.Models;
 
 namespace NetMed.Persistence.Repositories
 {
-    public static class NetworkTypeExtensions
+    public static class NetworkTypeRepositoryMapper
     {
         public static IQueryable<NetworkTypeModel> MapToNetworkTypeModel(
             this IQueryable<NetworkType> query)

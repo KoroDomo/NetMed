@@ -92,8 +92,14 @@ namespace NetMed.Persistence.Repositories
         {
             try
             {
-                var result = _operations.ValidateInsuranceProvider(provider); 
-                if (!result.Success)
+                var result = _operations.ValideteIdIsNotNull(provider.Id);
+                if (result.Success==false)
+                {
+                    _logger.LogWarning(result.Message);
+                    return result;
+                }
+                result = _operations.ValidateInsuranceProvider(provider); 
+                if (result.Success==false)
                 {
                     _logger.LogWarning(result.Message);
                     return result;

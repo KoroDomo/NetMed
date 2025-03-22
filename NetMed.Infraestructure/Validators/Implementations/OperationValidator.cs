@@ -151,5 +151,20 @@ namespace NetMed.Infraestructure.Validators.Implementations
 
         }
 
+        public OperationResult ValideteIdIsNotNull(int ID)
+        {
+            var result = new OperationResult();
+            if (ID == null)
+            {
+                result.Message = "El ID es requerido.";  
+            }
+            else
+            {
+                result.Success=true;
+            }
+
+            return result;
+        }
+
     }
 }

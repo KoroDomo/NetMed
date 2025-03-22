@@ -5,7 +5,7 @@ using NetMed.Model.Models;
 
 namespace NetMed.Persistence.Repositories
 {
-    public static class InsuranceProviderExtensions
+    public static class InsuranceProviderRepositoryMapper
     {
         public static IQueryable<InsuranceProviderModel> MapToInsuranceProviderModel(
             this IQueryable<InsuranceProviders> query)
