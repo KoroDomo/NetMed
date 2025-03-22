@@ -3,6 +3,7 @@ namespace NetMed.Application.Dtos.InsuranceProvider
 {
     public class InsuranceProviderDto : DtoBase
     {
+        public int InsuranceProviderID { get; set; }
         public string Name { get; set; }
         public new string PhoneNumber { get; set; }
         public string Email { get; set; }

@@ -11,6 +11,7 @@ namespace NetMed.Infraestructure.Mapper
         {
             // Mapeo de ModeloEntidad -> DTO
             CreateMap<InsuranceProviderModel, InsuranceProviderDto>()
+                .ForMember(dest => dest.InsuranceProviderID, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.ContactNumber))
@@ -30,6 +31,7 @@ namespace NetMed.Infraestructure.Mapper
                 .ReverseMap();
 
             CreateMap<InsuranceProviders, InsuranceProviderDto>()
+                .ForMember(dest => dest.InsuranceProviderID, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.ContactNumber))
@@ -49,6 +51,7 @@ namespace NetMed.Infraestructure.Mapper
                 .ReverseMap();
 
             CreateMap<InsuranceProviders, UpdateInsuranceProviderDto>()
+                .ForMember(dest => dest.InsuranceProviderID, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.InsuranceProviderID, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
