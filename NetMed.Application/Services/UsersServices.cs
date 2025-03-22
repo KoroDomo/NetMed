@@ -25,16 +25,16 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
-                var user = new Users
+                var users = new Users
                 {
-                    FirstName = "Cris",
-                    LastName = "Perez",
-                    Email = "fsf@rfrg",
-                    Password = "3203",
+                    UserId = dto.UserId,
+                    FirstName = dto.FirstName ?? string.Empty,
+                    LastName = dto.LastName ?? string.Empty,
+                    Email = dto.Email,
+                    Password = dto.Password ?? string.Empty,
                     RoleID = 2,
-                        
                 };
-                result = await _usersRepository.SaveEntityAsync(user);
+                result = await _usersRepository.SaveEntityAsync(users);
             }
             catch (Exception ex)
             {
@@ -51,12 +51,12 @@ namespace NetMed.Application.Services
             {
                 var user = new Users
                 {
-                    UserId = 4,
-                    FirstName = "Cris",
-                    LastName = "Perez",
-                    Email = "fsf@rfrg",
-                    Password = "3203",
-                    RoleID = 2,
+                    UserId = dto.UserId,
+                    FirstName = dto.FirstName ?? string.Empty,
+                    LastName = dto.LastName ?? string.Empty,
+                    Email = dto.Email,
+                    Password = dto.Password ?? string.Empty,
+
                 };
                 result = await _usersRepository.DeleteEntityAsync(user);
             }
@@ -112,12 +112,11 @@ public async Task<OperationResult> Update(UpdateUserDto dto)
             {
                 var user = new Users
                 {
-                   UserId = 3,
-                    FirstName = "Cris",
-                    LastName = "Perez",
-                    Email = "fsf@rfrg",
-                    Password = "3203",
-                    RoleID = 2,
+                        UserId = dto.UserId,
+                    FirstName = dto.FirstName ?? string.Empty,
+                    LastName = dto.LastName ?? string.Empty,
+                    Email = dto.Email,
+                    Password = dto.Password ?? string.Empty,
                 };
                 result = await _usersRepository.UpdateEntityAsync(user);
             }
