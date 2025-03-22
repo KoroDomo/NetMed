@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NetMed.Application.Dtos.DoctorAvailability;
+using NetMed.Application.Interfaces;
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
@@ -10,38 +12,42 @@ namespace NetMed.Api.Controllers
     [ApiController]
     public class DoctorAvailabilityController : ControllerBase
     {
-        private readonly IDoctorAvailabilityRepository _doctorAvailabilityRepository;
+        private readonly IDoctorAvailabilityService _doctorAvailabilityService;
         private readonly IMessageService _messageService;
         private readonly ILoggerSystem _logger;
 
-        public DoctorAvailabilityController(IDoctorAvailabilityRepository doctorAvailabilityRepository, ILoggerSystem logger, IMessageService messageService) 
+        public DoctorAvailabilityController(IDoctorAvailabilityService doctorAvailabilityService, ILoggerSystem logger, IMessageService messageService) 
         {
-           _doctorAvailabilityRepository = doctorAvailabilityRepository;
+            _doctorAvailabilityService = doctorAvailabilityService;
             _messageService = messageService;
             _logger = logger;
         }  
         [HttpGet("GetDoctorAvailability")]
         public async Task<IActionResult> Get()
         {
-            var doctorAvailability = await _doctorAvailabilityRepository.GetAllAsync();
+            var doctorAvailability = await _doctorAvailabilityService.GetAll();
             return Ok(doctorAvailability);
         }
         [HttpGet("GetAvailabilityById")]
         public async Task<IActionResult> Get(int id)
         {
-            var doctorAvailability = await _doctorAvailabilityRepository.GetEntityByIdAsync(id);
+            var doctorAvailability = await _doctorAvailabilityService.GetById(id);
             return Ok(doctorAvailability);
         }
         [HttpPost("SaveDoctorAvailability")]
-        public async Task<IActionResult> Post([FromBody] DoctorAvailability doctorAvaility)
+        public async Task<IActionResult> Post([FromBody] DoctorAvailabilityDto doctorAvaility)
         {
-            var doctorAvailability = await _doctorAvailabilityRepository.SaveEntityAsync(doctorAvaility);
+            var saveDoctorAvailability = new SaveDoctorAvailabilityDto();
+
+            var doctorAvailability = await _doctorAvailabilityService.Save(saveDoctorAvailability);
             return Ok(doctorAvailability);
         }
         [HttpPost("UpdateDoctorAvailability")]
-        public async Task<IActionResult> Put([FromBody] DoctorAvailability doctorAvaility)
+        public async Task<IActionResult> Put([FromBody] DoctorAvailabilityDto doctorAvaility)
         {
-            var doctorAvailability = await _doctorAvailabilityRepository.UpdateEntityAsync(doctorAvaility);
+            var updateDoctorAvailability = new UpdateDoctorAvailabilityDto();
+
+            var doctorAvailability = await _doctorAvailabilityService.Update(updateDoctorAvailability);
             return Ok(doctorAvailability);
         }
     }
