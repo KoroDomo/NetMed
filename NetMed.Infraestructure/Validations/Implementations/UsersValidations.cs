@@ -6,7 +6,7 @@ using NetMed.Infrastructure.Validations.Interfaces;
 
 namespace NetMed.Infrastructure.Validations.Implementations
 {
-    internal class UsersValidations : OperationValidator, IUserValidations
+ public class UsersValidations : OperationValidator, IUserValidations
     {
         public OperationResult ValidateUserEmail(Users users)
         {

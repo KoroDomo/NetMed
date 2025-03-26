@@ -121,5 +121,17 @@ namespace NetMed.Infrastructure.Validations.Implementations
 
                 return result;
             }
+
+        public OperationResult ValidatePatientAllergies(Patients patients)
+        {
+            OperationResult result = new OperationResult();
+            if (string.IsNullOrEmpty(patients.Allergies) || (patients.Allergies.Length < 3))
+            {
+                result.Success = false;
+                result.Message = "Invalid Allergies";
+                return result;
+            }
+            return result;
+        }
     }
 }

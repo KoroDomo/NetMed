@@ -7,10 +7,12 @@ using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
+using NetMed.Infrastructure.Validations.Implementations;
+using NetMed.Infrastructure.Validations.Interfaces;
 
 namespace NetMed.Application.Services
 {
-   public class UsersServices : IUsersServices
+    public class UsersServices : UsersValidations, IUsersServices
     {
         private readonly IUsersRepository _usersRepository;
         public UsersServices(IUsersRepository usersRepository,
@@ -34,6 +36,24 @@ namespace NetMed.Application.Services
                     Password = dto.Password ?? string.Empty,
                     RoleID = 2,
                 };
+
+                // Perform validations
+                var validationResults = new List<OperationResult>
+                {
+                    ValidateUserEmail(users),
+                    ValidateUserFirstName(users),
+                    ValidateUserLastName(users),
+                    ValidateUserPassword(users),
+                    ValidateUsersRoleID(users)
+                };
+
+                // Check if any validation failed
+                var failedValidation = validationResults.FirstOrDefault(v => !v.Success);
+                if (failedValidation != null)
+                {
+                    return failedValidation;
+                }
+
                 result = await _usersRepository.SaveEntityAsync(users);
             }
             catch (Exception ex)
@@ -112,12 +132,30 @@ public async Task<OperationResult> Update(UpdateUserDto dto)
             {
                 var user = new Users
                 {
-                        UserId = dto.UserId,
+                    UserId = dto.UserId,
                     FirstName = dto.FirstName ?? string.Empty,
                     LastName = dto.LastName ?? string.Empty,
                     Email = dto.Email,
                     Password = dto.Password ?? string.Empty,
                 };
+
+                // Perform validations
+                var validationResults = new List<OperationResult>
+                {
+                    ValidateUserEmail(user),
+                    ValidateUserFirstName(user),
+                    ValidateUserLastName(user),
+                    ValidateUserPassword(user),
+                    ValidateUsersRoleID(user)
+                };
+
+                // Check if any validation failed
+                var failedValidation = validationResults.FirstOrDefault(v => !v.Success);
+                if (failedValidation != null)
+                {
+                    return failedValidation;
+                }
+
                 result = await _usersRepository.UpdateEntityAsync(user);
             }
             catch (Exception ex)

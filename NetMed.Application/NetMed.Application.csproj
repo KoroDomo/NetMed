@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NetMed.Infraestructure\NetMed.Infrastructure.csproj" />
     <ProjectReference Include="..\NetMed.Persistence\NetMed.Persistence.csproj" />
   </ItemGroup>
 

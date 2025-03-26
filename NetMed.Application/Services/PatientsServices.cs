@@ -10,10 +10,13 @@ using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
 using NetMed.Persistence.Repositories;
+using NetMed.Infrastructure.Validations.Implementations;
+using NetMed.Infrastructure.Validations.Interfaces;
+
 
 namespace NetMed.Application.Services
 {
-    public class PatientsServices : IPatientsServices
+    public class PatientsServices : PatietsValidation, IPatientsServices
     {
         private readonly ILogger<PatientsServices> _logger;
         private readonly IPatientsRepository _patientsRepository;
@@ -42,6 +45,27 @@ namespace NetMed.Application.Services
                     Allergies = dto.Allergies,
                     InsuranceProviderID = dto.InsuranceProviderID,
                 };
+
+                // Perform validations
+                var validationResults = new List<OperationResult>
+                {
+                    ValidatePatientAge(patient),
+                    ValidatePatientGender(patient),
+                    ValidatePatientEmergencyContact(patient),
+                    ValidatePatientBloodType(patient),
+                    ValidatePatientAllergies(patient),
+                    ValidatePatientPhoneNumber(patient),
+                    ValidatePatientAddress(patient),
+                    ValidatePatientInsuranceProvider(patient),
+                    ValidatePatientWithoutInsurance(patient)
+                };
+
+                // Check if any validation failed
+                var failedValidation = validationResults.FirstOrDefault(v => !v.Success);
+                if (failedValidation != null)
+                {
+                    return failedValidation;
+                }
                 result = await _patientsRepository.SaveEntityAsync(patient);
             }
             catch (Exception ex)
@@ -119,6 +143,9 @@ namespace NetMed.Application.Services
                 };
                 result = await _patientsRepository.UpdateEntityAsync(patient);
             }
+
+            // Perform validations
+
             catch (Exception ex)
             {
                 result.Success = false;
