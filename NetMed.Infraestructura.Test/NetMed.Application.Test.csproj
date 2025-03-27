@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NetMed.Application\NetMed.Application.csproj" />
+    <ProjectReference Include="..\NetMed.Infraestructure\NetMed.Infraestructure.csproj" />
+  </ItemGroup>
+
 </Project>

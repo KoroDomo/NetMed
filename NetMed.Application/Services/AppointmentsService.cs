@@ -1,6 +1,5 @@
 ﻿
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using NetMed.Application.Dtos;
 using NetMed.Application.Dtos.Appointments;
 using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
@@ -9,6 +8,8 @@ using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
 using NetMed.Infraestructure.Validators;
 using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Repositories;
+
 
 
 namespace NetMed.Application.Services
@@ -33,11 +34,14 @@ namespace NetMed.Application.Services
             try
             {
                 var appointments = await _appointmentsRespository.GetAllAsync();
+                var appointmentDtos = appointments.ToDtoList();
+
                 result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(GetAll), true);
-                result.Data = appointments;         
+                result.Message = _messageService.GetMessage(nameof(GetAll), true); 
+                result.Data = appointmentDtos;
             }
-            catch (Exception ex )
+
+            catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = _messageService.GetMessage(nameof(GetAll), false);
@@ -57,9 +61,11 @@ namespace NetMed.Application.Services
                 if (!result.Success) return result;
 
                 var appointments = await _appointmentsRespository.GetEntityByIdAsync(Id);
+                var appointmentDtos = appointments.ToDto();
+
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(GetById), true);
-                result.Data = appointments;
+                result.Data = appointmentDtos;
             }
             catch (Exception ex)
             {
@@ -76,7 +82,7 @@ namespace NetMed.Application.Services
             {
                 result = _validations.IsNullOrWhiteSpace(Id);
                 if (!result.Success) return result;
-
+                
                 result = _validations.IsInt(Id);
                 if (!result.Success) return result;
 

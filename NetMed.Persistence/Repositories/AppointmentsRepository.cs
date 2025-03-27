@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
 using NetMed.Infraestructure.Validators;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NetMed.Persistence.Repositories
 {
@@ -79,15 +80,14 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-        public override async Task<OperationResult> GetAllAsync()
+        public override async Task<List<Appointments>> GetAllAsync()
         {
             OperationResult result = new OperationResult();
             try
             {         
                 var datos = await _context.Appointments.ToListAsync();
                 result.Message = result.Message = _messageService.GetMessage(nameof(GetAllAsync), true);
-                result.Data = datos;
-                return result;
+                result.Data = datos;                
             }
             catch (Exception ex)
             {
@@ -95,7 +95,7 @@ namespace NetMed.Persistence.Repositories
                 result.Message = _messageService.GetMessage(nameof(GetAllAsync), false);
                 _logger.LogError(ex, result.Message);
             }
-            return result;          
+            return (List<Appointments>)result.Data;
         }
         public override async Task<OperationResult> GetAllAsync(Expression<Func<Appointments, bool>> filter)
         {
@@ -134,22 +134,22 @@ namespace NetMed.Persistence.Repositories
             }
             return result; 
         }
-        public async override Task<OperationResult> GetEntityByIdAsync(int Id)
+        public async override Task<Appointments> GetEntityByIdAsync(int Id)
         {
             OperationResult result = new OperationResult();
             try
             {
                 result = _validations.IsNullOrWhiteSpace(Id);
-                if (!result.Success) return result;
+                if (!result.Success) return result.Data;
 
                 result = _validations.IsInt(Id);
-                if (!result.Success) return result;
-    
+                if (!result.Success) return result.Data;
+
                 result = await _validations.ExistsEntity(Id,async (id) =>
                 {
                     return await _context.Appointments.AnyAsync(a => a.Id == id);
                 });
-                if (!result.Success) return result;
+                if (!result.Success) return result.Data;
 
                 var datos = await _context.Appointments.Where(a => a.Id == Id).FirstAsync();
                 result.Success = true;
@@ -162,7 +162,7 @@ namespace NetMed.Persistence.Repositories
                 result.Message = _messageService.GetMessage(nameof(GetEntityByIdAsync), false);
                 _logger.LogError(ex, result.Message);
             }
-            return result;
+            return result.Data;
         }
         public async override Task<OperationResult> RemoveAsync(int Id)
         {

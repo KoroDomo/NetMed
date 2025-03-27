@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
@@ -156,8 +157,8 @@ namespace NetMed.Tests
         [Fact]
         public async Task GetAllAsync_ShouldReturnSuccess()
         {
+            OperationResult result = new OperationResult();
             //arrange
-
             var doctorAvailability = new DoctorAvailability()
             {
                 Id = 0,
@@ -167,7 +168,7 @@ namespace NetMed.Tests
                 EndTime = TimeOnly.Parse("18:00:00")
             };
             //act
-            var result = await _repository.GetAllAsync();
+            var datos = await _repository.GetAllAsync();
             //assert
             Assert.True(result.Success);
             Assert.Equal("Datos Obtenidos con exito", result.Message);
@@ -215,11 +216,12 @@ namespace NetMed.Tests
         [Fact]
         public async Task GetEntityByIdAsync_ShouldReturnSuccess_WhenIdExists()
         {
+            OperationResult result = new OperationResult();
             // Arrange
             int validId = 7; //Check Id
 
             // Act
-            var result = await _repository.GetEntityByIdAsync(validId);
+            var datos = await _repository.GetEntityByIdAsync(validId);
 
             // Assert
             Assert.True(result.Success);
@@ -228,13 +230,14 @@ namespace NetMed.Tests
         [Fact]
         public async Task GetEntityByIdAsync_ShouldReturnError_WhenIdIsNegativeOrZero()
         {
+            OperationResult result = new OperationResult();
             //Arrange
             int Id = -1;
             int id = 0;
 
             // Act
-            var result = await _repository.GetEntityByIdAsync(Id);
-            result = await _repository.GetEntityByIdAsync(id);
+            var datos = await _repository.GetEntityByIdAsync(Id);
+            datos = await _repository.GetEntityByIdAsync(id);
 
             // Assert
             Assert.False(result.Success);
@@ -243,11 +246,12 @@ namespace NetMed.Tests
         [Fact]
         public async Task GetEntityByIdAsync_ShouldReturnError_WhenIdNotExist()
         {
+            OperationResult result = new OperationResult();
             // Arrange
             int nonExistentId = 99;
 
             // Act
-            var result = await _repository.GetEntityByIdAsync(nonExistentId);
+            var datos = await _repository.GetEntityByIdAsync(nonExistentId);
 
             // Assert
             Assert.False(result.Success);

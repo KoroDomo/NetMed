@@ -26,7 +26,7 @@ namespace NetMed.Persistence.Repositories
             _messageService = messageService;
             _validations = validations;
         }
-        public async override Task<OperationResult> GetAllAsync()
+        public async override Task<List<DoctorAvailability>> GetAllAsync()
         {
             OperationResult result = new OperationResult();
             try
@@ -42,7 +42,7 @@ namespace NetMed.Persistence.Repositories
                 result.Message = _messageService.GetMessage(nameof(GetAllAsync), false);
                 _logger.LogError(ex, result.Message);   
             }
-            return result;
+            return (List<DoctorAvailability>)result.Data;
         }
         public override async Task<OperationResult> SaveEntityAsync(DoctorAvailability entity)
         {
@@ -131,22 +131,22 @@ namespace NetMed.Persistence.Repositories
             }
            return result;
         }
-        public async override Task<OperationResult> GetEntityByIdAsync(int Id)
+        public async override Task<DoctorAvailability> GetEntityByIdAsync(int Id)
         {
             OperationResult result = new OperationResult();
             try
             {
                 result = _validations.IsNullOrWhiteSpace(Id);
-                if (!result.Success) return result;
+                if (!result.Success) return result.Data;
 
                 result = await _validations.ExistsEntity(Id, async (id) =>
                 {
                     return await _context.DoctorAvailability.AnyAsync(a => a.Id == id);
                 });
-                if (!result.Success) return result;
+                if (!result.Success) return result.Data;
 
                 result = _validations.IsInt(Id);
-                if (!result.Success) return result;
+                if (!result.Success) return result.Data;
 
                 await base.GetEntityByIdAsync(Id);
                 result.Success = true;
@@ -158,7 +158,7 @@ namespace NetMed.Persistence.Repositories
                 result.Message = _messageService.GetMessage(nameof(GetEntityByIdAsync), false);
                 _logger.LogError(ex, result.Message);
             }
-            return result;
+            return result.Data;
         }
         public async override Task<OperationResult> RemoveAsync(int Id)
         {

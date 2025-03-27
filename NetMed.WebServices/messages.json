@@ -1,0 +1,245 @@
+﻿{
+  "messagesAppointments": [
+    {
+      "method": "SaveEntityAsync",
+      "success": true,
+      "message": "Datos Guardados con exito"
+    },
+    {
+      "method": "SaveEntityAsync",
+      "success": false,
+      "message": "Error al guardar los datos"
+    },
+    {
+      "method": "UpdateEntityAsync",
+      "success": true,
+      "message": "Datos Actualizados con exito"
+    },
+    {
+      "method": "UpdateEntityAsync",
+      "success": false,
+      "message": "Error al actualizar los datos"
+    },
+    {
+      "method": "GetAllAsync",
+      "success": true,
+      "message": "Datos Obtenidos con éxito"
+    },
+    {
+      "method": "GetAllAsync",
+      "success": false,
+      "message": "Error al obtener todos los datos"
+    },
+    {
+      "method": "ExistsAsync",
+      "success": true,
+      "message": "Entidad encontrada con éxito"
+    },
+    {
+      "method": "ExistsAsync",
+      "success": false,
+      "message": "Entidad no encontrada"
+    },
+    {
+      "method": "GetEntityByIdAsync",
+      "success": true,
+      "message": "Datos Obtenidos con éxito"
+    },
+    {
+      "method": "GetEntityByIdAsync",
+      "success": false,
+      "message": "Error al obtener los datos de este ID"
+    },
+    {
+      "method": "RemoveAsync",
+      "success": true,
+      "message": "Datos desactivados con exito"
+    },
+    {
+      "method": "RemoveAsync",
+      "success": false,
+      "message": "Error al desactivar los datos"
+    },
+    {
+      "method": "CreateAppointmentAsync",
+      "success": true,
+      "message": "Cita creada exitosamente."
+    },
+    {
+      "method": "CreateAppointmentAsync",
+      "success": false,
+      "message": "Error al crear la cita"
+    },
+    {
+      "method": "GetAppointmentsByPatientAsync",
+      "success": true,
+      "message": "Cita encontrada con exito"
+    },
+    {
+      "method": "GetAppointmentsByPatientAsync",
+      "success": false,
+      "message": "Error al encontrar esta cita"
+    },
+    {
+      "method": "GetAppointmentsByDoctorAsync",
+      "success": true,
+      "message": "Cita encontrada con exito"
+    },
+    {
+      "method": "GetAppointmentsByDoctorAsync",
+      "success": false,
+      "message": "Error al encontrar cita"
+    },
+    {
+      "method": "GetAppointmentsByStatusAsync",
+      "success": true,
+      "message": "Cita encontrada con exito"
+    },
+    {
+      "method": "GetAppointmentsByStatusAsync",
+      "success": false,
+      "message": "Error al encontrar cita"
+    },
+    {
+      "method": "GetAppointmentsByDateAsync",
+      "success": true,
+      "message": "Lista de todas las citas en esta fecha"
+    },
+    {
+      "method": "GetAppointmentsByDateAsync",
+      "success": false,
+      "message": "Error al obtener la lista de citas en esta fecha"
+    },
+    {
+      "method": "CancelAppointmentAsync",
+      "success": true,
+      "message": "Cita cancelada con exito."
+    },
+    {
+      "method": "CancelAppointmentAsync",
+      "success": false,
+      "message": "Error al cancelar cita"
+    },
+    {
+      "method": "GetAppointmentsByDoctorAndDateAsync",
+      "success": true,
+      "message": "Cita encontrada con exito"
+    },
+    {
+      "method": "GetAppointmentsByDoctorAndDateAsync",
+      "success": false,
+      "message": "Error al encontrara cita en esta fecha"
+    },
+    {
+      "method": "SetAvailabilityAsync",
+      "success": true,
+      "message": "Disponibilidad establecida correctamente."
+    },
+    {
+      "method": "SetAvailabilityAsync",
+      "success": false,
+      "message": "Error al establecer la disponibilidad"
+    },
+    {
+      "method": "GetAvailabilityByDoctorAndDateAsync",
+      "success": true,
+      "message": "Disponibilidad obtenida con exito"
+    },
+    {
+      "method": "GetAvailabilityByDoctorAndDateAsync",
+      "success": false,
+      "message": "Error al obtener la disponibilidad del doctor en esta fecha"
+    },
+    {
+      "method": "UpdateAvailabilityAsync",
+      "success": true,
+      "message": "Disponibilidad actualizada exitosamente."
+    },
+    {
+      "method": "UpdateAvailabilityAsync",
+      "success": false,
+      "message": "Error al actualizar la disponibilidad"
+    },
+    {
+      "method": "RemoveAvailabilityAsync",
+      "success": true,
+      "message": "Disponibilidad desactivada con éxito"
+    },
+    {
+      "method": "RemoveAvailabilityAsync",
+      "success": false,
+      "message": "Error al desactivar la disponibilidad"
+    },
+    {
+      "method": "IsDoctorAvailableAsync",
+      "success": true,
+      "message": "El doctor está disponible."
+    },
+    {
+      "method": "IsDoctorAvailableAsync",
+      "success": false,
+      "message": "El doctor no está disponible para este horario."
+    },
+    {
+      "method": "UpdateAvailabilityInRealTimeAsync",
+      "success": true,
+      "message": "Cambios actualizados con éxito."
+    },
+    {
+      "method": "UpdateAvailabilityInRealTimeAsync",
+      "success": false,
+      "message": "Estas intentando agregar datos ya existentes"
+    },
+    {
+      "method": "GetAll",
+      "success": true,
+      "message": "Datos obtenidos con éxito"
+    },
+    {
+      "method": "GetAll",
+      "success": false,
+      "message": "Error al obtener los datos"
+    },
+    {
+      "method": "GetById",
+      "success": true,
+      "message": "Datos obtenidos con éxito"
+    },
+    {
+      "method": "GetById",
+      "success": false,
+      "message": "Error al obtener los datos"
+    },
+    {
+      "method": "Remove",
+      "success": true,
+      "message": "Datos eliminados con éxito"
+    },
+    {
+      "method": "Remove",
+      "success": false,
+      "message": "Error al eliminar los datos"
+    },
+    {
+      "method": "Save",
+      "success": true,
+      "message": "Datos guardados con éxito"
+    },
+    {
+      "method": "Save",
+      "success": false,
+      "message": "Error al guardar los datos"
+    },
+    {
+      "method": "Update",
+      "success": true,
+      "message": "Datos actualizados con éxito"
+    },
+    {
+      "method": "Update",
+      "success": false,
+      "message": "Error al actualizar los datos"
+    }
+
+  ]
+  }

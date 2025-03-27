@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NetMed.Domain.Base;
+using NetMed.Domain.Entities;
 using NetMed.Domain.Repository;
 using NetMed.Persistence.Context;
 using System.Linq.Expressions;
@@ -46,24 +47,23 @@ namespace NetMed.Persistence.Base
             return result;
             
         }
-        public virtual async Task<OperationResult> GetAllAsync()
+        public virtual async Task<List<TEntity>> GetAllAsync()
         {
+
             OperationResult result = new OperationResult();
             try
             {
                 var datos = await Entity.ToListAsync();
-                return result;
-            } 
+            }
             catch (Exception)
             {
                 result.Success = false;
                 result.Message = "Ocurrio un error al obtener los datos";
             }
-            return result;
-           
+            return (List<TEntity>)result.Data;
         }
 
-        public virtual async Task<OperationResult> GetEntityByIdAsync(int Id)
+        public virtual async Task<TEntity> GetEntityByIdAsync(int Id)
         {
             OperationResult result = new OperationResult();
             try
@@ -75,7 +75,7 @@ namespace NetMed.Persistence.Base
                 result.Success = false;
                 result.Message = "Ocurrio un error al obtener los datos por ID";
             }
-            return result;
+            return result.Data;
         }
 
         public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)
