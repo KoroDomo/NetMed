@@ -72,7 +72,10 @@ namespace NetMed.Application.Services
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error guardando los datos.";
+                _logger.LogError(ex, ex.Message);
             }
+
+            result.Success = true;
             return result;
         }
 
@@ -93,6 +96,7 @@ namespace NetMed.Application.Services
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error eliminando los datos.";
+                _logger.LogError(ex, ex.Message);
             }
             return result;
         }
@@ -102,12 +106,13 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
-                result = await _patientsRepository.GetEntityByIdAsync(id);
+                result.data = await _patientsRepository.GetEntityByIdAsync(id);
             }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                _logger.LogError(ex, ex.Message);
             }
             return result;
         }
@@ -119,12 +124,19 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
-                result = await _patientsRepository.GetAllAsync();
+                result.data = await _patientsRepository.GetAllAsync();
+            
+             if (!result.Success)
+            {
+                result.data = result.data;
+                result.Success = result.Success;
             }
+        }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                _logger.LogError(ex, ex.Message);
             }
             return result;
         }
@@ -141,15 +153,14 @@ namespace NetMed.Application.Services
                     UserId = dto.UserId,
                     EmergencyContactPhone = dto.EmergencyContactPhone ?? string.Empty
                 };
-                result = await _patientsRepository.UpdateEntityAsync(patient);
+                result.data = await _patientsRepository.UpdateEntityAsync(patient);
             }
-
-            // Perform validations
 
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error actualizando los datos.";
+                _logger.LogError(ex, ex.Message);
             }
             return result;
         }

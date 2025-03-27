@@ -64,14 +64,13 @@ namespace NetMed.Infrastructure.Validations.Implementations
 
         public OperationResult ValidateDoctorLicenseNumber(Doctors doctors)
         {
-            if(doctors.LicenseNumber == null)
+            if (string.IsNullOrWhiteSpace(doctors.LicenseNumber))
             {
                 return new OperationResult
                 {
                     Message = "Invalid License Number",
                     Success = false
                 };
-             
             }
             return new OperationResult
             {
@@ -116,18 +115,18 @@ namespace NetMed.Infrastructure.Validations.Implementations
 
         public OperationResult ValidateDoctorLicenseExpirationDate(Doctors doctors)
         {
-            if (doctors.LicenseExpirationDate.ToDateTime(TimeOnly.MinValue) < DateTime.Now)
+            if (doctors.LicenseExpirationDate.ToDateTime(TimeOnly.MinValue) > DateTime.Now)
             {
                 return new OperationResult
                 {
-                    Message = "Valid License Expiration Date",
-                    Success = true
+                    Message = "License is expired",
+                    Success = false
                 };
             }
             return new OperationResult
             {
-                Message = "Invalid License Expiration Date",
-                Success = false
+                Message = "License is valid",
+                Success = true
             };
         }
 

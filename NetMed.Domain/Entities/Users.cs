@@ -16,7 +16,6 @@ namespace NetMed.Domain.Entities
         [Required]
         public required string Password { get; set; }
         public int RoleID { get; set; }
-        
 
 
     }

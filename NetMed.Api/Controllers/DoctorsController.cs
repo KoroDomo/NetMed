@@ -26,7 +26,7 @@ namespace NetMed.Api.Controllers
         public async Task<IActionResult> Get()
         {
             var res = await _doctorsServices.GetAllData();
-            if (res.Success ==true)
+            if (res.Success == true)
             {
                 return Ok(res.data);
             }

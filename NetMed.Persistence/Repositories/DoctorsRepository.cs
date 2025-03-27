@@ -233,18 +233,24 @@ namespace NetMed.Persistence.Repositories
                 {
                     result.Success = false;
                     result.Message = _repErrorMapper.DataISNullErrorGlogal["DataDoctorsIsNull"];
-                    return result;
+                    _logger.LogError("Doctors entity is null.");
                 }
-
-
-                _context.Doctors.Add(doctors);
-                await _context.SaveChangesAsync();
-                result.Success = true;
+                else
+                {
+                    _context.Doctors.Add(doctors);
+                    await _context.SaveChangesAsync();
+                    result.Success = true;
+                    result.Message = "Doctor saved successfully";
+                    _logger.LogInformation("Doctor saved successfully: {@Doctor}", doctors);
+                }
             }
-           
             catch (Exception ex)
             {
                 result.Message = ex.Message + _repErrorMapper.SaveEntityErrorMessage["SaveEntityError"];
+                if (ex.InnerException != null)
+                {
+                    result.Message += " Inner exception: " + ex.InnerException.Message;
+                }
                 result.Success = false;
                 _logger.LogError(ex, "Error while saving Doctor.");
             }

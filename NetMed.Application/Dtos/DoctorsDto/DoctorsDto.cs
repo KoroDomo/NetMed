@@ -24,6 +24,8 @@ namespace NetMed.Application.Dtos.Doctors
             get; set;
 
         }
-        public short AvailabilityModeId { get; set; }
+        public short AvailabilityModeId { get; set; } 
+
+    //    public bool IsActive { get; set; }
     }
 }

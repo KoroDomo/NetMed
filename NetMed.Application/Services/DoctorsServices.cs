@@ -5,68 +5,77 @@ using NetMed.Application.Dtos.Doctors;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Infrastructure.Validations.Implementations;
+using NetMed.Persistence.BaseLoger.Loger;
 using NetMed.Persistence.Interfaces;
+using NetMed.Persistence.Repositories;
 namespace NetMed.Application.Services
 {
     public class DoctorsServices : DoctorValidation, IDoctorsServices
     {
-        private readonly ILogger<DoctorsServices> logger;
+        private readonly ILogger<DoctorsServices> _logger;
         private readonly IDoctorsRepository _doctorsRepository;
         public DoctorsServices(IDoctorsRepository doctorsRepository,
             ILogger<DoctorsServices> logger)
           
         {
             if (doctorsRepository is null) throw new ArgumentNullException(nameof(doctorsRepository));
-            this.logger = logger;
+             this._logger = logger;
             this._doctorsRepository = doctorsRepository;
         }
 
         public async Task<OperationResult> GetById(int id)
         {
-            OperationResult response= new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
-                var result =  await _doctorsRepository.GetEntityByIdAsync(id);
-
-                if(!result.Success)
+                var doctor = await _doctorsRepository.GetEntityByIdAsync(id);
+                if (doctor != null)
                 {
-                    response.data = result.data;
-                    response.Success = result.Success;
-                    return response;
+                    result.Success = true;
+                    result.data = doctor;
+                }
+                else
+                {
+                    result.Success = false;
+                    result.Message = "Doctor not found.";
                 }
             }
             catch (Exception ex)
             {
-                response.Success = false;
-                response.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
-                this.logger.LogError(ex.Message);
+                result.Success = false;
+                result.Message = ex.Message + " An error occurred while retrieving the doctor.";
             }
-
-            return response;
+            return result;
         }
+
+           
+        
 
 
         public async Task<OperationResult> GetAllData()
         {
-            OperationResult response = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
-               var  result = await _doctorsRepository.GetAllAsync();
+               
+
+                result.data = await _doctorsRepository.GetAllAsync();
 
                 if(!result.Success)
                 {
-                    response.data = result.data;
-                    response.Success = result.Success;
-                    return response ;
+                    result.data = result.data;
+                    result.Success = result.Success;
+                    return result ;
                    
                 }
             }
             catch (Exception ex)
             {
-                response.Success = false;
-                response.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                _logger.LogError(ex, ex.Message);
             }
-            return response;
+            return result;
         }
 
         public async Task<OperationResult> Add(AddDoctorsDto dto)
@@ -74,6 +83,8 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
+                _logger.LogInformation("Starting Add method in DoctorsServices.");
+
                 var doctor = new Doctors
                 {
                     SpecialtyID = (short)dto.SpecialtyID,
@@ -90,6 +101,8 @@ namespace NetMed.Application.Services
                     IsActive = true
                 };
 
+                _logger.LogInformation("Doctor entity created: {@Doctor}", doctor);
+
                 // Perform validations
                 var validationResults = new List<OperationResult>
                 {
@@ -102,20 +115,40 @@ namespace NetMed.Application.Services
                     ValidateDoctorLicenseExpirationDate(doctor)
                 };
 
-               // Check validation 
+                // Check validation 
                 var failedValidation = validationResults.FirstOrDefault(v => !v.Success);
                 if (failedValidation != null)
                 {
+                    _logger.LogWarning("Validation failed: {Message}", failedValidation.Message);
                     return failedValidation;
                 }
 
-                result = await _doctorsRepository.SaveEntityAsync(doctor);
+                _logger.LogInformation("All validations passed.");
+
+                OperationResult saveResult = await _doctorsRepository.SaveEntityAsync(doctor);
+                if (saveResult == null)
+                {
+                    result.Success = false;
+                    result.Message = "Failed to save doctor entity.";
+                    _logger.LogError("SaveEntityAsync returned null.");
+                }
+                else
+                {
+                    result = saveResult;
+                    _logger.LogInformation("Doctor entity saved: {@Result}", result);
+                }
             }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error guardando los datos.";
+                if (ex.InnerException != null)
+                {
+                    result.Message += " Inner exception: " + ex.InnerException.Message;
+                }
+                _logger.LogError(ex, ex.Message);
             }
+
             return result;
         }
 
@@ -147,6 +180,7 @@ namespace NetMed.Application.Services
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error actualizando los datos.";
+                _logger.LogError(ex, ex.Message);
             }
             return result;
         }
@@ -177,6 +211,7 @@ namespace NetMed.Application.Services
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error eliminando los datos.";
+                _logger.LogError(ex, ex.Message);
             }
             return result;
         }

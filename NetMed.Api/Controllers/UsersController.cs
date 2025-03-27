@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NetMed.Persistence.Interfaces;
-using NetMed.Domain.Entities;
-using NetMed.Persistence.Repositories;
 using NetMed.Application.Contracts;
-using NetMed.Application.Dtos.Doctors;
-using NetMed.Application.Services;
 using NetMed.Application.Dtos.UsersDto;
 
 namespace NetMed.Api.Controllers

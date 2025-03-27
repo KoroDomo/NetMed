@@ -1,24 +1,24 @@
 ﻿
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.UsersDto;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Repositories;
 using NetMed.Infrastructure.Validations.Implementations;
-using NetMed.Infrastructure.Validations.Interfaces;
+
 
 namespace NetMed.Application.Services
 {
     public class UsersServices : UsersValidations, IUsersServices
     {
+        private readonly ILogger<UsersServices> _logger;
         private readonly IUsersRepository _usersRepository;
         public UsersServices(IUsersRepository usersRepository,
             ILogger<UsersServices> logger)
         {
             this._usersRepository = usersRepository;
+            this._logger = logger;
         }
 
 
@@ -34,6 +34,7 @@ namespace NetMed.Application.Services
                     LastName = dto.LastName ?? string.Empty,
                     Email = dto.Email,
                     Password = dto.Password ?? string.Empty,
+                  
                     RoleID = 2,
                 };
 
@@ -60,7 +61,9 @@ namespace NetMed.Application.Services
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error agregando el usuario.";
+                _logger.LogError(ex, ex.Message);
             }
+            result.Success = true;
             return result;
         }
 
@@ -84,6 +87,7 @@ namespace NetMed.Application.Services
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error eliminando el usuario.";
+                _logger.LogError(ex, ex.Message);
             }
             return result;
         }
@@ -102,6 +106,7 @@ namespace NetMed.Application.Services
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                _logger.LogError(ex, ex.Message);
             }
             return result;
         }
@@ -114,12 +119,27 @@ namespace NetMed.Application.Services
            OperationResult result = new OperationResult();
             try
             {
-                result = await _usersRepository.GetAllAsync();
+                result.data = await _usersRepository.GetAllAsync();
+
+                var users = result.data;
+
+
+               
+
+                if (!result.Success)
+                {
+                    result.data = result.data;
+                    result.Success = result.Success;
+                    return result;
+                }
+                return result;
+
             }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
+                _logger.LogError(ex, ex.Message);
             }
             return result;
         }
@@ -136,6 +156,7 @@ public async Task<OperationResult> Update(UpdateUserDto dto)
                     FirstName = dto.FirstName ?? string.Empty,
                     LastName = dto.LastName ?? string.Empty,
                     Email = dto.Email,
+              
                     Password = dto.Password ?? string.Empty,
                 };
 
@@ -162,6 +183,7 @@ public async Task<OperationResult> Update(UpdateUserDto dto)
             {
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error actualizando el usuario.";
+                _logger.LogError(ex, ex.Message);
             }
             return result;
         }

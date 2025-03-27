@@ -96,17 +96,19 @@ namespace NetMed.Infrastructure.Validations.Implementations
 
    
 
-        public OperationResult ValidatePatientPhoneNumber(Patients patients)
+  public OperationResult ValidatePatientPhoneNumber(Patients patients)
         {
             OperationResult result = new OperationResult();
 
-            if (string.IsNullOrEmpty(patients.PhoneNumber) || (patients.PhoneNumber.Length != 10))
+            if (string.IsNullOrEmpty(patients.PhoneNumber) || (patients.PhoneNumber.Length < 10))
             {
                 result.Success = false;
                 result.Message = "Invalid Phone Number";
                 return result;
             }
-         return result;
+
+            result.Success = true;
+            return result;
         }
 
         public OperationResult ValidatePatientWithoutInsurance(Patients patients)

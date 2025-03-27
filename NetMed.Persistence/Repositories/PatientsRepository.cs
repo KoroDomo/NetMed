@@ -335,8 +335,8 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result.data = await _context.Patients.ToListAsync();
-                result.Success = true;
+                var consult = await _context.Patients.ToListAsync();
+                result.data = consult;
             }
             catch (Exception ex)
             {

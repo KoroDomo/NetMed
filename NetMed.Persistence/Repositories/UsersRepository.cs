@@ -140,50 +140,52 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-        public async Task<OperationResult> GetUsersRegisteredInRangeAsync(DateTime startDate, DateTime endDate)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                if (result.data == null)
-                {
-                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-                    result.Success = false;
-                }
-                result.data = await _context.Users.Where(x => x.CreatedAt >= startDate && x.CreatedAt <= endDate).FirstOrDefaultAsync();
-                result.Success = true;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetUsersRegisteredInRangeAsync"];
-            }
-            return result;
-        }
+       //public async Task<OperationResult> GetPhoneNumber(string phoneNumber)
+       // {
+       //     OperationResult result = new OperationResult();
+       //     try
+       //     {
+       //         result.data = await _context.Users.Where(x => x.PhoneNumber == phoneNumber).FirstOrDefaultAsync();
+       //         result.Success = true;
+       //         if (result.data == null)
+       //         {
+       //             result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
+       //             result.Success = false;
+       //         }
+
+       //     }
+       //     catch (Exception ex )
+       //     {
+       //         result.Success = false;
+       //         result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetPhoneNumberAsync"];
+       //     }
+       //     return result;
+       // }
 
 
 
 
-        public async Task<OperationResult> GetAddressAsync(string address)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                if (result.data == null)
-                {
-                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-                    result.Success = false;
-                }
-                result.data = await _context.Users.Where(x => x.Address == address).FirstOrDefaultAsync();
-                result.Success = true;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetAddressAsync"];
-            }
-            return result;
-        }
+        //public async Task<OperationResult> GetAddressAsync(string address)
+        //{
+        //    OperationResult result = new OperationResult();
+        //    try
+        //    {
+               
+        //        result.data = await _context.Users.Where(x => x.Address == address).FirstOrDefaultAsync();
+        //        result.Success = true;
+        //        if (result.data == null)
+        //        {
+        //            result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
+        //            result.Success = false;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        result.Success = false;
+        //        result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetAddressAsync"];
+        //    }
+        //    return result;
+        //}
 
 
         public async Task<OperationResult> GetPasswordAsync(string password)
@@ -219,9 +221,9 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                var consult = await _context.Users.ToListAsync();
-                result.data = consult;
-                result.Success = true; // Add this since it was missing
+              result.data = await _context.Users.ToListAsync();
+              result.Success = true;
+                return result;
             }
             catch (Exception ex)
             {
@@ -237,13 +239,15 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                result.data = await _context.Set<Users>().Where(filter).ToListAsync();
-                result.Success = true;
+                var consult = await _context.Users.ToListAsync();
+
+                result.data = consult;
             }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"];
+                _logger.LogError(_repErrorMapper.SaveEntityErrorMessage + ex.Message.ToString());
             }
             return result;
         }
@@ -321,8 +325,6 @@ public override async Task<OperationResult> SaveEntityAsync(Users user)
                     existingUser.Email = user.Email;
                     existingUser.Password = user.Password;
                     existingUser.RoleID = user.RoleID;
-                    existingUser.Address = user.Address;
-                    existingUser.PhoneNumber = user.PhoneNumber;
                     existingUser.IsActive = user.IsActive;
                     existingUser.UpdatedAt = DateTime.UtcNow;
 
