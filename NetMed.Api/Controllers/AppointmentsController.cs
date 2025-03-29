@@ -45,9 +45,9 @@ namespace NetMed.Api.Controllers
             return Ok(appointments);
         }
         [HttpDelete("RemoveAppointment")]
-        public async Task<IActionResult> Remove(int id)
+        public async Task<IActionResult> Remove(RemoveAppointmentsDto removeAppointmentsDto)
         {
-            var appointments = await _appointmentsService.Remove(id);
+            var appointments = await _appointmentsService.Remove(removeAppointmentsDto);
             return Ok(appointments);
         }
     }

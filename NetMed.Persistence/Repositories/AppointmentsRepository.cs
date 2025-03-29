@@ -8,7 +8,6 @@ using System.Linq.Expressions;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
 using NetMed.Infraestructure.Validators;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NetMed.Persistence.Repositories
 {
@@ -164,26 +163,21 @@ namespace NetMed.Persistence.Repositories
             }
             return result.Data;
         }
-        public async override Task<OperationResult> RemoveAsync(int Id)
+        public async override Task<OperationResult> RemoveAsync(Appointments entity)
         {
             OperationResult result = new OperationResult();
             try
             {
-                result = _validations.IsInt(Id);
+                result = _validations.IsInt(entity);
                 if (!result.Success) return result;
 
-                result = _validations.IsNullOrWhiteSpace(Id);
+                result = _validations.IsNullOrWhiteSpace(entity);
                 if (!result.Success) return result;
 
-                result = await _validations.ExistsEntity(Id, async (id) =>
-                {
-                    return await _context.Appointments.AnyAsync(a => a.Id == id);
-                });
-                if (!result.Success) return result;
-
-                await base.RemoveAsync(Id);
+                var datos = await base.RemoveAsync(entity);
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(RemoveAsync), true);
+                result.Data = datos;
             }
             catch (Exception ex)
             {

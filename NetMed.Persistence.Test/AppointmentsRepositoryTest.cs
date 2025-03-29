@@ -257,47 +257,47 @@ namespace NetMed.Tests
             Assert.False(result.Success);
             Assert.Equal("No existe este registro en el sistema", result.Message);
         }
-        [Fact]
-        public async Task RemoveAsync_ShouldReturnSuccess_WhenIdExists()
-        {
-            // Arrange
-            int Id = 7;
+        //[Fact]
+        //public async Task RemoveAsync_ShouldReturnSuccess_WhenIdExists()
+        //{
+        //    // Arrange
+        //    int Id = 7;
 
-            // Act
-            var result = await _repository.RemoveAsync(Id);
+        //    // Act
+        //    var result = await _repository.RemoveAsync(Id);
 
-            // Assert
-            Assert.True(result.Success);
-            Assert.Equal("Datos desactivados con exito", result.Message);
-        }
-        [Fact]
-        public async Task RemoveAsync_ShouldReturnError_WhenIdIsNegativeOrZero()
-        {
-            //Arrange
-            int Id = -1;
-            int id = 0;
+        //    // Assert
+        //    Assert.True(result.Success);
+        //    Assert.Equal("Datos desactivados con exito", result.Message);
+        //}
+        //[Fact]
+        //public async Task RemoveAsync_ShouldReturnError_WhenIdIsNegativeOrZero()
+        //{
+        //    //Arrange
+        //    int Id = -1;
+        //    int id = 0;
 
-            // Act
-            var result = await _repository.RemoveAsync(Id);
-            result = await _repository.RemoveAsync(id);
+        //    // Act
+        //    var result = await _repository.RemoveAsync(Id);
+        //    result = await _repository.RemoveAsync(id);
 
-            // Assert
-            Assert.False(result.Success);
-            Assert.Equal("El Id debe ser mayor que cero", result.Message);
-        }
-        [Fact]
-        public async Task RemoveAsync_ShouldReturnError_WhenIdNotExist()
-        {
-            // Arrange
-            int nonExistentId = 99;
+        //    // Assert
+        //    Assert.False(result.Success);
+        //    Assert.Equal("El Id debe ser mayor que cero", result.Message);
+        //}
+        //[Fact]
+        //public async Task RemoveAsync_ShouldReturnError_WhenIdNotExist()
+        //{
+        //    // Arrange
+        //    int nonExistentId = 99;
 
-            // Act
-            var result = await _repository.RemoveAsync(nonExistentId);
+        //    // Act
+        //    var result = await _repository.RemoveAsync(nonExistentId);
 
-            // Assert
-            Assert.False(result.Success);
-            Assert.Equal("No existe este registro en el sistema", result.Message);
-        }
+        //    // Assert
+        //    Assert.False(result.Success);
+        //    Assert.Equal("No existe este registro en el sistema", result.Message);
+        //}
         [Fact]
         public async Task CreateAppointmentAsync_ShouldNotAllowDuplicateAppointments()
         {

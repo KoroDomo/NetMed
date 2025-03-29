@@ -1,5 +1,6 @@
 ﻿using NetMed.Domain.Base;
 using System.Linq.Expressions;
+using System.Security.Principal;
 
 namespace NetMed.Domain.Repository
 {
@@ -16,6 +17,6 @@ namespace NetMed.Domain.Repository
         Task<List<TEntity>> GetAllAsync();
         Task <OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter);
         Task<OperationResult> ExistsAsync(Expression<Func<TEntity, bool>> filter);
-        Task<OperationResult> RemoveAsync(int Id);
+        Task<OperationResult> RemoveAsync(TEntity entity);
     }
 }

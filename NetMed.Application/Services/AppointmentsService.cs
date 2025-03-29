@@ -8,8 +8,6 @@ using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
 using NetMed.Infraestructure.Validators;
 using NetMed.Persistence.Interfaces;
-using NetMed.Persistence.Repositories;
-
 
 
 namespace NetMed.Application.Services
@@ -75,18 +73,22 @@ namespace NetMed.Application.Services
             }
             return result;
         }
-        public async Task<OperationResult> Remove(int Id)
+        public async Task<OperationResult> Remove(RemoveAppointmentsDto TDto)
         {
             OperationResult result = new OperationResult();
             try
             {
-                result = _validations.IsNullOrWhiteSpace(Id);
+                result = _validations.IsNullOrWhiteSpace(TDto);
                 if (!result.Success) return result;
                 
-                result = _validations.IsInt(Id);
+                result = _validations.IsInt(TDto);
                 if (!result.Success) return result;
 
-                var appointments = await _appointmentsRespository.RemoveAsync(Id);
+                var appointments = new Appointments
+                {
+                    Id = TDto.AppointmentID,                  
+                };
+                await _appointmentsRespository.RemoveAsync(appointments);
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(Remove), true);
                 result.Data = appointments;

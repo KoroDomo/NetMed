@@ -87,9 +87,9 @@ namespace NetMed.WebServices.Controllers
         }
 
         // GET: AppointmentsController/Delete/5
-        public async Task<IActionResult> Delete(int Id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var result = await _appointmentService.GetById(Id);
+            var result = await _appointmentService.GetById(id);
             if (result.Success)
             {
                 return View(result.Data);
@@ -100,12 +100,11 @@ namespace NetMed.WebServices.Controllers
         // POST: AppointmentsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> Delete(RemoveAppointmentsDto removeAppointmentsDto)
         {
             try
             {
-                var result = await _appointmentService.Remove(id);
-                result.Success = false;
+                await _appointmentService.Remove(removeAppointmentsDto);
                 return RedirectToAction(nameof(Index));
             }
             catch

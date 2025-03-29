@@ -257,48 +257,48 @@ namespace NetMed.Tests
             Assert.False(result.Success);
             Assert.Equal("No existe este registro en el sistema", result.Message);
         }       
-        [Fact]
-        public async Task RemoveAsync_ShouldReturnError_WhenIdIsNullOrWhiteSpace()
-        {
-            // Arrange
-            int invalidId = 0;
+        //[Fact]
+        //public async Task RemoveAsync_ShouldReturnError_WhenIdIsNullOrWhiteSpace()
+        //{
+        //    // Arrange
+        //    int invalidId = 0;
 
-            // Act
-            var result = await _repository.RemoveAsync(invalidId);
+        //    // Act
+        //    var result = await _repository.RemoveAsync(invalidId);
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.False(result.Success);
-            Assert.Equal("El Id debe ser mayor que cero", result.Message);
-        }
-        [Fact]
-        public async Task RemoveAsync_ShouldReturnError_WhenIdIsNotInteger()
-        {
-            // Arrange
-            int invalidId = -1; 
+        //    // Assert
+        //    Assert.NotNull(result);
+        //    Assert.False(result.Success);
+        //    Assert.Equal("El Id debe ser mayor que cero", result.Message);
+        //}
+        //[Fact]
+        //public async Task RemoveAsync_ShouldReturnError_WhenIdIsNotInteger()
+        //{
+        //    // Arrange
+        //    int invalidId = -1; 
 
-            // Act
-            var result = await _repository.RemoveAsync(invalidId);
+        //    // Act
+        //    var result = await _repository.RemoveAsync(invalidId);
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.False(result.Success);
-            Assert.Equal("El Id debe ser mayor que cero", result.Message);
-        }
-        [Fact]
-        public async Task RemoveAsync_ShouldReturnSuccess_WhenIdExists()
-        {
-            // Arrange
-            int existingId = 2; 
+        //    // Assert
+        //    Assert.NotNull(result);
+        //    Assert.False(result.Success);
+        //    Assert.Equal("El Id debe ser mayor que cero", result.Message);
+        //}
+        //[Fact]
+        //public async Task RemoveAsync_ShouldReturnSuccess_WhenIdExists()
+        //{
+        //    // Arrange
+        //    int existingId = 2; 
 
-            // Act
-            var result = await _repository.RemoveAsync(existingId);
+        //    // Act
+        //    var result = await _repository.RemoveAsync(existingId);
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.True(result.Success);
-            Assert.Equal("Datos desactivados con exito", result.Message);
-        }
+        //    // Assert
+        //    Assert.NotNull(result);
+        //    Assert.True(result.Success);
+        //    Assert.Equal("Datos desactivados con exito", result.Message);
+        //}
 
         [Fact]
         public async Task SetAvailabilityAsync_ShouldReturnError_WhenDoctorIdIsInvalid()

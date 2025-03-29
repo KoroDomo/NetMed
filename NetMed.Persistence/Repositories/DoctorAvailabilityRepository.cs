@@ -160,24 +160,18 @@ namespace NetMed.Persistence.Repositories
             }
             return result.Data;
         }
-        public async override Task<OperationResult> RemoveAsync(int Id)
+        public async override Task<OperationResult> RemoveAsync(DoctorAvailability entity)
         {
             OperationResult result = new OperationResult();
             try
             {
-                result = _validations.IsNullOrWhiteSpace(Id);
+                result = _validations.IsNullOrWhiteSpace(entity);
                 if (!result.Success) return result;
 
-                result = await _validations.ExistsEntity(Id, async (id) =>
-                {
-                    return await _context.DoctorAvailability.AnyAsync(a => a.Id == id);
-                });
+                result = _validations.IsInt(entity);
                 if (!result.Success) return result;
 
-                result = _validations.IsInt(Id);
-                if (!result.Success) return result;
-
-                await base.RemoveAsync(Id);
+                await base.RemoveAsync(entity);
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(RemoveAsync), true);
             }

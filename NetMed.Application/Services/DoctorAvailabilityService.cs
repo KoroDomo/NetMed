@@ -67,18 +67,27 @@ namespace NetMed.Application.Services
             }
             return result;
         }
-        public async Task<OperationResult> Remove(int Id)
+        public async Task<OperationResult> Remove(RemoveDoctorAvailabilityDto TDto)
         {
             OperationResult result = new OperationResult();
             try
             {
-                result = _validations.IsNullOrWhiteSpace(Id);
+                result = _validations.IsNullOrWhiteSpace(TDto);
                 if (!result.Success) return result;
 
-                result = _validations.IsInt(Id);
+                result = _validations.IsInt(TDto);
                 if (!result.Success) return result;
 
-                var doctorAvailability = await _doctorAvailabilityRepository.RemoveAsync(Id);
+                var doctorAvailabilty = new DoctorAvailability
+                {
+                    Id = TDto.AvailabilityID,
+                    DoctorID = TDto.DoctorID,
+                    AvailableDate = TDto.AvailableDate,
+                    StartTime = TDto.StartTime,
+                    EndTime = TDto.EndTime
+                   
+                };
+                var doctorAvailability = await _doctorAvailabilityRepository.RemoveAsync(doctorAvailabilty);
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(Remove), true);
                 result.Data= doctorAvailability;

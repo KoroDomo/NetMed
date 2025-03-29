@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NetMed.Application.Dtos.Appointments;
 using NetMed.Application.Dtos.DoctorAvailability;
 using NetMed.Application.Interfaces;
 using NetMed.Application.Services;
@@ -48,9 +49,9 @@ namespace NetMed.Api.Controllers
             return Ok(doctorAvailability);
         }
         [HttpDelete("RemoveDoctorAvailability")]
-        public async Task<IActionResult> Remove(int id)
+        public async Task<IActionResult> Remove(RemoveDoctorAvailabilityDto removeDoctorAvailabilityDto)
         {
-            var doctorAvailability = await _doctorAvailabilityService.Remove(id);
+            var doctorAvailability = await _doctorAvailabilityService.Remove(removeDoctorAvailabilityDto);
             return Ok(doctorAvailability);
         }
     }

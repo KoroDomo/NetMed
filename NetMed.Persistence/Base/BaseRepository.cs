@@ -110,12 +110,12 @@ namespace NetMed.Persistence.Base
             return result;    
         }
 
-        public virtual async Task<OperationResult> RemoveAsync(int Id)
+        public virtual async Task<OperationResult> RemoveAsync(TEntity entity)
         {
             OperationResult result= new OperationResult();
             try
             {
-                var entity = await _context.Set<TEntity>().FindAsync(Id);
+                var data = await _context.Set<TEntity>().FindAsync(entity);
                 if (entity != null)
                 {
                     _context.Set<TEntity>().Remove(entity);
