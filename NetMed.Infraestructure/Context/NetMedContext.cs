@@ -9,7 +9,6 @@ namespace NetMed.Persistence.Context
         public NetMedContext(DbContextOptions<NetMedContext> options) : base(options) 
         {
 
-        
         }
 
         public DbSet<InsuranceProviders> InsuranceProviders { get; set; }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Moq;
-using NetMed.Application.Dtos.InsuranceProvider;
+using NetMed.Application.Dtos.NetworkType;
 using NetMed.Application.Services;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;

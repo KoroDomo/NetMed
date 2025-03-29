@@ -4,6 +4,7 @@ using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Validators.Implementations;
 using NetMed.Infraestructure.Validators.Interfaces;
+using NetMed.Model.Models;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
@@ -63,7 +64,7 @@ namespace NetMed.Persistence.Repositories
         {
             try
             {
-                var provider = await _context.InsuranceProviders.FindAsync(id);
+                var provider = await GetInsurenProviderById(id);
 
                 if (provider == null)
                 {
@@ -71,7 +72,7 @@ namespace NetMed.Persistence.Repositories
                     return _operations.HandleException("Entitys", "NotFound");
                 }
 
-                provider.IsActive = false;
+                provider.Result.IsActive = false;
 
                 await _context.SaveChangesAsync();
 
@@ -105,13 +106,14 @@ namespace NetMed.Persistence.Repositories
                     return result;
                 }
 
-                var Provider = await _context.InsuranceProviders.FindAsync(provider.Id);
+                var Provider = await GetInsurenProviderById(provider.Id);
                 if (Provider == null)
                 {
                     _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
                     return _operations.HandleException("Entitys", "NotFound");
                 }
 
+                Provider.Result.UpdatedAt = DateTime.Now;
                 _context.Entry(Provider).CurrentValues.SetValues(provider);
                 await _context.SaveChangesAsync();
 
@@ -133,15 +135,15 @@ namespace NetMed.Persistence.Repositories
                 var providers = await _context.InsuranceProviders
                     .Where(ip => ip.Id == InsuranceId)
                     .MapToInsuranceProviderModel()
-                    .ToListAsync();
+                    .SingleOrDefaultAsync();
 
 
-                if (!providers.Any())
+                if (providers == null)
                 {
                     _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
                     return _operations.HandleException("Entitys", "NotFound");
                 }
-
+                
                 return _operations.SuccessResult(providers, "Insurances", "GetInsurenProvider");
             }
             catch (Exception ex)

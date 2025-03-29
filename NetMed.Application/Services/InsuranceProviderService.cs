@@ -27,7 +27,6 @@ namespace NetMed.Application.Services
             _operations = new InsuranceProviderValidator();
             _mapper = mapper;
             
-            
         }
         public async Task<OperationResult> GetAll()
         {
@@ -37,7 +36,7 @@ namespace NetMed.Application.Services
 
                 if (!repositoryResult.Success) return repositoryResult;
 
-                var dtos= _mapper.Map<List<InsuranceProviderDto>>(repositoryResult.Result);
+                var dtos= _mapper.Map<List<GetInsuranceProviderDto>>(repositoryResult.Result);
 
                 return _operations.SuccessResult(dtos, "Operations", "GetSuccess");
             }
@@ -55,7 +54,8 @@ namespace NetMed.Application.Services
                 var repositoryResult = await _insuranceProviderRepository.GetInsurenProviderById(id);
                 if (!repositoryResult.Success) return repositoryResult;
 
-                var dtos = _mapper.Map<List<InsuranceProviderDto>>(repositoryResult.Result);
+
+                var dtos = _mapper.Map<GetInsuranceProviderDto>(repositoryResult.Result);
 
                 return _operations.SuccessResult(dtos,"Operations", "GetSuccess");
             }
@@ -80,8 +80,7 @@ namespace NetMed.Application.Services
 
                 if (operationResult.Success)
                 {
-                    dto.Removed = true; 
-                    dto.ChangeUserID = dto.ChangeUserID;
+                    dto.Removed = true;
                     return operationResult;
                 }
 

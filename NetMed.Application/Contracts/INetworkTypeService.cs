@@ -1,6 +1,5 @@
 ﻿using NetMed.Application.Base;
-using NetMed.Application.Dtos.InsuranceProvider;
-using NetMed.Domain.Base;
+using NetMed.Application.Dtos.NetworkType;
 
 namespace NetMed.Application.Contracts
 {

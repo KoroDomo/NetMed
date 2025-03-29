@@ -1,0 +1,107 @@
+﻿@model NetMed.Application.Dtos.InsuranceProvider.InsuranceProviderDto
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit Insurance Provider</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Website" class="control-label"></label>
+                <input asp-for="Website" class="form-control" />
+                <span asp-validation-for="Website" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="City" class="control-label"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="State" class="control-label"></label>
+                <input asp-for="State" class="form-control" />
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Country" class="control-label"></label>
+                <input asp-for="Country" class="form-control" />
+                <span asp-validation-for="Country" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ZipCode" class="control-label"></label>
+                <input asp-for="ZipCode" class="form-control" />
+                <span asp-validation-for="ZipCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CoverageDetails" class="control-label"></label>
+                <input asp-for="CoverageDetails" class="form-control" />
+                <span asp-validation-for="CoverageDetails" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsPreferred" /> @Html.DisplayNameFor(model => model.IsPreferred)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="NetworkTypeID" class="control-label"></label>
+                <input asp-for="NetworkTypeID" class="form-control" />
+                <span asp-validation-for="NetworkTypeID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CustomerSupportContact" class="control-label"></label>
+                <input asp-for="CustomerSupportContact" class="form-control" />
+                <span asp-validation-for="CustomerSupportContact" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AcceptedRegions" class="control-label"></label>
+                <input asp-for="AcceptedRegions" class="form-control" />
+                <span asp-validation-for="AcceptedRegions" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaxCoverageAmount" class="control-label"></label>
+                <input asp-for="MaxCoverageAmount" class="form-control" />
+                <span asp-validation-for="MaxCoverageAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ChangeDate" class="control-label"></label>
+                <input asp-for="ChangeDate" class="form-control" />
+                <span asp-validation-for="ChangeDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

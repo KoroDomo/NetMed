@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using NetMed.Application.Dtos.InsuranceProvider;
+using NetMed.Application.Dtos.NetworkType;
 using NetMed.Domain.Entities;
 using NetMed.Model.Models;
 
@@ -11,6 +11,11 @@ namespace NetMed.Infraestructure.Mapper
         {
             
             CreateMap<NetworkTypeModel, NetworkTypeDto>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.ChangeDate, opt => opt.MapFrom(src => src.UpdatedAt))
+                .ReverseMap();
+            CreateMap<NetworkTypeModel, GetNetworkTypeDto>()
                 .ForMember(dest => dest.NetworkTypeId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
@@ -19,7 +24,6 @@ namespace NetMed.Infraestructure.Mapper
 
 
             CreateMap<NetworkType, NetworkTypeDto>()
-                .ForMember(dest => dest.NetworkTypeId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.ChangeDate, opt => opt.MapFrom(src => src.UpdatedAt))

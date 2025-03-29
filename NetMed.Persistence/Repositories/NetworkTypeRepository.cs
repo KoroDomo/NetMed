@@ -104,6 +104,7 @@ namespace NetMed.Persistence.Repositories
                     _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
                     return _operations.HandleException("Entitys", "NotFound");
                 }
+                Network.UpdatedAt = DateTime.Now;
                 _context.Entry(Network).CurrentValues.SetValues(network);
                 await _context.SaveChangesAsync();
 

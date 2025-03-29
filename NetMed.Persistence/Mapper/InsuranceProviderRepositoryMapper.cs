@@ -1,5 +1,4 @@
-﻿
-using NetMed.Domain.Entities;
+﻿using NetMed.Domain.Entities;
 using NetMed.Model.Models;
 
 
@@ -22,10 +21,13 @@ namespace NetMed.Persistence.Repositories
                 State = ip.State,
                 Country = ip.Country,
                 ZipCode = ip.ZipCode,
+                IsActive = ip.IsActive,
                 CoverageDetails = ip.CoverageDetails,
                 IsPreferred = ip.IsPreferred,
                 NetworkTypeID = ip.NetworkTypeID,
                 AcceptedRegions = ip.AcceptedRegions,
+                UpdatedAt = ip.UpdatedAt,
+                CustomerSupportContact = ip.CustomerSupportContact,
                 MaxCoverageAmount = ip.MaxCoverageAmount
             });
         }

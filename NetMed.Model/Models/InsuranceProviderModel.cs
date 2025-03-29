@@ -16,10 +16,9 @@ namespace NetMed.Model.Models
         public string CoverageDetails { get; set; }
         public bool IsPreferred { get; set; }
         public int NetworkTypeID { get; set; }
-        public int? CustomerSupportContact { get; set; }
+        public string? CustomerSupportContact { get; set; }
         public string? AcceptedRegions { get; set; }
         public decimal? MaxCoverageAmount { get; set; }
-        public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; }
 

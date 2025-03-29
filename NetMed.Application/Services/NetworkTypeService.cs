@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using NetMed.Application.Contracts;
-using NetMed.Application.Dtos.InsuranceProvider;
+using NetMed.Application.Dtos.NetworkType;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
@@ -34,7 +34,7 @@ namespace NetMed.Application.Services
                 var repositoryResult = await _networkTypeRepository.GetAllAsync();
                 if (!repositoryResult.Success) return repositoryResult;
 
-                var dtos = _mapper.Map<List<NetworkTypeDto>>(repositoryResult.Result);
+                var dtos = _mapper.Map<List<GetNetworkTypeDto>>(repositoryResult.Result);
 
                 return _operations.SuccessResult(dtos, "Operations", "GetSuccess");
             }
@@ -81,7 +81,6 @@ namespace NetMed.Application.Services
                 if (operationResult.Success)
                 {
                     dto.Removed = true;
-                    dto.ChangeUserID = dto.NetworkTypeId;
                     return operationResult;
                 }
 
