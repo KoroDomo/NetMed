@@ -26,7 +26,7 @@ namespace NetMed.Persistence.Repositories
             _startupValidator = new StatusValidator(logger, jsonMessage);
         }
 
-        public override Task<List<Status>> GetAllAsync()
+        public override Task<OperationResult> GetAllAsync()
         {
             _logger.LogInformation(_jsonMessage.SuccessMessages["GetAllEntity"]);
             return base.GetAllAsync();

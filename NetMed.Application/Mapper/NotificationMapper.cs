@@ -14,7 +14,6 @@ namespace NetMed.Application.Mapper
         public NotificationMapper()
         {
             CreateMap<NotificationsModel, NotificationDto>()
-           .ForMember(not => not.NotificationId, opt => opt.MapFrom(src => src.NotificationID))
            .ForMember(not => not.UserID, opt => opt.MapFrom(src => src.UserID))
            .ForMember(not => not.Message, opt => opt.MapFrom(src => src.Message))
            .ForMember(not => not.SentAt, opt => opt.MapFrom(src => src.SentAt))
@@ -22,7 +21,6 @@ namespace NetMed.Application.Mapper
 
 
            CreateMap<Notification, NotificationDto>()
-          .ForMember(not => not.NotificationId, opt => opt.MapFrom(src => src.Id))
           .ForMember(not => not.UserID, opt => opt.MapFrom(src => src.UserID))
           .ForMember(not => not.Message, opt => opt.MapFrom(src => src.Message))
           .ForMember(not => not.SentAt, opt => opt.MapFrom(src => src.SentAt))

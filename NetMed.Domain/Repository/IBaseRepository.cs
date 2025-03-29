@@ -14,7 +14,7 @@ namespace NetMed.Domain.Repository
         Task<OperationResult> SaveEntityAsync(TEntity entity);
         Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> filter);
         Task<OperationResult> GetAllAsync(Expression<Func<TEntity, bool>> filter);
-        Task<List<TEntity>> GetAllAsync();
+        Task<OperationResult> GetAllAsync();
 
         Task<OperationResult> DeleteEntityAsync(TEntity entity);
 

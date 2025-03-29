@@ -30,11 +30,11 @@ namespace NetMed.Persistence.Base
             }
         }
 
-        public virtual async Task<List<TEntity>> GetAllAsync()
+        public virtual async Task<OperationResult> GetAllAsync()
         {
             try
             {
-                return await Entity.ToListAsync();
+                return new OperationResult { Data = await Entity.ToListAsync(), Success= true };
             }
             catch (Exception ex)
             {

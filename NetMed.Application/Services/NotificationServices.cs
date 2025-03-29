@@ -44,13 +44,13 @@ namespace NetMed.Application.Services
             try
             {
                 var notification = await _notificationRepository.GetAllAsync();
-                if (!notification.Any())
+                if (notification == null)
                 {
                     _logger.LogInformation(_jsonMessageMapper.ErrorMessages["GetAllEntity"], notification);
                     return new OperationResult { Success = true, Message = _jsonMessageMapper.SuccessMessages["GetAllEntity"], Data = notification };
                 }
 
-                return new OperationResult { Success = false, _jsonMessageMapper.SuccessMessages["GetAllEntity"], Data = notification };
+                return new OperationResult { Success = false, Message = _jsonMessageMapper.SuccessMessages["GetAllEntity"], Data = notification };
             }
 
 

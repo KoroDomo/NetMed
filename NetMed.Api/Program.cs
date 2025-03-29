@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NetMed.Application.Interfaces;
+using NetMed.IOC.Dependencies;
 using NetMed.Domain.Base;
 using NetMed.Infraestructure.Loggin.Base;
 using NetMed.Persistence.Context;
@@ -13,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<NetmedContext>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalAppointment")));
 
+
+
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 builder.Services.AddScoped<IRolesRepository, RolesRepository>();
@@ -20,9 +23,9 @@ builder.Services.AddScoped<IRolesRepository, RolesRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 
 
-//builder.Services.AddNotificationDependency();
-//builder.Services.AddRolesDependency();
-//builder.Services.AddStatusDependency();
+builder.Services.AddNotificationDependency();
+builder.Services.AddRolesDependency();
+builder.Services.AddStatusDependency();
 
 
 builder.Services.AddSingleton<ILoggerCustom, LoggerCustom>();

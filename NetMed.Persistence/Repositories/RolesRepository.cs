@@ -28,7 +28,7 @@ namespace NetMed.Persistence.Repositories
             _rolesValidator = new RolesValidator(logger, jsonMessage);
         }
 
-        public override Task<List<Roles>> GetAllAsync()
+        public override Task<OperationResult> GetAllAsync()
         {
             _logger.LogInformation(_jsonMessage.SuccessMessages["GetAllEntity"]);
             return base.GetAllAsync();

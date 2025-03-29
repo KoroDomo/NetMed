@@ -1,13 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure;
+using Microsoft.EntityFrameworkCore;
 using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Validator.Implementations;
 using NetMed.Infraestructure.Validator.Interfaz;
+using NetMed.Model.Models;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Context.Interfaces;
-using System.Linq.Expressions;
+using NetMed.Persistence.NewFolder;
 
 namespace NetMed.Persistence.Repositories
 {
@@ -28,12 +30,28 @@ namespace NetMed.Persistence.Repositories
             _notificationValidator = new NotificationValidator(logger, messageMapper);
         }
 
-        public  override  async Task<List<Notification>> GetAllAsync()
+        public async override Task<OperationResult> GetAllAsync()
         {
             try
             {
-                return await _context.Set<Notification>().ToListAsync();
-               
+                var network = await _context.Notifications
+                    .OrderByDescending(ip => ip.Id)
+                    .Select(ip => new NotificationsModel()
+                    {
+                        NotificationID = ip.Id,
+                        Message = ip.Message,
+                        SentAt = ip.SentAt,
+                        UserID = ip.UserID
+                    })
+                    .ToListAsync();
+
+                if (!network.Any())
+                {
+                    _logger.LogError("No se encontro la notication.");
+                    return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["EntityCreated"] };
+
+                }
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["EntityCreated"], Data = network };
             }
             catch (Exception ex)
             {
