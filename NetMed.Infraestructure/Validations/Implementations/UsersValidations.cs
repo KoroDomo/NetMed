@@ -49,7 +49,7 @@ namespace NetMed.Infrastructure.Validations.Implementations
         public OperationResult ValidateUserPassword(Users users)
         {
             OperationResult result = new OperationResult();
-            if (string.IsNullOrEmpty(users.Password) || (string.IsNullOrWhiteSpace(users.Password)))
+            if (string.IsNullOrEmpty(users.Password) || (string.IsNullOrWhiteSpace(users.Password)) && (users.Password.Length < 4))
             {
                 result.Success = false;
                 result.Message = "Invalid Password";
@@ -61,10 +61,10 @@ namespace NetMed.Infrastructure.Validations.Implementations
         public OperationResult ValidateUsersRoleID(Users users)
         {
             OperationResult result = new OperationResult();
-            if (users.RoleID <= 0)
+            if (users.RoleID > 1 && users.RoleID > 3)
             {
                 result.Success = false;
-                result.Message = "Invalid Role ID";
+                result.Message = "Invalid RoleID";
                 return result;
             }
             return result;

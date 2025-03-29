@@ -13,7 +13,7 @@ namespace NetMed.Infrastructure.Validations.Implementations
         public OperationResult ValidatePatientAddress(Patients patients)
         {
             OperationResult result = new OperationResult();
-            if (string.IsNullOrEmpty(patients.Address) || (patients.Address.Length < 4))
+            if (string.IsNullOrEmpty(patients.Address) || (patients.Address.Length < 3))
             {
                 result.Success = false;
                 result.Message = "Invalid Address";
@@ -100,7 +100,7 @@ namespace NetMed.Infrastructure.Validations.Implementations
         {
             OperationResult result = new OperationResult();
 
-            if (string.IsNullOrEmpty(patients.PhoneNumber) || (patients.PhoneNumber.Length < 10))
+            if (string.IsNullOrEmpty(patients.PhoneNumber) || (patients.PhoneNumber.Length != 10))
             {
                 result.Success = false;
                 result.Message = "Invalid Phone Number";
@@ -108,7 +108,8 @@ namespace NetMed.Infrastructure.Validations.Implementations
             }
 
             result.Success = true;
-            return result;
+            result.data = patients;
+            return result; 
         }
 
         public OperationResult ValidatePatientWithoutInsurance(Patients patients)

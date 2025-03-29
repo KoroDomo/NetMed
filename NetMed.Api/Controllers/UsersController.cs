@@ -36,8 +36,12 @@ namespace NetMed.Api.Controllers
 
         // POST api/<UsersController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] AddUserDto usersDto) // Updated parameter type
+        public async Task<IActionResult> AddUser([FromBody] AddUserDto usersDto)
         {
+            if (usersDto == null)
+            {
+                return BadRequest("User data is required.");
+            }
 
             if (!ModelState.IsValid)
             {
@@ -45,15 +49,16 @@ namespace NetMed.Api.Controllers
             }
 
             var result = await _usersServices.Add(usersDto);
-            if (result.Success)
+            if (!result.Success)
             {
-                return Ok(result.data);
+                return BadRequest(result.Message);
             }
-            return BadRequest(result.Message);
+
+            return Ok(result.data);
         }
         // PUT api/<UsersController>/5
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Put([FromBody] UpdateUserDto usersDto) // Updated parameter type
+        public async Task<IActionResult> Put([FromBody] UpdateUserDto usersDto) 
         {
             if (!ModelState.IsValid)
             {

@@ -16,7 +16,8 @@ namespace NetMed.Application.Services
         private readonly IDoctorsRepository _doctorsRepository;
         public DoctorsServices(IDoctorsRepository doctorsRepository,
             ILogger<DoctorsServices> logger)
-          
+            : base(logger)
+
         {
             if (doctorsRepository is null) throw new ArgumentNullException(nameof(doctorsRepository));
              this._logger = logger;
@@ -62,10 +63,11 @@ namespace NetMed.Application.Services
                 result.data = await _doctorsRepository.GetAllAsync();
 
                 if(!result.Success)
-                {
+                {  
+                    
                     result.data = result.data;
                     result.Success = result.Success;
-                    return result ;
+                    return result;
                    
                 }
             }
@@ -87,6 +89,7 @@ namespace NetMed.Application.Services
 
                 var doctor = new Doctors
                 {
+                    UserId = dto.UserId,    
                     SpecialtyID = (short)dto.SpecialtyID,
                     LicenseNumber = dto.LicenseNumber,
                     PhoneNumber = dto.PhoneNumber,

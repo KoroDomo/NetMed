@@ -34,7 +34,7 @@ namespace NetMed.Persistence.Repositories
                 result.data = await _context.Doctors.Where(x => x.AvailabilityModeId == availabilityModeId)
                     .ToListAsync();
 
-                // Add this line to set the success message
+             
                 result.Message = "Doctor disponible";
 
 
@@ -234,6 +234,7 @@ namespace NetMed.Persistence.Repositories
                     result.Success = false;
                     result.Message = _repErrorMapper.DataISNullErrorGlogal["DataDoctorsIsNull"];
                     _logger.LogError("Doctors entity is null.");
+                    return result;
                 }
                 else
                 {
@@ -242,6 +243,7 @@ namespace NetMed.Persistence.Repositories
                     result.Success = true;
                     result.Message = "Doctor saved successfully";
                     _logger.LogInformation("Doctor saved successfully: {@Doctor}", doctors);
+                    return result;
                 }
             }
             catch (Exception ex)
@@ -253,9 +255,10 @@ namespace NetMed.Persistence.Repositories
                 }
                 result.Success = false;
                 _logger.LogError(ex, "Error while saving Doctor.");
+                return result;
             }
 
-            return result;
+           
         }
 
 

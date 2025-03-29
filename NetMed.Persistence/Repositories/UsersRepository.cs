@@ -290,19 +290,21 @@ public override async Task<OperationResult> SaveEntityAsync(Users user)
                     result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     return result;
                 }
-
-             
+                user.UserId = 0;
+                _context.Users.Add(user);
 
                 await _context.SaveChangesAsync();
+                result.data = user;
                 result.Success = true;
+               
             }
             catch (Exception ex)
             {
                 result.Message = ex.Message + _repErrorMapper.SaveEntityErrorMessage["SaveEntityError"];
                 result.Success = false;
                 _logger.LogError(ex, "Error while saving User.");
+                return result;
             }
-
             return result;
         }
 

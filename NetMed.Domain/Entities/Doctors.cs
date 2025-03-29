@@ -9,7 +9,6 @@ namespace NetMed.Domain.Entities
     {
         [Column("DoctorID")]
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public override int UserId { get; set; }
 
         [Required]

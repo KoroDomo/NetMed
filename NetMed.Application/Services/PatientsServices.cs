@@ -39,6 +39,8 @@ namespace NetMed.Application.Services
                     UserId = dto.UserId,
                     DateOfBirth = dto.DateOfBirth,
                     Gender = dto.Gender,
+                    PhoneNumber = dto.PhoneNumber,
+                    Address = dto.Address,
                     EmergencyContactPhone = dto.EmergencyContactPhone ?? string.Empty, 
                     EmergencyContactName = dto.EmergencyContactName,
                     BloodType = dto.BloodType,

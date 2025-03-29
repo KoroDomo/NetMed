@@ -2,7 +2,7 @@
 {
     public class DoctorsModel
     {
-        public int DoctorID { get; set; }
+ 
         public int SpecialtyID { get; set; }
         public required string LicenseNumber { get; set; }
         public required string PhoneNumber { get; set; }

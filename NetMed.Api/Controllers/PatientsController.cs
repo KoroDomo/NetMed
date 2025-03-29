@@ -39,8 +39,23 @@ namespace NetMed.Api.Controllers
         [HttpPost("SavePatients")]
         public async Task<IActionResult> Post([FromBody] AddPatientDto patientsDto)
         {
-            var pacient = await _patientsServices.Add(patientsDto);
-            return Ok(pacient);
+            try
+            {
+                var pacient = await _patientsServices.Add(patientsDto);
+                if (pacient.Success)
+                {
+                    return Ok(pacient);
+                }
+                else
+                {
+                    return BadRequest(pacient.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while saving the patient.");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         // PUT api/<PatientsController>/5

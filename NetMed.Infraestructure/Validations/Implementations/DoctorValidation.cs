@@ -1,5 +1,6 @@
 ﻿
 
+using Microsoft.Extensions.Logging;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Validations.Implementations;
@@ -9,6 +10,13 @@ namespace NetMed.Infrastructure.Validations.Implementations
 {
     public class DoctorValidation : OperationValidator, IDoctorValidations
     {
+        private readonly ILogger<DoctorValidation> _logger;
+
+        public DoctorValidation(ILogger<DoctorValidation> logger)
+        {
+            _logger = logger;
+        }
+
         public OperationResult ValidateDoctorAvailability(Doctors doctors)
         {
             if(doctors.AvailabilityModeId < 1 && doctors.AvailabilityModeId < 0 )
@@ -81,7 +89,7 @@ namespace NetMed.Infrastructure.Validations.Implementations
 
         public OperationResult ValidateDoctorSpecialtyID(Doctors doctors)
         {
-           if(doctors.SpecialtyID < 1 && doctors.SpecialtyID < 0)
+           if(doctors.SpecialtyID > 8 || doctors.SpecialtyID < 0)
             {
                 return new OperationResult
                 {
@@ -115,7 +123,10 @@ namespace NetMed.Infrastructure.Validations.Implementations
 
         public OperationResult ValidateDoctorLicenseExpirationDate(Doctors doctors)
         {
-            if (doctors.LicenseExpirationDate.ToDateTime(TimeOnly.MinValue) > DateTime.Now)
+            var currentDate = DateOnly.FromDateTime(DateTime.Now);
+            _logger.LogInformation($"Validating License Expiration Date: {doctors.LicenseExpirationDate}, Current Date: {currentDate}");
+
+            if (doctors.LicenseExpirationDate < currentDate)
             {
                 return new OperationResult
                 {

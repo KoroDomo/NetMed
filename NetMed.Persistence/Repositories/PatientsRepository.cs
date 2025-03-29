@@ -253,11 +253,20 @@ namespace NetMed.Persistence.Repositories
                 {
                     result.Success = false;
                     result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
+                    _logger.LogError("Patients entity is null");
                     return result;
                 }
-                _context.Patients.Add(patients);
-                await _context.SaveChangesAsync();
-                result.Success = true;
+                else
+                {
+
+
+                    _context.Patients.Add(patients);
+                    await _context.SaveChangesAsync();
+                    result.Success = true;
+                    result.Message = "Patient saved susccessfully";
+                    _logger.LogInformation("Patient saved: {@Patients}", patients);
+                    return result;
+                }
             }
             catch (Exception ex)
             {

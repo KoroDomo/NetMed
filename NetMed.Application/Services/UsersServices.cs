@@ -6,20 +6,31 @@ using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
 using NetMed.Infrastructure.Validations.Implementations;
+using Microsoft.EntityFrameworkCore;
+using NetMed.Persistence.Context;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.Extensions.Options;
 
 
 namespace NetMed.Application.Services
 {
     public class UsersServices : UsersValidations, IUsersServices
     {
+        private NetMedContext _context;
         private readonly ILogger<UsersServices> _logger;
         private readonly IUsersRepository _usersRepository;
         public UsersServices(IUsersRepository usersRepository,
+            NetMedContext context,
             ILogger<UsersServices> logger)
         {
             this._usersRepository = usersRepository;
             this._logger = logger;
+            _context = context;
+
         }
+
+
+
 
 
         public async Task<OperationResult> Add(AddUserDto dto)
@@ -34,8 +45,7 @@ namespace NetMed.Application.Services
                     LastName = dto.LastName ?? string.Empty,
                     Email = dto.Email,
                     Password = dto.Password ?? string.Empty,
-                  
-                    RoleID = 2,
+                    RoleID = dto.RoleID
                 };
 
                 // Perform validations
@@ -55,8 +65,15 @@ namespace NetMed.Application.Services
                     return failedValidation;
                 }
 
-                result = await _usersRepository.SaveEntityAsync(users);
+                await _usersRepository.SaveEntityAsync(users);
+
+                if (result.data == null)
+                {
+                    result.Success = false;
+                    result.Message = "Error, datos del usuario vacios";
+                }
             }
+
             catch (Exception ex)
             {
                 result.Success = false;
@@ -116,24 +133,12 @@ namespace NetMed.Application.Services
 
         public async Task<OperationResult> GetAllData()
         {
-           OperationResult result = new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
-                result.data = await _usersRepository.GetAllAsync();
-
-                var users = result.data;
-
-
-               
-
-                if (!result.Success)
-                {
-                    result.data = result.data;
-                    result.Success = result.Success;
-                    return result;
-                }
-                return result;
-
+                var data = await _usersRepository.GetAllAsync();
+                result.data = data;
+                result.Success = true;
             }
             catch (Exception ex)
             {
@@ -145,7 +150,7 @@ namespace NetMed.Application.Services
         }
 
     
-public async Task<OperationResult> Update(UpdateUserDto dto)
+    public async Task<OperationResult> Update(UpdateUserDto dto)
         {
             OperationResult result = new OperationResult();
             try
@@ -188,6 +193,8 @@ public async Task<OperationResult> Update(UpdateUserDto dto)
             return result;
         }
 
-    
+        
+
+
     }
 }
