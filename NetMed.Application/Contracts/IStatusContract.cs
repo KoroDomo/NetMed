@@ -7,5 +7,8 @@ namespace NetMed.Application.Contracts
     public interface IStatusContract : IBaseContract<SaveStatusDto, UpdateStatusDto, DeleteStatusDto>
     {
 
+
+                
+
     }
 }

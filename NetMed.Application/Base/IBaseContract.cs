@@ -1,5 +1,4 @@
 ﻿using NetMed.Domain.Base;
-using NetMed.Domain.Entities;
 
 namespace NetMed.Application.Base
 {

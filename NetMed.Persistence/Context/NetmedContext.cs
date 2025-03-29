@@ -11,8 +11,6 @@ namespace NetMed.Persistence.Context
         {
 
         }
-
-
         public DbSet<Status> statuses { get; set; }
 
         public DbSet<Notification> Notifications { get; set; }

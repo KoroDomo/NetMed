@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using NetMed.Application.Contracts;
+using NetMed.Application.Dtos.Status;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Context.Interfaces;
 using NetMed.Persistence.Interfaces;
@@ -9,47 +11,38 @@ using NetMed.Persistence.Interfaces;
         [ApiController]
         public class StatusController : ControllerBase
         {
-            private readonly IStatusRepository _statusRepository;
+            private readonly IStatusContract _statusContract;
             private readonly ILogger<StatusController> _logger;
 
-            public StatusController(IStatusRepository statusRepository,
+            public StatusController(IStatusContract statusContract,
                                     ILogger<StatusController> logger)
             {
-                _statusRepository = statusRepository;
+                _statusContract = statusContract;
                 _logger = logger;
             }
 
             [HttpGet("GetAllStatus")]
             public async Task<IActionResult> GetAllStatus()
             {
-                    var statusList = await _statusRepository.GetAllAsync();
+                    var statusList = await _statusContract.GetAllDto();
                     return Ok(statusList);
            
             }
 
-        [HttpGet("GetStatusById")]
-        public async Task<IActionResult> GetStatusById(int id)
-        {
-
-            var status = await _statusRepository.GetStatusByIdAsync(id);
-            return Ok(status);
-
-        }
-
             [HttpPost("CreateStatus")]
-            public async Task<IActionResult> CreateStatus([FromBody] Status status)
+            public async Task<IActionResult> CreateStatus([FromBody] SaveStatusDto status)
             {
               
-                    var statu = await _statusRepository.CreateStatusAsync(status);
+                    var statu = await _statusContract.SaveDto(status);
                     return Ok(statu);
                
             }
 
             [HttpPut("UpdateStatus")]
-            public async Task<IActionResult> UpdateStatus([FromBody] Status status)
+            public async Task<IActionResult> UpdateStatus([FromBody] UpdateStatusDto status)
             {
 
-            var result = await _statusRepository.UpdateStatusAsync(status);
+            var result = await _statusContract.UpdateDto(status);
                     return Ok(result);
                 
                 
@@ -59,7 +52,7 @@ using NetMed.Persistence.Interfaces;
             public async Task<IActionResult> DeleteStatus([FromBody] int  statusId)
             {
                
-                    var result = await _statusRepository.DeleteStatusAsync(statusId);
+                    var result = await _statusContract.DeleteDto(statusId);
                     return Ok(result);
                 
             }

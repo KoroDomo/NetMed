@@ -8,7 +8,7 @@ using NetMed.Infraestructure.Validator.Interfaz;
 
 namespace NetMed.Infraestructure.Validator.Implementations
 {
-    public class StatusValidator : BaseValidator, IStatusValidator
+    public class StatusValidator : BaseValidator<Status>, IStatusValidator
     {
         private readonly JsonMessage _jsonMessage;
         private readonly ILoggerCustom _loggerCustom;

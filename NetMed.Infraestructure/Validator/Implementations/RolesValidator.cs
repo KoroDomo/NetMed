@@ -8,7 +8,7 @@ using NetMed.Infraestructure.Validator.Interfaz;
 
 namespace NetMed.Infraestructure.Validator.Implementations
 {
-    public class RolesValidator : BaseValidator, IRolesValidator
+    public class RolesValidator : BaseValidator<Roles>, IRolesValidator
     {
         private readonly JsonMessage _jsonMessage;
         private readonly ILoggerCustom _loggerCustom;

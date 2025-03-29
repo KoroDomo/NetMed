@@ -24,6 +24,7 @@ namespace NetMed.Domain.Base
                 ["NotificationNotFound"] = "No se encontró la notificación",
                 ["GeneralError"] = "Error al procesar la solicitud",
                 ["InvalidId"] = "El ID proporcionado no es válido",
+                ["InvalidNullId"] = "El ID no puede ser nulo ",
                 ["NullEntity"] = "La entidad no puede ser nula",
                 ["DatabaseError"] = "Error en la base de datos",
                 ["RoleNotFound"] = "No se encontró el rol ",
@@ -39,7 +40,9 @@ namespace NetMed.Domain.Base
                 ["RolesMessage"] = "Los roles no puede pasar de 20 caracteres",
                 ["NotificationSentAt"] = "No puede sobrepasar el tiempo mano",
                 ["RoleIsNotActive"] = " El rol no esta activo",
-                ["RegexIsNull"] = "La entrada no puede ser nula o vacía."
+                ["RegexIsNull"] = "La entrada no puede ser nula o vacía.",
+                ["InvalidDate"] = "La fecha no puede ser mayor que la actual"
+                
             };
 
             SuccessMessages = new Dictionary<string, string>

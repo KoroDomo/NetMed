@@ -7,6 +7,7 @@ using NetMed.Infraestructure.Validator.Interfaz;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Context.Interfaces;
+using System.Linq.Expressions;
 
 namespace NetMed.Persistence.Repositories
 {
@@ -25,6 +26,20 @@ namespace NetMed.Persistence.Repositories
             _logger = logger;
             _jsonMessage = messageMapper;
             _notificationValidator = new NotificationValidator(logger, messageMapper);
+        }
+
+        public  override  async Task<List<Notification>> GetAllAsync()
+        {
+            try
+            {
+                return await _context.Set<Notification>().ToListAsync();
+               
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, _jsonMessage.ErrorMessages["DatabaseError"], ex.Message);
+                throw;
+            }
         }
 
         public override async Task<OperationResult> SaveEntityAsync(Notification notification)

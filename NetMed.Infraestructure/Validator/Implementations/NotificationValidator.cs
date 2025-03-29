@@ -3,17 +3,16 @@
 using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
-using NetMed.Domain.Repository;
 using NetMed.Infraestructure.Validator.Base;
 using NetMed.Infraestructure.Validator.Interfaz;
 
 namespace NetMed.Infraestructure.Validator.Implementations
 {
-    public class NotificationValidator : BaseValidator, INotificationValidator
+    public class NotificationValidator : BaseValidator<Notification>, INotificationValidator
     {
         private readonly JsonMessage _jsonMessage;
         private readonly ILoggerCustom _loggerCustom;
-        private readonly IBaseRepository<Notification> _notificationRepository;
+        private readonly BaseValidator<Notification> _operationsNotification;
 
 
         public NotificationValidator(ILoggerCustom loggerCustom,
@@ -83,7 +82,7 @@ namespace NetMed.Infraestructure.Validator.Implementations
             if (sentAt.HasValue && sentAt.Value > DateTime.UtcNow)
             {
                 return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["NotificationSentAt"] };
-           
+
             }
             else
             {
@@ -104,7 +103,50 @@ namespace NetMed.Infraestructure.Validator.Implementations
             }
         }
 
-       
+        public OperationResult ValidateNotification(Notification notification)
+        {
+            try
+            {
+
+          
+              var  result = ValidateNotificationIsNotNull(notification, _jsonMessage.ErrorNotification["NullEntity"]);
+                if (!result.Success)
+                {
+                    return result;
+                }
+
+                result = ValidateNotificationIdAndUserId(notification.Id, notification.UserID, _jsonMessage.ErrorNotification["InvalidId"]);
+                if (!result.Success)
+                {
+                    return result;
+                }
+
+                result = _operationsNotification.ValidateStringLength(notification.Message, 20);
+                if (!result.Success)
+                {
+                    return result;
+                }
+
+                result = _operationsNotification.IsNullOrWhiteSpace<Notification>(notification);
+                if (!result.Success)
+                {
+                    return result;
+                }
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["NullEntity"] };
+            
+            }
+        }
+
+        public OperationResult ValidateNotificationIdAndUserId(int UserId, string erroMessage)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
+
 

@@ -15,5 +15,8 @@ namespace NetMed.Infraestructure.Validator.Interfaz
 
         OperationResult ValidateSentAt(DateTime? sentAt);
 
+        OperationResult ValidateNotification(Notification notification);
+
+
     }
 }

@@ -1,6 +1,7 @@
-﻿using NetMed.Application.Contracts;
+﻿ using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.Notification;
 using NetMed.Application.Interfaces;
+using NetMed.Application.Mapper;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Validator.Implementations;
@@ -19,6 +20,7 @@ namespace NetMed.Application.Services
         private readonly ILoggerCustom _logger;
         private readonly JsonMessage _jsonMessageMapper;
         private readonly INotificationValidator _notificationValidator;
+        private readonly NotificationMapper _mapper;
 
         public  NotificationServices(NetmedContext context,INotificationRepository notificationRepository,
                                                            ILoggerCustom logger,
@@ -29,6 +31,7 @@ namespace NetMed.Application.Services
             _notificationRepository = notificationRepository;
             _jsonMessageMapper = jsonMessageMapper;
             _notificationValidator = new NotificationValidator(logger, jsonMessageMapper);
+            _mapper = new NotificationMapper();
 
         }
 
@@ -41,9 +44,17 @@ namespace NetMed.Application.Services
             try
             {
                 var notification = await _notificationRepository.GetAllAsync();
-                _logger.LogInformation(_jsonMessageMapper.ErrorMessages["GetAllEntity"], notification);
-                return new OperationResult { Success = true, Message = _jsonMessageMapper.SuccessMessages["GetAllEntity"], Data = notification };
+                if (!notification.Any())
+                {
+                    _logger.LogInformation(_jsonMessageMapper.ErrorMessages["GetAllEntity"], notification);
+                    return new OperationResult { Success = true, Message = _jsonMessageMapper.SuccessMessages["GetAllEntity"], Data = notification };
+                }
+
+                return new OperationResult { Success = false, _jsonMessageMapper.SuccessMessages["GetAllEntity"], Data = notification };
             }
+
+
+                
             catch (Exception ex)
             {
                 _logger.LogError(ex, _jsonMessageMapper.ErrorMessages["DatabaseError"], ex.Message);
@@ -87,7 +98,7 @@ namespace NetMed.Application.Services
             {               
                 var notification = new Notification
                 {
-                   
+             
                     UserID = dtoSave.UserID,
                     Message = dtoSave.Message,
                     SentAt = dtoSave.SentAt,
@@ -151,6 +162,6 @@ namespace NetMed.Application.Services
             }
         }
 
-       
+      
     }
 }
