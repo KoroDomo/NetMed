@@ -1,4 +1,4 @@
-namespace NetMed.Web.Models
+namespace NetMed.WebApi.Models
 {
     public class ErrorViewModel
     {

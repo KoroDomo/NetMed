@@ -88,10 +88,10 @@ namespace NetMed.Application.Services
                 {
                     Id = TDto.AppointmentID,                  
                 };
-                await _appointmentsRespository.RemoveAsync(appointments);
+                var data = await _appointmentsRespository.RemoveAsync(appointments);
                 result.Success = true;
                 result.Message = _messageService.GetMessage(nameof(Remove), true);
-                result.Data = appointments;
+                result.Data = data;
             }
             catch (Exception ex) 
             {

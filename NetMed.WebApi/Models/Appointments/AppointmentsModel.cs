@@ -1,5 +1,7 @@
-﻿
-namespace NetMed.Model.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace NetMed.WebApi.Models.Appointments
 {
     public class AppointmentsModel
     {
@@ -10,6 +12,5 @@ namespace NetMed.Model.Models
         public int statusID { get; set; }
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
-
     }
 }

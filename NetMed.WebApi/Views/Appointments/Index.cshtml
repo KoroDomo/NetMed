@@ -1,0 +1,71 @@
+﻿@model IEnumerable<NetMed.WebApi.Models.Appointments.AppointmentsModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Appointments List</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.appointmentID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.patientID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.doctorID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.appointmentDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.statusID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.createdAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.updatedAt)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.appointmentID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.patientID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.doctorID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.appointmentDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.statusID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.createdAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.updatedAt)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new {  id=item.appointmentID }) |
+                @Html.ActionLink("Details", "Details", new {  id=item.appointmentID  }) |
+                @Html.ActionLink("Delete", "Delete", new {  id=item.appointmentID })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

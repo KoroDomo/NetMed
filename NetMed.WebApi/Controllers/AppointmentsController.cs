@@ -1,27 +1,33 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.Mvc;
-using NetMed.Web.Models.Appointments;
+using NetMed.WebApi.Models.Appointments;
 
-namespace NetMed.Web.Controllers
+namespace NetMed.WebApi.Controllers
 {
     public class AppointmentsController : Controller
     {
         // GET: AppointmentsController
         public async Task<IActionResult> Index()
         {
+            List<AppointmentsModel> appointments = new List<AppointmentsModel>();
+            
             using (var client = new HttpClient())
             {
-                List<AppointmentsModel> appointments = new List<AppointmentsModel>();
                 client.BaseAddress = new Uri("http://localhost:5135/api/");
-                
                 var response = await client.GetAsync("Appointments/GetAppointment");
 
-                if (response.IsSuccessStatusCode)  
+                if (response.IsSuccessStatusCode)
                 {
-                    var data = await response.Content.ReadFromJsonAsync<AppointmentsModel>();
+                    var datos = await response.Content.ReadFromJsonAsync<OperationResult>();
+                    return View(datos.Data);                    
+                }
+                else
+                {
+                    ViewBag.Message = "Error obteniendo las Citas";
+                    return View();
                 }
             }
-            return View();
+            
         }
 
         // GET: AppointmentsController/Details/5
