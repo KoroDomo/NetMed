@@ -148,7 +148,7 @@ namespace NetMed.Persistence.Repositories
                 result = _validations.IsInt(Id);
                 if (!result.success) return result.data;
 
-                var datos = await base.GetEntityByIdAsync(Id);
+                var datos = await _context.DoctorAvailability.Where(a => a.Id == Id).FirstAsync();
                 result.success = true;
                 result.message = _messageService.GetMessage(nameof(GetEntityByIdAsync), true);
                 result.data = datos;

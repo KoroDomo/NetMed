@@ -30,11 +30,10 @@ namespace NetMed.WebApi.Controllers
             }
             
         }
+
         // GET: AppointmentsController/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            AppointmentsModel appointments = new AppointmentsModel();
-
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost:5135/api/");
@@ -49,7 +48,7 @@ namespace NetMed.WebApi.Controllers
                 }
                 else
                 {
-                    ViewBag.Message = "Error obteniendo las Citas";
+                    ViewBag.Message = "Error obteniendo la Cita";
                     return View();
                 }
             }  
@@ -111,7 +110,7 @@ namespace NetMed.WebApi.Controllers
                 }
                 else
                 {
-                    ViewBag.Message = "Error obteniendo las Citas";
+                    ViewBag.Message = "Error obteniendo la Cita";
                     return View();
                 }
             }
@@ -138,7 +137,7 @@ namespace NetMed.WebApi.Controllers
                     }
                     else
                     {
-                        ViewBag.Message = "Error Guardando las Cita";
+                        ViewBag.Message = "Error editando la Cita";
                         return View();
                     }
                 }
@@ -167,7 +166,7 @@ namespace NetMed.WebApi.Controllers
                 }
                 else
                 {
-                    ViewBag.Message = "Error obteniendo las Citas";
+                    ViewBag.Message = "Error obteniendo la Cita";
                     return View();
                 }
             }
@@ -197,7 +196,7 @@ namespace NetMed.WebApi.Controllers
 
                     if (response.IsSuccessStatusCode)
                     {
-                        await response.Content.ReadFromJsonAsync<OperationResult<AppointmentsModel>>();
+                        await response.Content.ReadFromJsonAsync<OperationResult<AppointmentsModelRemove>>();
                     }
                     else
                     {

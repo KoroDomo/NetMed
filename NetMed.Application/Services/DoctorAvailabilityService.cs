@@ -62,7 +62,7 @@ namespace NetMed.Application.Services
 
                 result.success = true;
                 result.message = _messageService.GetMessage(nameof(GetById), true);
-                result.data = doctorAvailability;        
+                result.data = doctorAvailabilityDto;        
             }
             catch (Exception ex)
             {

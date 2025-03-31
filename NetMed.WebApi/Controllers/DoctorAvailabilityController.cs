@@ -1,6 +1,8 @@
 ﻿using NetMed.WebApi.Models.OperationsResult;
 using Microsoft.AspNetCore.Mvc;
 using NetMed.WebApi.Models.DoctorAvailability;
+using System.Text;
+using System.Text.Json;
 
 namespace NetMed.WebApi.Controllers
 {
@@ -22,21 +24,34 @@ namespace NetMed.WebApi.Controllers
                 }
                 else
                 {
-                    ViewBag.Message = "Error obteniendo las Citas";
+                    ViewBag.Message = "Error obteniendo las disponibilidades de los doctores";
                     return View();
                 }
             }
         }
-
         // GET: DoctorAvailabilityController/Details/5
         public async Task<IActionResult> Details(int id)
         {
 
             using (var client = new HttpClient())
             {
+                client.BaseAddress = new Uri("http://localhost:5135/api/");
 
-            };
-            return View();
+                var response = await client.GetAsync($"DoctorAvailability/GetAvailabilityById?id={id}");
+
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var datos = await response.Content.ReadFromJsonAsync<OperationResult<DoctorAvailabilityModel>>();
+                    return View(datos.data);
+                }
+                else
+                {
+                    ViewBag.Message = "Error al obtener los datos del doctor";
+                    return View();
+                }
+            }           
         }
 
         // GET: DoctorAvailabilityController/Create
@@ -48,10 +63,28 @@ namespace NetMed.WebApi.Controllers
         // POST: DoctorAvailabilityController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create(DoctorAvailabilityModel doctorAvailabilityModel)
         {
             try
             {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://localhost:5135/api/");
+
+                    var response = await client.PostAsJsonAsync($"DoctorAvailability/SaveDoctorAvailability", doctorAvailabilityModel);
+
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        await response.Content.ReadFromJsonAsync<OperationResult<DoctorAvailabilityModelSave>>();
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Error Guardando la disponibilidad";
+                        return View();
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -61,18 +94,53 @@ namespace NetMed.WebApi.Controllers
         }
 
         // GET: DoctorAvailabilityController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            return View();
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:5135/api/");
+
+                var response = await client.GetAsync($"DoctorAvailability/GetAvailabilityById?id={id}");
+
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var datos = await response.Content.ReadFromJsonAsync<OperationResult<DoctorAvailabilityModel>>();
+                    return View(datos.data);
+                }
+                else
+                {
+                    ViewBag.Message = "Error obteniendo los datos del doctor";
+                    return View();
+                }
+            }
         }
 
         // POST: DoctorAvailabilityController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(DoctorAvailabilityModelUpdate doctorAvailabilityModel)
         {
             try
             {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://localhost:5135/api/");
+                    var response = await client.PutAsJsonAsync("DoctorAvailability/UpdateDoctorAvailability", doctorAvailabilityModel);
+
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        await response.Content.ReadFromJsonAsync<OperationResult<DoctorAvailabilityModel>>();
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Error editando la disponibilidad del doctor";
+                        return View();
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -82,18 +150,62 @@ namespace NetMed.WebApi.Controllers
         }
 
         // GET: DoctorAvailabilityController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            return View();
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:5135/api/");
+
+                var response = await client.GetAsync($"DoctorAvailability/GetAvailabilityById?id={id}");
+
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var datos = await response.Content.ReadFromJsonAsync<OperationResult<DoctorAvailabilityModel>>();
+                    return View(datos.data);
+                }
+                else
+                {
+                    ViewBag.Message = "Error obteniendo los datos del doctor";
+                    return View();
+                }
+
+            }
         }
 
         // POST: DoctorAvailabilityController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> Delete(DoctorAvailabilityModelRemove doctorAvailabilityModel)
         {
             try
             {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://localhost:5135/api/");
+
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Delete,
+                        RequestUri = new Uri(client.BaseAddress, "DoctorAvailability/RemoveDoctorAvailability"),
+                        Content = new StringContent(JsonSerializer.Serialize(doctorAvailabilityModel), Encoding.UTF8, "application/json")
+                    };
+
+                    var response = await client.SendAsync(request);
+
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        await response.Content.ReadFromJsonAsync<OperationResult<DoctorAvailabilityModel>>();
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Error Eliminando la disponibilidad del doctor";
+                        return View();
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
