@@ -1,9 +1,7 @@
-﻿
-namespace NetMed.Application.Dtos.DoctorAvailability
+﻿namespace NetMed.WebApi.Models.DoctorAvailability
 {
-    public class DoctorAvailabilityDto
+    public class DoctorAvailabilityModelSave
     {
-        public int availabilityID { get; set; }
         public int doctorID { get; set; }
         public DateOnly availableDate { get; set; }
         public TimeOnly startTime { get; set; }

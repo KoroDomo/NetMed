@@ -5,10 +5,10 @@ namespace NetMed.Domain.Base
     {
         public OperationResult() 
         { 
-          this.Success = true;
+          this.success = true;
         }    
-        public string? Message { get; set; }
-        public bool Success {get; set;}
-        public dynamic? Data { get; set; }
+        public string? message { get; set; }
+        public bool success {get; set;}
+        public dynamic? data { get; set; }
     }
 }

@@ -1,17 +1,21 @@
-﻿@model NetMed.Application.Dtos.Appointments.SaveAppointmentsDto
+﻿@model NetMed.WebApi.Models.Appointments.AppointmentsModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
 }
 
-<h1>Admin Appointments</h1>
-
+<h1>Edit Appointment</h1>
 
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="appointmentID" class="control-label"></label>
+                <input asp-for="appointmentID" class="form-control" />
+                <span asp-validation-for="appointmentID" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="patientID" class="control-label"></label>
                 <input asp-for="patientID" class="form-control" />
@@ -33,7 +37,17 @@
                 <span asp-validation-for="statusID" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <label asp-for="createdAt" class="control-label"></label>
+                <input asp-for="createdAt" class="form-control" />
+                <span asp-validation-for="createdAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="updatedAt" class="control-label"></label>
+                <input asp-for="updatedAt" class="form-control" />
+                <span asp-validation-for="updatedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn btn-primary" />
             </div>
         </form>
     </div>

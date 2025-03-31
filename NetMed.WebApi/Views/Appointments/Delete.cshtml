@@ -1,4 +1,4 @@
-﻿@model NetMed.Application.Dtos.Appointments.AppointmentsDto
+﻿@model NetMed.WebApi.Models.Appointments.AppointmentsModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -6,7 +6,6 @@
 
 <h1>Delete Appointments</h1>
 
-<h3>Are you sure you want to delete this?</h3>
 <div>
     <hr />
     <dl class="row">
@@ -55,6 +54,15 @@
     </dl>
     
     <form asp-action="Delete">
+
+        <input type="hidden" asp-for="appointmentID" />
+        <input type="hidden" asp-for="patientID" />
+        <input type="hidden" asp-for="doctorID" />
+        <input type="hidden" asp-for="appointmentDate" />
+        <input type="hidden" asp-for="statusID" />
+        <input type="hidden" asp-for="createdAt" />
+        <input type="hidden" asp-for="updatedAt" />
+
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>

@@ -32,17 +32,17 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 var datos = await _context.DoctorAvailability.ToListAsync();
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(GetAllAsync), true);
-                result.Data = datos;
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(GetAllAsync), true);
+                result.data = datos;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(GetAllAsync), false);
-                _logger.LogError(ex, result.Message);   
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(GetAllAsync), false);
+                _logger.LogError(ex, result.message);   
             }
-            return (List<DoctorAvailability>)result.Data;
+            return (List<DoctorAvailability>)result.data;
         }
         public override async Task<OperationResult> SaveEntityAsync(DoctorAvailability entity)
         {
@@ -50,22 +50,22 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = _validations.IsNullOrWhiteSpace(entity);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.CheckDate(entity.AvailableDate);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 var datos = await base.SaveEntityAsync(entity);
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(SaveEntityAsync), true);
-                result.Data = datos;
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(SaveEntityAsync), true);
+                result.data = datos;
             }
 
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(SaveEntityAsync), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(SaveEntityAsync), false);
+                _logger.LogError(ex, result.message);
             }
             return result;      
         }
@@ -75,18 +75,18 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = _validations.IsNullOrWhiteSpace(entity);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 var datos = await base.UpdateEntityAsync(entity);
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(UpdateEntityAsync), true);
-                result.Data = datos;
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(UpdateEntityAsync), true);
+                result.data = datos;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(UpdateEntityAsync), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(UpdateEntityAsync), false);
+                _logger.LogError(ex, result.message);
 
             }
             return result;
@@ -97,17 +97,17 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = _validations.IsNullOrWhiteSpace(filter);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 await base.ExistsAsync(filter);
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(ExistsAsync), true);
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(ExistsAsync), true);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(ExistsAsync), false);
-                _logger.LogError(ex , result.Message);  
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(ExistsAsync), false);
+                _logger.LogError(ex , result.message);  
             }
             return result; ;
         }
@@ -117,17 +117,17 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = _validations.IsNullOrWhiteSpace(filter);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 await base.GetAllAsync(filter);
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(GetAllAsync), true);
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(GetAllAsync), true);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(GetAllAsync), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(GetAllAsync), false);
+                _logger.LogError(ex, result.message);
             }
            return result;
         }
@@ -137,49 +137,51 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = _validations.IsNullOrWhiteSpace(Id);
-                if (!result.Success) return result.Data;
+                if (!result.success) return result.data;
 
                 result = await _validations.ExistsEntity(Id, async (id) =>
                 {
                     return await _context.DoctorAvailability.AnyAsync(a => a.Id == id);
                 });
-                if (!result.Success) return result.Data;
+                if (!result.success) return result.data;
 
                 result = _validations.IsInt(Id);
-                if (!result.Success) return result.Data;
+                if (!result.success) return result.data;
 
-                await base.GetEntityByIdAsync(Id);
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(GetEntityByIdAsync), true);
+                var datos = await base.GetEntityByIdAsync(Id);
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(GetEntityByIdAsync), true);
+                result.data = datos;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(GetEntityByIdAsync), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(GetEntityByIdAsync), false);
+                _logger.LogError(ex, result.message);
             }
-            return result.Data;
+            return result.data;
         }
-        public async override Task<OperationResult> RemoveAsync(DoctorAvailability entity)
+        public async override Task<OperationResult> RemoveAsync(int Id)
         {
             OperationResult result = new OperationResult();
             try
             {
-                result = _validations.IsNullOrWhiteSpace(entity);
-                if (!result.Success) return result;
+                result = _validations.IsNullOrWhiteSpace(Id);
+                if (!result.success) return result;
 
-                result = _validations.IsInt(entity);
-                if (!result.Success) return result;
+                result = _validations.IsInt(Id);
+                if (!result.success) return result;
 
-                await base.RemoveAsync(entity);
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(RemoveAsync), true);
+                var datos = await base.RemoveAsync(Id);
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(RemoveAsync), true);
+                result.data = datos;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(RemoveAsync), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(RemoveAsync), false);
+                _logger.LogError(ex, result.message);
             }
             return result;
         }
@@ -189,16 +191,16 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = _validations.IsNullOrWhiteSpace(DoctorID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.IsInt(DoctorID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.CheckDate(AvailableDate);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.Time(StartTime, EndTime);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 var newAvailability = new DoctorAvailability
                 {
@@ -209,15 +211,15 @@ namespace NetMed.Persistence.Repositories
                 };
                 _context.DoctorAvailability.Add(newAvailability);
                 await _context.SaveChangesAsync();
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(SetAvailabilityAsync), true);
-                result.Data = newAvailability;
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(SetAvailabilityAsync), true);
+                result.data = newAvailability;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(SetAvailabilityAsync), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(SetAvailabilityAsync), false);
+                _logger.LogError(ex, result.message);
             }
             return result;
         }
@@ -227,26 +229,26 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = _validations.IsNullOrWhiteSpace(DoctorID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
        
                 result = _validations.IsInt(DoctorID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.CheckDate(AvailableDate);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 var availability = await _context.DoctorAvailability
                     .Where(a => a.DoctorID == DoctorID && a.AvailableDate == AvailableDate)
                     .FirstOrDefaultAsync();
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(GetAvailabilityByDoctorAndDateAsync), true);
-                result.Data = availability;
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(GetAvailabilityByDoctorAndDateAsync), true);
+                result.data = availability;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(GetAvailabilityByDoctorAndDateAsync), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(GetAvailabilityByDoctorAndDateAsync), false);
+                _logger.LogError(ex, result.message);
             }
             return result;
         }
@@ -256,34 +258,34 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = _validations.IsInt(DoctorID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.IsNullOrWhiteSpace(DoctorID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.IsInt(AvailabilityID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.IsNullOrWhiteSpace(AvailabilityID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.CheckDate(AvailableDate);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.Time(StartTime, EndTime);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 var availability = await _context.DoctorAvailability.FindAsync(AvailabilityID);
 
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(UpdateAvailabilityAsync), true);
-                result.Data = availability;
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(UpdateAvailabilityAsync), true);
+                result.data = availability;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(UpdateAvailabilityAsync), false);
-                _logger.LogError(ex, result.Message); 
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(UpdateAvailabilityAsync), false);
+                _logger.LogError(ex, result.message); 
             }
             return result;
         }
@@ -293,24 +295,24 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = _validations.IsInt(AvailabilityID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.IsNullOrWhiteSpace(AvailabilityID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 var availability = await _context.DoctorAvailability.FindAsync(AvailabilityID);
                 _context.DoctorAvailability.Remove(availability);
                 await _context.SaveChangesAsync();
 
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(RemoveAvailabilityAsync), true);
-                result.Data = availability;
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(RemoveAvailabilityAsync), true);
+                result.data = availability;
             }
             catch (Exception ex)
             {              
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(RemoveAvailabilityAsync), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(RemoveAvailabilityAsync), false);
+                _logger.LogError(ex, result.message);
             }
             return result;
         }
@@ -321,16 +323,16 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = _validations.IsNullOrWhiteSpace(DoctorID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.IsInt(DoctorID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.CheckDate(AvailableDate);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.Time(StartTime, EndTime);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 bool overlappingAvailability = await _context.DoctorAvailability.AnyAsync
                     (a => a.DoctorID == DoctorID && a.AvailableDate == AvailableDate &&
@@ -338,18 +340,18 @@ namespace NetMed.Persistence.Repositories
 
                 if (!overlappingAvailability)
                 {
-                    result.Success = true;
-                    result.Message = _messageService.GetMessage(nameof(IsDoctorAvailableAsync), true);
+                    result.success = true;
+                    result.message = _messageService.GetMessage(nameof(IsDoctorAvailableAsync), true);
                     return result;
                 }
-                 result.Success = false;
-                 result.Message = _messageService.GetMessage(nameof(IsDoctorAvailableAsync), false);
+                 result.success = false;
+                 result.message = _messageService.GetMessage(nameof(IsDoctorAvailableAsync), false);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(IsDoctorAvailableAsync), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(IsDoctorAvailableAsync), false);
+                _logger.LogError(ex, result.message);
             }
             return result;
         }
@@ -359,16 +361,16 @@ namespace NetMed.Persistence.Repositories
             try
             {
                 result = _validations.IsNullOrWhiteSpace(DoctorID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.IsInt(DoctorID);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.CheckDate(AvailableDate);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.Time(StartTime, EndTime);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 var availability = await _context.DoctorAvailability.FirstOrDefaultAsync(a =>
                    a.DoctorID == DoctorID &&
@@ -389,18 +391,18 @@ namespace NetMed.Persistence.Repositories
                 }
                 else
                 {
-                    result.Success = false;
-                    result.Message = _messageService.GetMessage(nameof(UpdateAvailabilityInRealTimeAsync), false);
+                    result.success = false;
+                    result.message = _messageService.GetMessage(nameof(UpdateAvailabilityInRealTimeAsync), false);
                 }
                 await _context.SaveChangesAsync();
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(UpdateAvailabilityInRealTimeAsync), true);
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(UpdateAvailabilityInRealTimeAsync), true);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(UpdateAvailabilityInRealTimeAsync), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(UpdateAvailabilityInRealTimeAsync), false);
+                _logger.LogError(ex, result.message);
             }
             return result;
         }

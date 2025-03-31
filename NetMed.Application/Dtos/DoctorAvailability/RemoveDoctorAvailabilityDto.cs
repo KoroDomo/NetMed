@@ -1,8 +1,8 @@
 ﻿
 namespace NetMed.Application.Dtos.DoctorAvailability
 {
-    public class RemoveDoctorAvailabilityDto : DoctorAvailabilityDto
+    public class RemoveDoctorAvailabilityDto 
     {
-        public int AvailabilityID { get; set; }
+        public int availabilityID { get; set; }
     }
 }

@@ -34,16 +34,16 @@ namespace NetMed.Application.Services
                 var appointments = await _appointmentsRespository.GetAllAsync();
                 var appointmentDtos = appointments.ToDtoList();
 
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(GetAll), true); 
-                result.Data = appointmentDtos;
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(GetAll), true); 
+                result.data = appointmentDtos;
             }
 
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(GetAll), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(GetAll), false);
+                _logger.LogError(ex, result.message);
             }
             return result;
         }
@@ -53,23 +53,23 @@ namespace NetMed.Application.Services
             try
             {
                 result = _validations.IsInt(Id);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 result = _validations.IsNullOrWhiteSpace(Id);    
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
                 var appointments = await _appointmentsRespository.GetEntityByIdAsync(Id);
                 var appointmentDtos = appointments.ToDto();
 
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(GetById), true);
-                result.Data = appointmentDtos;
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(GetById), true);
+                result.data = appointmentDtos;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(GetById), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(GetById), false);
+                _logger.LogError(ex, result.message);
             }
             return result;
         }
@@ -79,25 +79,21 @@ namespace NetMed.Application.Services
             try
             {
                 result = _validations.IsNullOrWhiteSpace(TDto);
-                if (!result.Success) return result;
+                if (!result.success) return result;
                 
                 result = _validations.IsInt(TDto);
-                if (!result.Success) return result;
+                if (!result.success) return result;
 
-                var appointments = new Appointments
-                {
-                    Id = TDto.AppointmentID,                  
-                };
-                var data = await _appointmentsRespository.RemoveAsync(appointments);
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(Remove), true);
-                result.Data = data;
+                var data = await _appointmentsRespository.RemoveAsync(TDto.appointmentID);
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(Remove), true);
+                result.data = data;
             }
             catch (Exception ex) 
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(Remove), true);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(Remove), true);
+                _logger.LogError(ex, result.message);
             }
             return result;          
         }
@@ -108,21 +104,21 @@ namespace NetMed.Application.Services
             {
                 var appointments = new Appointments
                 {
-                    PatientID = TDto.PatientID,
-                    DoctorID = TDto.DoctorID,
-                    AppointmentDate = TDto.AppointmentDate,
-                    StatusID = TDto.StatusID
+                    PatientID = TDto.patientID,
+                    DoctorID = TDto.doctorID,
+                    AppointmentDate = TDto.appointmentDate,
+                    StatusID = TDto.statusID
                 };
                 await _appointmentsRespository.SaveEntityAsync(appointments);
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(Save), true); 
-                result.Data = appointments;
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(Save), true); 
+                result.data = appointments;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(Save), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(Save), false);
+                _logger.LogError(ex, result.message);
             }
             return result;
         }
@@ -133,22 +129,22 @@ namespace NetMed.Application.Services
             {
                 var appointments = new Appointments
                 {
-                    Id = TDto.AppointmentID,
-                    PatientID = TDto.PatientID,
-                    DoctorID = TDto.DoctorID,
-                    AppointmentDate = TDto.AppointmentDate,
-                    StatusID = TDto.StatusID
+                    Id = TDto.appointmentID,
+                    PatientID = TDto.patientID,
+                    DoctorID = TDto.doctorID,
+                    AppointmentDate = TDto.appointmentDate,
+                    StatusID = TDto.statusID
                 };
                 await _appointmentsRespository.UpdateEntityAsync(appointments);
-                result.Success = true;
-                result.Message = _messageService.GetMessage(nameof(Update), true);  
-                result.Data = appointments;
+                result.success = true;
+                result.message = _messageService.GetMessage(nameof(Update), true);  
+                result.data = appointments;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = _messageService.GetMessage(nameof(Update), false);
-                _logger.LogError(ex, result.Message);
+                result.success = false;
+                result.message = _messageService.GetMessage(nameof(Update), false);
+                _logger.LogError(ex, result.message);
             }
             return result;
         }

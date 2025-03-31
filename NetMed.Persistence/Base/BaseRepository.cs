@@ -27,8 +27,8 @@ namespace NetMed.Persistence.Base
             }
             catch (Exception)
             {
-                result.Success = false;
-                result.Message = "Ocurrio un error al obtener los datos";
+                result.success = false;
+                result.message = "Ocurrio un error al obtener los datos";
             }
             return result;
         }
@@ -41,8 +41,8 @@ namespace NetMed.Persistence.Base
             }
             catch (Exception)
             {
-                result.Success = false;
-                result.Message = "Ocurrio un error al obtener los datos";
+                result.success = false;
+                result.message = "Ocurrio un error al obtener los datos";
             }
             return result;
             
@@ -57,10 +57,10 @@ namespace NetMed.Persistence.Base
             }
             catch (Exception)
             {
-                result.Success = false;
-                result.Message = "Ocurrio un error al obtener los datos";
+                result.success = false;
+                result.message = "Ocurrio un error al obtener los datos";
             }
-            return (List<TEntity>)result.Data;
+            return (List<TEntity>)result.data;
         }
 
         public virtual async Task<TEntity> GetEntityByIdAsync(int Id)
@@ -72,10 +72,10 @@ namespace NetMed.Persistence.Base
             }
             catch (Exception)
             {
-                result.Success = false;
-                result.Message = "Ocurrio un error al obtener los datos por ID";
+                result.success = false;
+                result.message = "Ocurrio un error al obtener los datos por ID";
             }
-            return result.Data;
+            return result.data;
         }
 
         public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)
@@ -88,8 +88,8 @@ namespace NetMed.Persistence.Base
             }
             catch (Exception) 
             {
-                result.Success = false;
-                result.Message = "Ocurrio un error al guardar los datos";
+                result.success = false;
+                result.message = "Ocurrio un error al guardar los datos";
             }
             return result;
         }
@@ -104,28 +104,35 @@ namespace NetMed.Persistence.Base
             }
             catch (Exception)
             {
-                result.Success = false;
-                result.Message = "Ocurrio un error al actualizar los datos";
+                result.success = false;
+                result.message = "Ocurrio un error al actualizar los datos";
             }
             return result;    
         }
 
-        public virtual async Task<OperationResult> RemoveAsync(TEntity entity)
+        public virtual async Task<OperationResult> RemoveAsync(int Id)
         {
-            OperationResult result= new OperationResult();
+            OperationResult result = new OperationResult();
             try
             {
-                var data = await _context.Set<TEntity>().FindAsync(entity);
+                var entity = await _context.Set<TEntity>().FindAsync(Id);
                 if (entity != null)
                 {
                     _context.Set<TEntity>().Remove(entity);
                     await _context.SaveChangesAsync();
+                    result.success = true;
+                    result.message = "Datos Elminados con exito";   
+                }
+                else
+                {
+                    result.success = false;
+                    result.message = "El registro no fue encontrado.";
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = "Ocurrio un error al desactivar los datos";
+                result.success = false;
+                result.message = $"Ocurrió un error al eliminar los datos: {ex.Message}";
             }
             return result;
         }

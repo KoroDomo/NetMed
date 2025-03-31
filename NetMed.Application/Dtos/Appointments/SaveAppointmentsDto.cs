@@ -5,9 +5,9 @@ namespace NetMed.Application.Dtos.Appointments
 {
     public class SaveAppointmentsDto 
     {
-        public int PatientID { get; set; }
-        public int DoctorID { get; set; }
-        public DateTime AppointmentDate { get; set; }
-        public int StatusID { get; set; }
+        public int patientID { get; set; }
+        public int doctorID { get; set; }
+        public DateTime appointmentDate { get; set; }
+        public int statusID { get; set; }
     }
 }

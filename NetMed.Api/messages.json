@@ -53,12 +53,12 @@
     {
       "method": "RemoveAsync",
       "success": true,
-      "message": "Datos desactivados con exito"
+      "message": "Datos Elminados con exito"
     },
     {
       "method": "RemoveAsync",
       "success": false,
-      "message": "Error al desactivar los datos"
+      "message": "Error Eliminar los datos"
     },
     {
       "method": "CreateAppointmentAsync",
@@ -213,12 +213,12 @@
     {
       "method": "Remove",
       "success": true,
-      "message": "Datos eliminados con éxito"
+      "message": "Datos Elminados con exito"
     },
     {
       "method": "Remove",
       "success": false,
-      "message": "Error al eliminar los datos"
+      "message": "Error Eliminar los datos"
     },
     {
       "method": "Save",

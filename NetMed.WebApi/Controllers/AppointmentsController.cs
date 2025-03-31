@@ -1,6 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using NetMed.WebApi.Models.Appointments;
+using NetMed.WebApi.Models.OperationsResult;
+using System.Text;
+using System.Text.Json;
 
 namespace NetMed.WebApi.Controllers
 {
@@ -8,9 +11,7 @@ namespace NetMed.WebApi.Controllers
     {
         // GET: AppointmentsController
         public async Task<IActionResult> Index()
-        {
-            List<AppointmentsModel> appointments = new List<AppointmentsModel>();
-            
+        {            
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost:5135/api/");
@@ -18,8 +19,8 @@ namespace NetMed.WebApi.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var datos = await response.Content.ReadFromJsonAsync<OperationResult>();
-                    return View(datos.Data);                    
+                    var datos = await response.Content.ReadFromJsonAsync<OperationResultTypeList<AppointmentsModel>>();
+                    return View(datos.data);                    
                 }
                 else
                 {
@@ -29,11 +30,29 @@ namespace NetMed.WebApi.Controllers
             }
             
         }
-
         // GET: AppointmentsController/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            return View();
+            AppointmentsModel appointments = new AppointmentsModel();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:5135/api/");
+                var response = await client.GetAsync($"Appointments/GetAppointmentById?id={id}");
+
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<OperationResult<AppointmentsModel>>();
+                    return View(result.data);
+                }
+                else
+                {
+                    ViewBag.Message = "Error obteniendo las Citas";
+                    return View();
+                }
+            }  
         }
 
         // GET: AppointmentsController/Create
@@ -45,10 +64,28 @@ namespace NetMed.WebApi.Controllers
         // POST: AppointmentsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create(AppointmentsModelSave appointmentsModel)
         {
             try
             {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://localhost:5135/api/");
+
+                    var response = await client.PostAsJsonAsync($"Appointments/SaveAppointement",appointmentsModel);
+
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        await response.Content.ReadFromJsonAsync<OperationResult<AppointmentsModel>>();
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Error Guardando las Cita";
+                        return View();
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -58,18 +95,53 @@ namespace NetMed.WebApi.Controllers
         }
 
         // GET: AppointmentsController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            return View();
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:5135/api/");
+                var response = await client.GetAsync($"Appointments/GetAppointmentById?id={id}");
+
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<OperationResult<AppointmentsModel>>();
+                    return View(result.data);
+                }
+                else
+                {
+                    ViewBag.Message = "Error obteniendo las Citas";
+                    return View();
+                }
+            }
         }
 
         // POST: AppointmentsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(AppointmentsModelUpdate appointmentsModel)
         {
             try
             {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://localhost:5135/api/");
+
+                    var response = await client.PutAsJsonAsync($"Appointments/UpdateAppointment", appointmentsModel);
+
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        await response.Content.ReadFromJsonAsync<OperationResult<AppointmentsModel>>();
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Error Guardando las Cita";
+                        return View();
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -79,18 +151,60 @@ namespace NetMed.WebApi.Controllers
         }
 
         // GET: AppointmentsController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            return View();
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:5135/api/");
+                var response = await client.GetAsync($"Appointments/GetAppointmentById?id={id}");
+
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<OperationResult<AppointmentsModel>>();
+                    return View(result.data);
+                }
+                else
+                {
+                    ViewBag.Message = "Error obteniendo las Citas";
+                    return View();
+                }
+            }
         }
 
         // POST: AppointmentsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task <IActionResult> Delete(int id,AppointmentsModelRemove appointmentsModel)
         {
             try
             {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://localhost:5135/api/");
+
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Delete,
+                        RequestUri = new Uri(client.BaseAddress, "Appointments/RemoveAppointment"),
+                        Content = new StringContent(JsonSerializer.Serialize(appointmentsModel), Encoding.UTF8, "application/json")
+                    };
+
+                    var response = await client.SendAsync(request);                 
+
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        await response.Content.ReadFromJsonAsync<OperationResult<AppointmentsModel>>();
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Error Eliminando la Cita";
+                        return View();
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch

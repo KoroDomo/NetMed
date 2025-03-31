@@ -51,8 +51,8 @@ namespace NetMed.Tests
             var result = await _repository.SaveEntityAsync(doctorAvailability);
 
             // Assert
-            Assert.True(result.Success);
-            Assert.Equal("Datos Guardados con exito", result.Message);
+            Assert.True(result.success);
+            Assert.Equal("Datos Guardados con exito", result.message);
             Assert.True(_context.DoctorAvailability.Any(a => a.DoctorID == 1));
         }
         [Fact]
@@ -65,8 +65,8 @@ namespace NetMed.Tests
             var result = await _repository.SaveEntityAsync(doctorAvailability);
 
             // Assert
-            Assert.False(result.Success);
-            Assert.Equal("La entidad no puede ser nula", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("La entidad no puede ser nula", result.message);
         }
         [Fact]
         public async Task SaveEntityAsync_ShouldReturnFailure_WhenDoctorAvailabilityExists()
@@ -94,8 +94,8 @@ namespace NetMed.Tests
             var result = await _repository.SaveEntityAsync(doctorAvailability);
 
             // Assert
-            Assert.False(result.Success);
-            Assert.Equal("El paciente ya tiene una cita programada con este doctor para esta fecha y hora", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("El paciente ya tiene una cita programada con este doctor para esta fecha y hora", result.message);
         }//Check
         [Fact]
         public async Task SaveEntityAsync_ShouldReturnFailure_WhenAppointmentDateIsInvalid()
@@ -114,8 +114,8 @@ namespace NetMed.Tests
             var result = await _repository.SaveEntityAsync(doctorAvailability);
 
             // Assert
-            Assert.False(result.Success);
-            Assert.Equal("La fecha debe ser mayor a la fecha actual", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("La fecha debe ser mayor a la fecha actual", result.message);
         }//check
         [Fact]
         public async Task UpdateEntityAsync_ShouldUpdateDoctorAvailability()
@@ -137,8 +137,8 @@ namespace NetMed.Tests
             var result = await _repository.UpdateEntityAsync(doctorAvailability);
 
             // Assert
-            Assert.True(result.Success);
-            Assert.Equal("Datos Actualizados con exito", result.Message);
+            Assert.True(result.success);
+            Assert.Equal("Datos Actualizados con exito", result.message);
             Assert.Equal(DateOnly.Parse("2025-04-17"), _context.DoctorAvailability.First().AvailableDate);
         }
         [Fact]
@@ -151,8 +151,8 @@ namespace NetMed.Tests
             var result = await _repository.UpdateEntityAsync(doctorAvailability);
 
             // Assert
-            Assert.False(result.Success);
-            Assert.Equal("La entidad no puede ser nula", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("La entidad no puede ser nula", result.message);
         }
         [Fact]
         public async Task GetAllAsync_ShouldReturnSuccess()
@@ -170,8 +170,8 @@ namespace NetMed.Tests
             //act
             var datos = await _repository.GetAllAsync();
             //assert
-            Assert.True(result.Success);
-            Assert.Equal("Datos Obtenidos con exito", result.Message);
+            Assert.True(result.success);
+            Assert.Equal("Datos Obtenidos con exito", result.message);
         }
         [Fact]
         public async Task GetAllAsync_ShouldReturnError_WhenEntityIsNull()
@@ -183,8 +183,8 @@ namespace NetMed.Tests
             var result = await _repository.GetAllAsync(filter);
 
             //Assert
-            Assert.False(result.Success);
-            Assert.Equal("La entidad no puede ser nula", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("La entidad no puede ser nula", result.message);
         }
         [Fact]
         public async Task GetAllAsync_ShouldReturnSeccess_WhenFiltreSuccessfully()
@@ -196,8 +196,8 @@ namespace NetMed.Tests
             var result = await _repository.GetAllAsync(filter);
 
             //Assert
-            Assert.True(result.Success);
-            Assert.Equal("Datos Obtenidos con exito", result.Message);
+            Assert.True(result.success);
+            Assert.Equal("Datos Obtenidos con exito", result.message);
         }
         [Fact]
         public async Task ExistsAsync_ShouldReturnSeccess()
@@ -210,8 +210,8 @@ namespace NetMed.Tests
             var result = await _repository.ExistsAsync(filter);
 
             // Assert
-            Assert.True(result.Success);
-            Assert.Equal("Entidad encontrada con éxito", result.Message);
+            Assert.True(result.success);
+            Assert.Equal("Entidad encontrada con éxito", result.message);
         }
         [Fact]
         public async Task GetEntityByIdAsync_ShouldReturnSuccess_WhenIdExists()
@@ -224,8 +224,8 @@ namespace NetMed.Tests
             var datos = await _repository.GetEntityByIdAsync(validId);
 
             // Assert
-            Assert.True(result.Success);
-            Assert.Equal("Datos Obtenidos con exito", result.Message);
+            Assert.True(result.success);
+            Assert.Equal("Datos Obtenidos con exito", result.message);
         }
         [Fact]
         public async Task GetEntityByIdAsync_ShouldReturnError_WhenIdIsNegativeOrZero()
@@ -240,8 +240,8 @@ namespace NetMed.Tests
             datos = await _repository.GetEntityByIdAsync(id);
 
             // Assert
-            Assert.False(result.Success);
-            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("El Id debe ser mayor que cero", result.message);
         }
         [Fact]
         public async Task GetEntityByIdAsync_ShouldReturnError_WhenIdNotExist()
@@ -254,8 +254,8 @@ namespace NetMed.Tests
             var datos = await _repository.GetEntityByIdAsync(nonExistentId);
 
             // Assert
-            Assert.False(result.Success);
-            Assert.Equal("No existe este registro en el sistema", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("No existe este registro en el sistema", result.message);
         }       
         //[Fact]
         //public async Task RemoveAsync_ShouldReturnError_WhenIdIsNullOrWhiteSpace()
@@ -314,8 +314,8 @@ namespace NetMed.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.False(result.Success);
-            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("El Id debe ser mayor que cero", result.message);
         }
         [Fact]
         public async Task SetAvailabilityAsync_ShouldReturnError_WhenTimeIsInvalid()
@@ -330,8 +330,8 @@ namespace NetMed.Tests
             var result = await _repository.SetAvailabilityAsync(doctorId, availableDate, startTime, endTime);
 
             // Assert
-            Assert.False(result.Success);
-            Assert.Equal("La hora de inicio debe ser anterior a la hora de finalización.", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("La hora de inicio debe ser anterior a la hora de finalización.", result.message);
         }
 
         [Fact]
@@ -348,8 +348,8 @@ namespace NetMed.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.True(result.Success);
-            Assert.Equal("Disponibilidad establecida correctamente.", result.Message);
+            Assert.True(result.success);
+            Assert.Equal("Disponibilidad establecida correctamente.", result.message);
         }
         [Fact]
         public async Task GetAvailabilityByDoctorAndDateAsync_ShouldReturnError_WhenDoctorIdIsInvalid()
@@ -363,8 +363,8 @@ namespace NetMed.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.False(result.Success);
-            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("El Id debe ser mayor que cero", result.message);
         }
 
         [Fact]
@@ -378,8 +378,8 @@ namespace NetMed.Tests
             var result = await _repository.GetAvailabilityByDoctorAndDateAsync(doctorId, availableDate);
 
             // Assert
-            Assert.True(result.Success);
-            Assert.Equal("Disponibilidad obtenida con exito", result.Message);
+            Assert.True(result.success);
+            Assert.Equal("Disponibilidad obtenida con exito", result.message);
 
         }
         [Fact]
@@ -397,8 +397,8 @@ namespace NetMed.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.False(result.Success);
-            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("El Id debe ser mayor que cero", result.message);
         }
         [Fact]
         public async Task RemoveAvailabilityAsync_ShouldReturnError_WhenAvailabilityIdIsInvalid()
@@ -411,8 +411,8 @@ namespace NetMed.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.False(result.Success);
-            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("El Id debe ser mayor que cero", result.message);
         }
         [Fact]
         public async Task IsDoctorAvailableAsync_ShouldReturnFalse_WhenDoctorHasOverlappingAvailability()
@@ -439,8 +439,8 @@ namespace NetMed.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.False(result.Success);
-            Assert.Equal("El doctor no está disponible para este horario.", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("El doctor no está disponible para este horario.", result.message);
         }
 
         [Fact]
@@ -457,8 +457,8 @@ namespace NetMed.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.False(result.Success);
-            Assert.Equal("El Id debe ser mayor que cero", result.Message);
+            Assert.False(result.success);
+            Assert.Equal("El Id debe ser mayor que cero", result.message);
         }
 
 

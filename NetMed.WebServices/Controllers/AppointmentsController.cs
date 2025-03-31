@@ -19,9 +19,9 @@ namespace NetMed.WebServices.Controllers
         {
             var result = await _appointmentService.GetAll();
 
-            if (result.Success)
+            if (result.success)
             {              
-                return View(result.Data);               
+                return View(result.data);               
             }
             return View();
         }
@@ -30,9 +30,9 @@ namespace NetMed.WebServices.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var result = await _appointmentService.GetById(id);
-            if (result.Success)
+            if (result.success)
             {
-                return View(result.Data);
+                return View(result.data);
             }
             return View();
         }
@@ -63,9 +63,9 @@ namespace NetMed.WebServices.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var result = await _appointmentService.GetById(id);
-            if (result.Success)
+            if (result.success)
             {
-                return View(result.Data);
+                return View(result.data);
             }
             return View();
         }
@@ -90,9 +90,9 @@ namespace NetMed.WebServices.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _appointmentService.GetById(id);
-            if (result.Success)
+            if (result.success)
             {
-                return View(result.Data);
+                return View(result.data);
             }
             return View();
         }
