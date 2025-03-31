@@ -207,7 +207,7 @@ namespace NetMed.Web1.Controllers
         // POST: NetworkTypeWebController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(RemoveNetworkTypeModel insuranceProvider)
+        public async Task<IActionResult> Delete(RemoveNetworkTypeModel networkType)
         {
 
             try
@@ -220,7 +220,7 @@ namespace NetMed.Web1.Controllers
                     {
                         Method = HttpMethod.Delete,
                         RequestUri = new Uri(client.BaseAddress, "NetworkTypeApi/RemoveInsuranceProvider"),
-                        Content = new StringContent(JsonSerializer.Serialize(insuranceProvider), Encoding.UTF8, "application/json")
+                        Content = new StringContent(JsonSerializer.Serialize(networkType), Encoding.UTF8, "application/json")
                     };
 
                     var response = await client.SendAsync(request);

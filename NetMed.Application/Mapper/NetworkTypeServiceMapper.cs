@@ -23,7 +23,7 @@ namespace NetMed.Infraestructure.Mapper
                 .ReverseMap();
 
 
-            CreateMap<NetworkType, NetworkTypeDto>()
+            CreateMap<NetworkType, GetNetworkTypeDto>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.ChangeDate, opt => opt.MapFrom(src => src.UpdatedAt))

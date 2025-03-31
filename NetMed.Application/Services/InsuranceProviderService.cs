@@ -80,7 +80,6 @@ namespace NetMed.Application.Services
 
                 if (operationResult.Success)
                 {
-                    operationResult.Result.Removed = true;
                     return operationResult;
                 }
 

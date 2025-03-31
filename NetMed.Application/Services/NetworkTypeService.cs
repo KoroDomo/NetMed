@@ -55,7 +55,7 @@ namespace NetMed.Application.Services
                 var repositoryResult = await _networkTypeRepository.GetNetworkTypeById(id);
                 if (!repositoryResult.Success) return repositoryResult;
 
-                var dtos = _mapper.Map<NetworkTypeDto>(repositoryResult.Result);
+                var dtos = _mapper.Map<GetNetworkTypeDto>(repositoryResult.Result);
 
                 return _operations.SuccessResult(dtos, "Operations", "GetSuccess");
             }
@@ -81,7 +81,6 @@ namespace NetMed.Application.Services
 
                 if (operationResult.Success)
                 {
-                    operationResult.Result.dto.Removed = true;
                     return operationResult;
                 }
 
