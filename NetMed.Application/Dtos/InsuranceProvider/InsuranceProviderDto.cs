@@ -4,7 +4,7 @@ namespace NetMed.Application.Dtos.InsuranceProvider
     public class InsuranceProviderDto : DtoBase
     {
         public string Name { get; set; }
-        public new string PhoneNumber { get; set; }
+        public string ContactNumber { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }
         public string? Website { get; set; }

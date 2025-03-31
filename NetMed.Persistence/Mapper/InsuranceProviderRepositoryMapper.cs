@@ -1,7 +1,6 @@
 ﻿using NetMed.Domain.Entities;
 using NetMed.Model.Models;
 
-
 namespace NetMed.Persistence.Repositories
 {
     public static class InsuranceProviderRepositoryMapper
@@ -29,6 +28,7 @@ namespace NetMed.Persistence.Repositories
                 UpdatedAt = ip.UpdatedAt,
                 CustomerSupportContact = ip.CustomerSupportContact,
                 MaxCoverageAmount = ip.MaxCoverageAmount
+
             });
         }
     }

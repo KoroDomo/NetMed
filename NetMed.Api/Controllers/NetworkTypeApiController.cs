@@ -34,7 +34,7 @@ namespace NetMed.Api.Controllers
 
 
         [HttpPost("SaveNetworkTypeRepository")]
-        public async Task<IActionResult> Post([FromBody] SaveNetworkTypeDto networks)
+        public async Task<IActionResult> Post(SaveNetworkTypeDto networks)
         {
             var networkTypeRepositorys = await _networkTypeService.Save(networks);
 
@@ -43,18 +43,18 @@ namespace NetMed.Api.Controllers
 
 
         [HttpPut("UpdateNetworkTypeRepository")]
-        public async Task<IActionResult> Put([FromBody] UpdateNetworkTypeDto networks)
+        public async Task<IActionResult> Put(UpdateNetworkTypeDto networks)
         {
             var networkTypeRepositorys = await _networkTypeService.Update(networks);
 
             return Ok(networkTypeRepositorys);
         }
         [HttpDelete("RemoveInsuranceProvider")]
-        public async Task<IActionResult> Remove([FromBody] RemoveNetworkTypeDto insuranceProvider)
+        public async Task<IActionResult> Remove(RemoveNetworkTypeDto networks)
         {
-            var insurenceProviders = await _networkTypeService.Remove(insuranceProvider);
+            var networkType = await _networkTypeService.Remove(networks);
 
-            return Ok(insurenceProviders);
+            return Ok(networkType);
         }
     }
 }

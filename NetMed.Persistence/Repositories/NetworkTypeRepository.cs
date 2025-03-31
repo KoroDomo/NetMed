@@ -97,6 +97,13 @@ namespace NetMed.Persistence.Repositories
                     return result;
                 }
 
+                result = _operations.ValidateNetworkType(network);
+                if (result.Success == false)
+                {
+                    _logger.LogWarning(result.Message);
+                    return result;
+                }
+
                 var Network = await _context.NetworkType.FindAsync(network.Id);
                 
                 if (Network == null)
@@ -125,9 +132,9 @@ namespace NetMed.Persistence.Repositories
                 var networkTypes = await _context.NetworkType
                     .Where(nt => nt.Id == networkTypeId)
                     .MapToNetworkTypeModel()
-                    .ToListAsync();
+                    .SingleOrDefaultAsync();
 
-                if (!networkTypes.Any())
+                if (networkTypes == null)
                 {
                     _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
                     return _operations.HandleException("Entitys", "NotFound");

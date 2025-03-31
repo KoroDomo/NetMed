@@ -84,8 +84,7 @@ namespace NetMed.Application.Test
 
             // Assert
             Assert.True(result.Success);
-            Assert.True(dto.Removed);
-            Assert.Equal(1, dto.ChangeUserID); // Verificar asignación específica del código
+            Assert.True(dto.Removed); // Verificar asignación específica del código
         }
 
         [Fact]

@@ -102,11 +102,11 @@ namespace NetMed.Web.Controllers
         // POST: InsuranceProviderController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(RemoveInsuranceProviderDto removeInsuranceProvider)
+        public async Task<IActionResult> Delete(RemoveInsuranceProviderDto removeInsuranceProviderID)
         {
             try
             {
-                await _providerService.Remove(removeInsuranceProvider);
+                await _providerService.Remove(removeInsuranceProviderID);
                 return RedirectToAction(nameof(Index));
             }
             catch

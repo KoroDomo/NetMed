@@ -1,0 +1,119 @@
+﻿@model NetMed.Web1.Models.InsuranceProvider.GetInsuranceProviderModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details InsuranceProvider</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.insuranceProviderID)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.insuranceProviderID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.contactNumber)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.contactNumber)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.email)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.email)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.address)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.address)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.website)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.website)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.city)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.city)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.state)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.state)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.country)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.country)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.zipCode)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.zipCode)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.coverageDetails)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.coverageDetails)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.isPreferred)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.isPreferred)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.networkTypeID)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.networkTypeID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.customerSupportContact)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.customerSupportContact)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.acceptedRegions)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.acceptedRegions)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.maxCoverageAmount)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.maxCoverageAmount)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.changeDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.changeDate)
+        </dd>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.insuranceProviderID }) |
+    <a asp-action="Index">Back to List</a>
+</div>

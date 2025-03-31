@@ -4,7 +4,6 @@ using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Validators.Implementations;
 using NetMed.Infraestructure.Validators.Interfaces;
-using NetMed.Model.Models;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Interfaces;
@@ -60,11 +59,11 @@ namespace NetMed.Persistence.Repositories
             }
         }
 
-        public async Task<OperationResult> RemoveInsuranceProviderAsync(int id)
+        public async Task<OperationResult> RemoveInsuranceProviderAsync(int providers)
         {
             try
             {
-                var provider = await GetInsurenProviderById(id);
+                var provider = await _context.InsuranceProviders.FindAsync(providers);
 
                 if (provider == null)
                 {
@@ -72,7 +71,7 @@ namespace NetMed.Persistence.Repositories
                     return _operations.HandleException("Entitys", "NotFound");
                 }
 
-                provider.Result.IsActive = false;
+                provider.IsActive = false;
 
                 await _context.SaveChangesAsync();
 
@@ -99,6 +98,7 @@ namespace NetMed.Persistence.Repositories
                     _logger.LogWarning(result.Message);
                     return result;
                 }
+
                 result = _operations.ValidateInsuranceProvider(provider); 
                 if (result.Success==false)
                 {
@@ -106,14 +106,14 @@ namespace NetMed.Persistence.Repositories
                     return result;
                 }
 
-                var Provider = await GetInsurenProviderById(provider.Id);
+                var Provider = await _context.InsuranceProviders.FindAsync(provider.Id);
                 if (Provider == null)
                 {
                     _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
                     return _operations.HandleException("Entitys", "NotFound");
                 }
 
-                Provider.Result.UpdatedAt = DateTime.Now;
+                Provider.UpdatedAt = DateTime.Now;
                 _context.Entry(Provider).CurrentValues.SetValues(provider);
                 await _context.SaveChangesAsync();
 
@@ -151,7 +151,6 @@ namespace NetMed.Persistence.Repositories
                 _logger.LogError(ex, _operations.GetErrorMessage("Insurances", "GetInsurenProvider"));
 
                 return _operations.HandleException("Insurances", "GetInsurenProvider");
-
 
             }
         }

@@ -24,6 +24,8 @@ namespace NetMed.Domain.Entities
         public int NetworkTypeID { get; set; }
         public string? CustomerSupportContact { get; set; }
         public string? AcceptedRegions { get; set; }
+
+        [Column(TypeName = "decimal(18,4)")]
         public decimal? MaxCoverageAmount { get; set; }
 
         

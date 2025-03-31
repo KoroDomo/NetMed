@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace NetMed.Model.Models
 {
     public class InsuranceProviderModel
@@ -18,6 +20,8 @@ namespace NetMed.Model.Models
         public int NetworkTypeID { get; set; }
         public string? CustomerSupportContact { get; set; }
         public string? AcceptedRegions { get; set; }
+
+        [Column(TypeName = "decimal(18,4)")]
         public decimal? MaxCoverageAmount { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; }

@@ -34,7 +34,7 @@ namespace NetMed.Application.Services
             {
                 var repositoryResult = await _insuranceProviderRepository.GetAllAsync();
 
-                if (!repositoryResult.Success) return repositoryResult;
+                if (repositoryResult.Success == false) return repositoryResult;
 
                 var dtos= _mapper.Map<List<GetInsuranceProviderDto>>(repositoryResult.Result);
 
@@ -52,7 +52,7 @@ namespace NetMed.Application.Services
             try
             {
                 var repositoryResult = await _insuranceProviderRepository.GetInsurenProviderById(id);
-                if (!repositoryResult.Success) return repositoryResult;
+                if (repositoryResult.Success == false) return repositoryResult;
 
 
                 var dtos = _mapper.Map<GetInsuranceProviderDto>(repositoryResult.Result);
@@ -70,7 +70,7 @@ namespace NetMed.Application.Services
             try
             {
                 var validationResult = _operations.isNull(dto);
-                if (!validationResult.Success)
+                if (validationResult.Success == false)
                 {
                     _logger.LogWarning(validationResult.Message);
                     return validationResult;
@@ -80,7 +80,7 @@ namespace NetMed.Application.Services
 
                 if (operationResult.Success)
                 {
-                    dto.Removed = true;
+                    operationResult.Result.Removed = true;
                     return operationResult;
                 }
 
@@ -115,7 +115,7 @@ namespace NetMed.Application.Services
             {
                 var insuranceProvider = _mapper.Map<InsuranceProviders>(dto);
                 
-                var result= await _insuranceProviderRepository.UpdateEntityAsync(insuranceProvider);
+                var result = await _insuranceProviderRepository.UpdateEntityAsync(insuranceProvider);
                 
                 return result;
             }

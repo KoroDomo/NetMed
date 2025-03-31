@@ -432,8 +432,8 @@ namespace NetMed.Persistence.Test
             // Assert
             Assert.True(result.Success);
             Assert.NotNull(result.Result);
-            Assert.Equal(insuranceId, result.Result[0].Id);
-            Assert.Equal("Provider 1", result.Result[0].Name);
+            Assert.Equal(insuranceId, result.Result.Id);
+            Assert.Equal("Provider 1", result.Result.Name);
             Assert.Contains("Provider/s obtenido exitosamente.", result.Message);
 
         }
@@ -636,7 +636,7 @@ namespace NetMed.Persistence.Test
 
             // Assert
             Assert.True(result.Success);
-            Assert.False(provider.IsActive);
+            Assert.False(result.Result.IsActive);
             Assert.Contains("Provider eliminado exitosamente.", result.Message);
         }
 

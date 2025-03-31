@@ -1,0 +1,131 @@
+﻿@model IEnumerable<NetMed.Web1.Models.InsuranceProvider.GetInsuranceProviderModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.insuranceProviderID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.contactNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.address)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.website)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.city)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.state)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.country)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.zipCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.coverageDetails)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.isPreferred)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.networkTypeID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.customerSupportContact)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.acceptedRegions)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.maxCoverageAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.changeDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.insuranceProviderID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.contactNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.website)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.city)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.state)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.country)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.zipCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.coverageDetails)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.isPreferred)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.networkTypeID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.customerSupportContact)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.acceptedRegions)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.maxCoverageAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.changeDate)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new {  id = item.insuranceProviderID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.insuranceProviderID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.insuranceProviderID })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

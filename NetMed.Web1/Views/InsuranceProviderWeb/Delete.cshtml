@@ -1,0 +1,140 @@
+﻿@model NetMed.Web1.Models.InsuranceProvider.RemoveInsuranceProviderModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>GetInsuranceProviderModel</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.insuranceProviderID)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.insuranceProviderID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.contactNumber)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.contactNumber)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.email)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.email)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.address)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.address)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.website)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.website)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.city)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.city)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.state)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.state)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.country)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.country)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.zipCode)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.zipCode)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.coverageDetails)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.coverageDetails)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.isPreferred)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.isPreferred)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.networkTypeID)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.networkTypeID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.customerSupportContact)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.customerSupportContact)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.acceptedRegions)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.acceptedRegions)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.maxCoverageAmount)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.maxCoverageAmount)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.changeDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.changeDate)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="insuranceProviderID" />
+        <input type="hidden" asp-for="name" />
+        <input type="hidden" asp-for="contactNumber" />
+        <input type="hidden" asp-for="email" />
+        <input type="hidden" asp-for="address" />
+        <input type="hidden" asp-for="website" />
+        <input type="hidden" asp-for="city" />
+        <input type="hidden" asp-for="state" />
+        <input type="hidden" asp-for="country" />
+        <input type="hidden" asp-for="zipCode" />
+        <input type="hidden" asp-for="coverageDetails" />
+        <input type="hidden" asp-for="isPreferred" />
+        <input type="hidden" asp-for="networkTypeID" />
+        <input type="hidden" asp-for="customerSupportContact" />
+        <input type="hidden" asp-for="acceptedRegions" />
+        <input type="hidden" asp-for="maxCoverageAmount" />
+        <input type="hidden" asp-for="changeDate" />
+
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
