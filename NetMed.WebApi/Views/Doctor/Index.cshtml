@@ -1,0 +1,95 @@
+﻿@model IEnumerable<NetMed.Web.Models.DoctorModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.doctorId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.specialtyID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.licenseNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.phoneNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.yearsOfExperience)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.education)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.bio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.consultationFee)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.clinicAddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.availabilityModeId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.licenseExpirationDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.doctorId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.specialtyID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.licenseNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.phoneNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.yearsOfExperience)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.education)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.bio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.consultationFee)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.clinicAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.availabilityModeId)
+            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.licenseExpirationDate)
+                </td>
+            <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.doctorId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.doctorId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.doctorId })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
