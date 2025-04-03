@@ -6,7 +6,8 @@ namespace NetMed.Application.Base
     {
 
         Task<OperationResult> GetAllDto();
-        Task<OperationResult> GetDtoById(int notification);
+        Task<OperationResult> GetDtoById(int Id);
+
         Task<OperationResult> UpdateDto(TDtoUpdate dtoUpdate);
         Task<OperationResult> SaveDto(TDtoSave dtoSave);
         Task<OperationResult> DeleteDto(int dtoDelete);

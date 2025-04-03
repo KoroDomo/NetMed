@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.Notification;
 using NetMed.Domain.Entities;
-using NetMed.Persistence.Context.Interfaces;
+
 
 namespace NetMed.Api.Controllers
 {
@@ -26,14 +26,20 @@ namespace NetMed.Api.Controllers
             var notificationsList = await _notificationContract.GetAllDto();
             return Ok(notificationsList);
         }
-        
+
+        [HttpGet("GetById")]
+        public async Task<IActionResult> Get(int Id)
+        {
+            var notifications = await _notificationContract.GetDtoById(Id);
+            return Ok(notifications);
+        }
+
         [HttpPost("CreatedNotifications")]
         public async Task<IActionResult> Post([FromBody] SaveNotificationDto notification)
         {
             var notifications = await _notificationContract.SaveDto(notification);
             return Ok(notifications);
 
-            
         }
 
        
@@ -45,11 +51,14 @@ namespace NetMed.Api.Controllers
         }
 
         [HttpDelete("DeleteNotifications")]
-        public async Task<IActionResult> Delete([FromBody] int notificationiD)
+        public async Task<IActionResult> DeleteNotification([FromBody] Notification notification)
         {
-            var notifications = await _notificationContract.DeleteDto(notificationiD);
+            var notifications = await _notificationContract.DeleteDto(notification.Id);
             return Ok(notifications);
         }
+
+    
+
 
     }
 }

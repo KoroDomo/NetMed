@@ -64,28 +64,11 @@ namespace NetMed.Persistence.Base
 
         public virtual async Task<TEntity> GetEntityByIdAsync(int id)
         {
-            try
-            {
-                var entity = await Entity.FindAsync(id);
+            return await Entity.FindAsync(id);
 
-                if (entity == null)
-                {
-                    _logger.LogWarning(_messageMapper.ErrorMessages["EntityNotFound"], "id", id);
-                    throw new KeyNotFoundException(_messageMapper.ErrorMessages["EntityNotFound"]);
-                }
-
-                _logger.LogInformation(_messageMapper.SuccessMessages["EntityRetrieved"], "id", id);
-                return entity;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, _messageMapper.ErrorMessages["DatabaseError"], ex.Message);
-
-                throw; 
-            }
         }
 
-        public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)
+public virtual async Task<OperationResult> SaveEntityAsync(TEntity entity)
         {
             OperationResult result = new OperationResult();
 

@@ -32,6 +32,7 @@ namespace NetMed.Persistence.Repositories
             return base.GetAllAsync();
         }
 
+
         public override Task<OperationResult> GetAllAsync(Expression<Func<Status, bool>> filter)
         {
             _logger.LogInformation(_jsonMessage.SuccessMessages["GetAllEntity"]);
@@ -40,7 +41,7 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> GetStatusByIdAsync(int statusId)
         {
-            var validationResult = _startupValidator.ValidateIsStatusIdNotIsNegative(statusId, _jsonMessage.ErrorMessages["InvalidId"]);
+            var validationResult = _startupValidator.ValidateIsStatusIdNotIsNegative(statusId, _jsonMessage.ErrorMessages["StatusLessZero"]);
 
             if (!validationResult.Success)
             {
@@ -73,7 +74,7 @@ namespace NetMed.Persistence.Repositories
         public async Task<OperationResult> CreateStatusAsync(Status status)
         {
 
-            var validationResult = _startupValidator.ValidateStatusIsNotNull(status, _jsonMessage.ErrorMessages["NullEntity"]);
+            var validationResult = _startupValidator.ValidateStatusIsNotNull(status, _jsonMessage.ErrorMessages["StatusNull"]);
 
             if (!validationResult.Success)
             {
@@ -81,7 +82,7 @@ namespace NetMed.Persistence.Repositories
                 return validationResult;
             }
 
-            var validationLessZero = _startupValidator.ValidateIsStatusIdNotIsNegative(status.Id, _jsonMessage.ErrorMessages["InvalidId"]);
+            var validationLessZero = _startupValidator.ValidateIsStatusIdNotIsNegative(status.Id, _jsonMessage.ErrorMessages["StatusLessZero"]);
 
             if (!validationLessZero.Success)
             {
@@ -94,8 +95,8 @@ namespace NetMed.Persistence.Repositories
                 await _context.statuses.AddAsync(status);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_jsonMessage.SuccessMessages["EntityCreated"]);
-                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["EntityCreated"], Data = status };
+                _logger.LogInformation(_jsonMessage.SuccessMessages["StatusCreated"]);
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["StatusCreated"], Data = status };
             }
             catch (Exception ex)
             {
@@ -106,7 +107,7 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> UpdateStatusAsync(Status status)
         {
-            var validationResult = _startupValidator.ValidateStatusIsNotNull(status, _jsonMessage.ErrorMessages["NullEntity"]);
+            var validationResult = _startupValidator.ValidateStatusIsNotNull(status, _jsonMessage.ErrorMessages["StatusNull"]);
 
             if (!validationResult.Success)
             {
@@ -114,7 +115,7 @@ namespace NetMed.Persistence.Repositories
                 return validationResult;
             }
 
-            var validationLessZero = _startupValidator.ValidateIsStatusIdNotIsNegative(status.Id, _jsonMessage.ErrorMessages["InvalidId"]);
+            var validationLessZero = _startupValidator.ValidateIsStatusIdNotIsNegative(status.Id, _jsonMessage.ErrorMessages["StatusLessZero"]);
 
 
             if (!validationLessZero.Success)
@@ -128,8 +129,8 @@ namespace NetMed.Persistence.Repositories
                 _context.statuses.Update(status);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_jsonMessage.SuccessMessages["EntityUpdated"]);
-                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["EntityUpdated"], Data = status };
+                _logger.LogInformation(_jsonMessage.SuccessMessages["StatusUpdated"]);
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["StatusUpdated"], Data = status };
             }
             catch (Exception ex)
             {
@@ -141,32 +142,23 @@ namespace NetMed.Persistence.Repositories
         public async Task<OperationResult> DeleteStatusAsync(int statusId)
         {
 
-            var validationResult = _startupValidator.ValidateIsStatusIdNotIsNegative(statusId, _jsonMessage.ErrorMessages["InvalidId"]);
-
-            if (!validationResult.Success)
+            var nullValidationResult = _startupValidator.ValidateNumberEntityIsNegative(statusId, _jsonMessage.ErrorMessages["NotificationNull"]);
+            if (!nullValidationResult.Success)
             {
-                _logger.LogError(validationResult.Message);
-                return validationResult;
+                _logger.LogError(nullValidationResult.Message);
+                return nullValidationResult;
             }
 
             try
             {
                 var status = await _context.statuses.FindAsync(statusId);
 
-                var notNullStatus = _startupValidator.ValidateIsEntityIsNull(status, _jsonMessage.ErrorMessages["StatusNotFound"]);
-                
-
-                if (!notNullStatus.Success)
-                {
-                    _logger.LogWarning(notNullStatus.Message);
-                    return notNullStatus;
-                }
 
                 _context.statuses.Remove(status);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_jsonMessage.SuccessMessages["EntityDeleted"]);
-                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["EntityDeleted"], Data = status };
+                _logger.LogInformation(_jsonMessage.SuccessMessages["StatusDeleted"], nameof(Status), status);
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["StatusDeleted"], Data = status };
             }
             catch (Exception ex)
             {

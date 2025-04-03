@@ -21,6 +21,7 @@ namespace NetMed.Domain.Base
             ErrorMessages = new Dictionary<string, string>
             {
                 ["ValidationFailed"] = "Validación fallida }",
+                ["GetAllNull"] = "Problemas extrayendo los valores",
                 ["NotificationNotFound"] = "No se encontró la notificación",
                 ["GeneralError"] = "Error al procesar la solicitud",
                 ["InvalidId"] = "El ID proporcionado no es válido",
@@ -28,6 +29,7 @@ namespace NetMed.Domain.Base
                 ["NullEntity"] = "La entidad no puede ser nula",
                 ["DatabaseError"] = "Error en la base de datos",
                 ["RoleNotFound"] = "No se encontró el rol ",
+                ["NotificationNotFound"] = "No se encontró la notificación",
                 ["StatusNotFound"] = "No se encontró el status ",
                 ["EntityNotFound"] = "No se encontró la entidad ",
                 ["EntityNotCreated"] = "La entidad no pudo ser creada ",
@@ -36,6 +38,10 @@ namespace NetMed.Domain.Base
                 ["NotificationNull"] = "La notificacion no puede ser nula",
                 ["RolesNull"] = "Los roles no puede ser nula",
                 ["StatusNull"] = "El estado no puede ser nula",
+                ["NotificationLessZero"] = "El ID de notificacion no puede ser menor a 0",
+                ["RolesLessZero"] = "El ID de  roles no puede ser menor a 0",
+                ["StatusLessZero"] = "El ID de Status no puede ser menor a 0",
+
                 ["NotificationMessage"] = "El mensaje no puede pasar de los 600 caracteres",
                 ["RolesMessage"] = "Los roles no puede pasar de 20 caracteres",
                 ["NotificationSentAt"] = "No puede sobrepasar el tiempo mano",
@@ -48,6 +54,7 @@ namespace NetMed.Domain.Base
             SuccessMessages = new Dictionary<string, string>
             {
                 ["EntityRetrieved"] = "Entidad recumperada con exito",
+                ["EntityFound"] = "Entidad encontrada con exito",
                 ["GetAllEntity"] = "Valores extraídos con éxito ",
                 ["EntityCreated"] = "Entidad guardada con éxito ",
                 ["EntityUpdated"] = "Entidad actualizada con éxito",
@@ -75,7 +82,7 @@ namespace NetMed.Domain.Base
 
           ErrorNotification = new Dictionary<string, string>
           {
-              ["NotificationNotFound"] = "No se encontró la notificación",
+             
               ["NotificationNotCreated"] = "La notificación no pudo ser creada",
               ["NotificationNotUpdated"] = "La notificación no pudo ser actualizada",
               ["NotificationNotDeleted"] = "La notificación no pudo ser desactivada"

@@ -6,7 +6,7 @@ using NetMed.Domain.Repository;
 namespace NetMed.Persistence.Context.Interfaces
 {
     public interface INotificationRepository : IBaseRepository<Notification>
-    {
+    {   
             Task <OperationResult> GetNotificationsByUserIdAsync(int userId);
 
             Task<OperationResult> GetNotificationByIdAsync(int notificationId);

@@ -6,7 +6,6 @@ using NetMed.Infraestructure.Validator.Interfaz;
 using NetMed.Persistence.Base;
 using NetMed.Persistence.Context;
 using NetMed.Persistence.Context.Interfaces;
-using NetMed.Persistence.Interfaces;
 using System.Linq.Expressions;
 
 namespace NetMed.Persistence.Repositories
@@ -19,8 +18,8 @@ namespace NetMed.Persistence.Repositories
         private readonly IRolesValidator _rolesValidator;
 
         public RolesRepository(NetmedContext context,
-                               ILoggerCustom logger,
-                               JsonMessage jsonMessage) : base(context)
+                             ILoggerCustom logger,
+                             JsonMessage jsonMessage) : base(context)
         {
             _context = context;
             _logger = logger;
@@ -28,23 +27,47 @@ namespace NetMed.Persistence.Repositories
             _rolesValidator = new RolesValidator(logger, jsonMessage);
         }
 
-        public override Task<OperationResult> GetAllAsync()
+        public override async Task<OperationResult> GetAllAsync()
         {
-            _logger.LogInformation(_jsonMessage.SuccessMessages["GetAllEntity"]);
-            return base.GetAllAsync();
+            try
+            {
+                var roles = await base.GetAllAsync();
+                _logger.LogInformation(_jsonMessage.SuccessMessages["GetAllEntity"]);
+                return roles;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, _jsonMessage.ErrorMessages["DatabaseError"]);
+                return new OperationResult
+                {
+                    Success = false,
+                    Message = _jsonMessage.ErrorMessages["DatabaseError"]
+                };
+            }
         }
 
-        public override Task<OperationResult> GetAllAsync(Expression<Func<Roles, bool>> filter)
+        public override async Task<OperationResult> GetAllAsync(Expression<Func<Roles, bool>> filter)
         {
-            _logger.LogInformation(_jsonMessage.SuccessMessages["GetAllEntity"]);
-            return base.GetAllAsync(filter);
+            try
+            {
+                var roles = await base.GetAllAsync(filter);
+                _logger.LogInformation(_jsonMessage.SuccessMessages["GetAllEntity"]);
+                return roles;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, _jsonMessage.ErrorMessages["DatabaseError"]);
+                return new OperationResult
+                {
+                    Success = false,
+                    Message = _jsonMessage.ErrorMessages["DatabaseError"]
+                };
+            }
         }
 
         public async Task<OperationResult> GetRoleByIdAsync(int rolesId)
         {
-           
-
-            var validationResult = _rolesValidator.ValidateRolesIdIsNegative(rolesId, _jsonMessage.ErrorMessages["InvalidId"]);
+            var validationResult = _rolesValidator.ValidateNumberEntityIsNegative(rolesId, _jsonMessage.ErrorMessages["InvalidId"]);
 
             if (!validationResult.Success)
             {
@@ -54,10 +77,16 @@ namespace NetMed.Persistence.Repositories
 
             try
             {
-                var role = await _context.Roles.FindAsync(rolesId);
+                var notification = await _context.Roles.FindAsync(rolesId);
 
-                _logger.LogInformation(_jsonMessage.SuccessMessages["RoleFound"]);
-                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["RoleFound"], Data = role };
+                if (notification == null)
+                {
+                    _logger.LogWarning(_jsonMessage.ErrorMessages["RoleNotFound"], rolesId);
+                    return new OperationResult { Success = false, Message = _jsonMessage.ErrorMessages["RoleNotFound"], Data = notification };
+                }
+
+                _logger.LogInformation(_jsonMessage.SuccessMessages["RoleFound"], nameof(Notification), rolesId);
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["RoleFound"], Data = notification };
             }
             catch (Exception ex)
             {
@@ -68,16 +97,14 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> CreateRoleAsync(Roles roles)
         {
-
-            var validationResult = _rolesValidator.ValidateRoleIsNotNull(roles, _jsonMessage.ErrorMessages["NullEntity"]);
-
-            if (!validationResult.Success)
+            var nullValidationResult = _rolesValidator.ValidateRoleIsNotNull(roles, _jsonMessage.ErrorMessages["NotificationNull"]);
+            if (!nullValidationResult.Success)
             {
-                _logger.LogError(validationResult.Message);
-                return validationResult;
+                _logger.LogError(nullValidationResult.Message);
+                return nullValidationResult;
             }
 
-            var idValidationResult = _rolesValidator.ValidateRolesIdIsNegative(roles.Id, _jsonMessage.ErrorMessages["InvalidId"]);
+            var idValidationResult = _rolesValidator.ValidateRolesIdIsNegative(roles.Id, _jsonMessage.ErrorMessages["RolesLessZero"]);
 
             if (!idValidationResult.Success)
             {
@@ -90,8 +117,10 @@ namespace NetMed.Persistence.Repositories
                 await _context.Roles.AddAsync(roles);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_jsonMessage.SuccessMessages["RoleCreated"]);
+                _logger.LogInformation(_jsonMessage.SuccessMessages["RoleCreated"], nameof(Roles), roles.Id);
+
                 return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["RoleCreated"], Data = roles };
+
             }
             catch (Exception ex)
             {
@@ -100,10 +129,18 @@ namespace NetMed.Persistence.Repositories
             }
         }
 
+
+
         public async Task<OperationResult> UpdateRoleAsync(Roles roles)
         {
+            var nullValidationResult = _rolesValidator.ValidateRoleIsNotNull(roles, _jsonMessage.ErrorMessages["RolesNull"]);
+            if (!nullValidationResult.Success)
+            {
+                _logger.LogError(nullValidationResult.Message);
+                return nullValidationResult;
+            }
 
-            var validationResult = _rolesValidator.ValidateRoleIsNotNull(roles, _jsonMessage.ErrorMessages["NullEntity"]);
+            var validationResult = _rolesValidator.ValidateRolesIdIsNegative(roles.Id, _jsonMessage.ErrorMessages["RolesLessZero"]);
 
             if (!validationResult.Success)
             {
@@ -111,20 +148,12 @@ namespace NetMed.Persistence.Repositories
                 return validationResult;
             }
 
-            var validateNotNull = _rolesValidator.ValidateRolesIdIsNegative(roles.Id, _jsonMessage.ErrorMessages["InvalidId"]);
-
-            if (!validateNotNull.Success)
-            {
-                _logger.LogError(validateNotNull.Message);
-                return validateNotNull;
-            }
-
             try
             {
                 _context.Roles.Update(roles);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_jsonMessage.SuccessMessages["RoleUpdated"]);
+                _logger.LogInformation(_jsonMessage.SuccessMessages["RoleUpdated"], nameof(roles), roles.Id);
                 return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["RoleUpdated"], Data = roles };
             }
             catch (Exception ex)
@@ -136,32 +165,23 @@ namespace NetMed.Persistence.Repositories
 
         public async Task<OperationResult> DeleteRoleAsync(int rolesId)
         {
-
-            var validationResult = _rolesValidator.ValidateRolesIdIsNegative(rolesId, _jsonMessage.ErrorMessages["InvalidId"]);
-
-            if (!validationResult.Success)
+            var nullValidationResult = _rolesValidator.ValidateNumberEntityIsNegative(rolesId, _jsonMessage.ErrorMessages["RolesNull"]);
+            if (!nullValidationResult.Success)
             {
-                _logger.LogError(validationResult.Message);
-                return validationResult;
+                _logger.LogError(nullValidationResult.Message);
+                return nullValidationResult;
             }
 
             try
             {
-                var role = await _context.Roles.FindAsync(rolesId);
+                var roles = await _context.Roles.FindAsync(rolesId);
 
-                var notNullRole = EntityValidator.ValidateNotNull(role, _jsonMessage.ErrorMessages["RoleNotFound"]);
 
-                if (!notNullRole.Success)
-                {
-                    _logger.LogWarning(notNullRole.Message);
-                    return notNullRole;
-                }
-
-                _context.Roles.Remove(role);
+                _context.Roles.Remove(roles);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation(_jsonMessage.SuccessMessages["RoleDeleted"]);
-                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["RoleDeleted"], Data = role };
+                _logger.LogInformation(_jsonMessage.SuccessMessages["RoleDeleted"], nameof(Roles), roles);
+                return new OperationResult { Success = true, Message = _jsonMessage.SuccessMessages["RoleDeleted"], Data = roles };
             }
             catch (Exception ex)
             {

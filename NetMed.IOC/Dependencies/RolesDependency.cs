@@ -15,7 +15,7 @@ namespace NetMed.IOC.Dependencies
         {
 
             service.AddScoped<IRolesRepository, RolesRepository>();
-            service.AddTransient<IRolesContract, RolesServices>();
+            service.AddTransient<IRolesContract, RolesService>();
 
 
 

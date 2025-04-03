@@ -29,6 +29,15 @@ namespace NetMed.Api.Controllers
                 return Ok(rolesList);
             }
 
+
+            [HttpGet("GetRolesById")]
+            public async Task<IActionResult> Get( int roles)
+            {
+                var rolesList = await _rolesContract.GetDtoById(roles);
+                return Ok(rolesList);
+            }
+
+
             [HttpPost("CreateRole")]
             public async Task<IActionResult> Post([FromBody] SaveRolesDto role)
             {

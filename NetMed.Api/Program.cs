@@ -1,11 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using NetMed.Application.Interfaces;
-using NetMed.IOC.Dependencies;
 using NetMed.Domain.Base;
 using NetMed.Infraestructure.Loggin.Base;
+using NetMed.IOC.Dependencies;
 using NetMed.Persistence.Context;
-using NetMed.Persistence.Context.Interfaces;
-using NetMed.Persistence.Repositories;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,14 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddDbContext<NetmedContext>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("MedicalAppointment")));
-
-
-
-builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
-
-builder.Services.AddScoped<IRolesRepository, RolesRepository>();
-
-builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 
 
 builder.Services.AddNotificationDependency();

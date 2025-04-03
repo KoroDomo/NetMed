@@ -2,10 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.Status;
 using NetMed.Domain.Entities;
-using NetMed.Persistence.Context.Interfaces;
-using NetMed.Persistence.Interfaces;
 
-    namespace NetMed.Api.Controllers
+
+namespace NetMed.Api.Controllers
     {
         [Route("api/[controller]")]
         [ApiController]
@@ -29,6 +28,15 @@ using NetMed.Persistence.Interfaces;
            
             }
 
+        [HttpGet("GetStatusById")]
+
+        public async Task<IActionResult> GetById(int ID)
+        {
+            var status = await _statusContract.GetDtoById(ID);
+            return Ok(status);
+
+        }
+
             [HttpPost("CreateStatus")]
             public async Task<IActionResult> CreateStatus([FromBody] SaveStatusDto status)
             {
@@ -49,12 +57,10 @@ using NetMed.Persistence.Interfaces;
             }
 
             [HttpDelete("DeleteStatus")]
-            public async Task<IActionResult> DeleteStatus([FromBody] int  statusId)
+            public async Task<IActionResult> DeleteStatus([FromBody] Status  status)
             {
-               
-                    var result = await _statusContract.DeleteDto(statusId);
-                    return Ok(result);
-                
+                    var result = await _statusContract.DeleteDto(status.Id);
+                    return Ok(result);   
             }
         }
     }

@@ -11,5 +11,7 @@ namespace NetMed.Domain.Entities
         [Key]
         public override int Id { get; set; }
         public string RoleName { get; set; }
+
+
     }
 }

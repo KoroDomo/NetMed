@@ -15,7 +15,7 @@ namespace NetMed.IOC.Dependencies
         {
 
             service.AddScoped<IStatusRepository, StatusRepository>();
-            service.AddTransient<IStatusContract, StatusServices>();
+            service.AddTransient<IStatusContract, StatusService>();
 
 
 
