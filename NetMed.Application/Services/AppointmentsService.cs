@@ -1,9 +1,9 @@
 ﻿
-using NetMed.Application.Dtos;
+
 using NetMed.Application.Dtos.Appointments;
+using NetMed.Application.Dtos.Extensions;
 using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
-using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
 using NetMed.Infraestructure.Validators;
@@ -84,10 +84,14 @@ namespace NetMed.Application.Services
                 result = _validations.IsInt(TDto);
                 if (!result.success) return result;
 
-                var data = await _appointmentsRespository.RemoveAsync(TDto.appointmentID);
+                var appointment = await _appointmentsRespository.GetEntityByIdAsync(TDto.appointmentID);
+                var appointmentDto = appointment.ToDto();
+
+                await _appointmentsRespository.RemoveAsync(TDto.appointmentID);
+
                 result.success = true;
                 result.message = _messageService.GetMessage(nameof(Remove), true);
-                result.data = data;
+                result.data = appointmentDto;
             }
             catch (Exception ex) 
             {
@@ -102,14 +106,10 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
-                var appointments = new Appointments
-                {
-                    PatientID = TDto.patientID,
-                    DoctorID = TDto.doctorID,
-                    AppointmentDate = TDto.appointmentDate,
-                    StatusID = TDto.statusID
-                };
+                var appointments = TDto.ConvertToEntitySave();
+
                 await _appointmentsRespository.SaveEntityAsync(appointments);
+                
                 result.success = true;
                 result.message = _messageService.GetMessage(nameof(Save), true); 
                 result.data = appointments;
@@ -127,15 +127,10 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
-                var appointments = new Appointments
-                {
-                    Id = TDto.appointmentID,
-                    PatientID = TDto.patientID,
-                    DoctorID = TDto.doctorID,
-                    AppointmentDate = TDto.appointmentDate,
-                    StatusID = TDto.statusID
-                };
+                var appointments = TDto.ConvertToEntityUpdate();
+
                 await _appointmentsRespository.UpdateEntityAsync(appointments);
+
                 result.success = true;
                 result.message = _messageService.GetMessage(nameof(Update), true);  
                 result.data = appointments;

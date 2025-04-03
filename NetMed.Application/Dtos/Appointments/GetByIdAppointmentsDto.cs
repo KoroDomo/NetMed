@@ -1,6 +1,4 @@
-﻿
-
-namespace NetMed.Application.Dtos.Appointments
+﻿namespace NetMed.Application.Dtos.Appointments
 {
    public class GetByIdAppointmentsDto : BaseDto
    {

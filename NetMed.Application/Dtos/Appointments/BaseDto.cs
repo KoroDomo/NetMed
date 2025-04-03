@@ -1,5 +1,4 @@
-﻿
-namespace NetMed.Application.Dtos
+﻿namespace NetMed.Application.Dtos.Appointments
 {
    public class BaseDto
    {

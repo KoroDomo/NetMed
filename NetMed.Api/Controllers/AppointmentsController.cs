@@ -23,6 +23,7 @@ namespace NetMed.Api.Controllers
         [HttpGet("GetAppointment")]
         public async Task<IActionResult> Get()
         {
+            
             var appointments = await _appointmentsService.GetAll();
             return Ok(appointments); 
         }

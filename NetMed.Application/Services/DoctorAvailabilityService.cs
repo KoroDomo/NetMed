@@ -1,9 +1,7 @@
-﻿
-using NetMed.Application.Dtos;
-using NetMed.Application.Dtos.DoctorAvailability;
+﻿using NetMed.Application.Dtos.DoctorAvailability;
+using NetMed.Application.Dtos.Extensions;
 using NetMed.Application.Interfaces;
 using NetMed.Domain.Base;
-using NetMed.Domain.Entities;
 using NetMed.Infraestructure.Logger;
 using NetMed.Infraestructure.Messages;
 using NetMed.Infraestructure.Validators;
@@ -83,11 +81,15 @@ namespace NetMed.Application.Services
                 result = _validations.IsInt(TDto);
                 if (!result.success) return result;
 
-                var doctorAvailability = await _doctorAvailabilityRepository.RemoveAsync(TDto.availabilityID);
+
+                var doctorAvailability = await _doctorAvailabilityRepository.GetEntityByIdAsync(TDto.availabilityID);
+                var doctorAvailabilityDto = doctorAvailability.ToDto();
+
+                await _doctorAvailabilityRepository.RemoveAsync(TDto.availabilityID);
 
                 result.success = true;
                 result.message = _messageService.GetMessage(nameof(Remove), true);
-                result.data= doctorAvailability;
+                result.data= doctorAvailabilityDto;
             }
             catch (Exception ex)
             {
@@ -102,13 +104,8 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
-                var doctorAvailability = new DoctorAvailability
-                {
-                    DoctorID = TDto.doctorID,                    
-                    AvailableDate = TDto.availableDate,
-                    StartTime = TDto.startTime,
-                    EndTime = TDto.endTime
-                };
+                var doctorAvailability = TDto.ConvertToEntitySave();
+
                 await _doctorAvailabilityRepository.SaveEntityAsync(doctorAvailability);
                 result.success = true;
                 result.message = _messageService.GetMessage(nameof(Save), true);
@@ -127,14 +124,8 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
-                var doctorAvailability = new DoctorAvailability
-                {
-                    Id = TDto.availabilityID,
-                    DoctorID = TDto.doctorID,
-                    AvailableDate = TDto.availableDate,
-                    StartTime = TDto.startTime,
-                    EndTime = TDto.endTime
-                };
+                var doctorAvailability = TDto.ConvertToEntityUpdate();
+
                 await _doctorAvailabilityRepository.UpdateEntityAsync(doctorAvailability);
                 result.success = true;
                 result.message = _messageService.GetMessage(nameof(Update), true);
