@@ -1,6 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-using NetMed.WebApi.ConfiUrl;
+using NetMed.WebApi.UrlConfi;
 using NetMed.WebApi.Models.Appointments;
 using NetMed.WebApi.Models.OperationsResult;
 using System.Text;

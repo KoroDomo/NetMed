@@ -1,4 +1,4 @@
-﻿namespace NetMed.WebApi.ConfiUrl
+﻿namespace NetMed.WebApi.UrlConfi
 {
     public static class ApiConfig
     {

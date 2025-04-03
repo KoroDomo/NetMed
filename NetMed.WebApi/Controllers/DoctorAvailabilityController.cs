@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using NetMed.WebApi.Models.DoctorAvailability;
 using System.Text;
 using System.Text.Json;
-using NetMed.WebApi.ConfiUrl;
+using NetMed.WebApi.UrlConfi;
 
 namespace NetMed.WebApi.Controllers
 {
