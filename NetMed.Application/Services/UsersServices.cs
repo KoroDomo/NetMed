@@ -40,7 +40,7 @@ namespace NetMed.Application.Services
             {
                 var users = new Users
                 {
-                    UserId = dto.UserId,
+                    Id = dto.Id,
                     FirstName = dto.FirstName ?? string.Empty,
                     LastName = dto.LastName ?? string.Empty,
                     Email = dto.Email,
@@ -91,7 +91,7 @@ namespace NetMed.Application.Services
             {
                 var user = new Users
                 {
-                    UserId = dto.UserId,
+                    Id = dto.Id,
                     FirstName = dto.FirstName ?? string.Empty,
                     LastName = dto.LastName ?? string.Empty,
                     Email = dto.Email,
@@ -116,7 +116,7 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
-                result = await _usersRepository.GetEntityByIdAsync(id);
+              var  res = await _usersRepository.GetEntityByIdAsync(id);
                 result.Success = true;
             }
             catch (Exception ex)
@@ -139,10 +139,11 @@ namespace NetMed.Application.Services
                 var data = await _usersRepository.GetAllAsync();
                 result.data = data;
                 result.Success = true;
+                return result;
             }
             catch (Exception ex)
             {
-                result.Success = false;
+                result.Success   = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
                 _logger.LogError(ex, ex.Message);
             }
@@ -157,7 +158,7 @@ namespace NetMed.Application.Services
             {
                 var user = new Users
                 {
-                    UserId = dto.UserId,
+                    Id = dto.Id,
                     FirstName = dto.FirstName ?? string.Empty,
                     LastName = dto.LastName ?? string.Empty,
                     Email = dto.Email,

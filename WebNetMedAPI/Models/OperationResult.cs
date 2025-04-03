@@ -1,11 +1,10 @@
 ﻿namespace NetMed.Web.Models
 {
-    public class OperationResultList<T> 
+    public class OperationResult<T>
     {
-    
         public string Message { get; set; }
         public bool Success { get; set; }
-        
-        public List<T> data { get; set; }
+        public T data { get; set; }
     }
+
 }

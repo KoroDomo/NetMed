@@ -10,7 +10,7 @@ namespace NetMed.Domain.Entities
     {
         [Key]
         [Required]
-        public override int UserId { get; set; }
+        public override int Id { get; set; }
         public required string FirstName { get; set; }
 
         [Required]

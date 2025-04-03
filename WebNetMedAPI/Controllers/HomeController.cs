@@ -1,8 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using NetMed.WebApi.Models;
-
-namespace NetMed.WebApi.Controllers
+using NetMed.Web.Models;
+namespace WebNetMedAPI.Controllers
 {
     public class HomeController : Controller
     {

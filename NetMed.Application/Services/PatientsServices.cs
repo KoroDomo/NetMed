@@ -36,7 +36,7 @@ namespace NetMed.Application.Services
             {
                 var patient = new Patients
                 {
-                    UserId = dto.UserId,
+                    Id = dto.Id,
                     DateOfBirth = dto.DateOfBirth,
                     Gender = dto.Gender,
                     PhoneNumber = dto.PhoneNumber,
@@ -89,7 +89,7 @@ namespace NetMed.Application.Services
             {
                 var patient = new Patients
                 {
-                    UserId = dto.UserId,
+                    Id = dto.Id,
                    EmergencyContactPhone = string.Empty
                 };
                 result = await _patientsRepository.DeleteEntityAsync(patient);
@@ -132,6 +132,7 @@ namespace NetMed.Application.Services
             {
                 result.data = result.data;
                 result.Success = result.Success;
+                    return result;
             }
         }
             catch (Exception ex)
@@ -152,7 +153,7 @@ namespace NetMed.Application.Services
             {
                 var patient = new Patients
                 {
-                    UserId = dto.UserId,
+                    Id = dto.Id,
                     EmergencyContactPhone = dto.EmergencyContactPhone ?? string.Empty
                 };
                 result.data = await _patientsRepository.UpdateEntityAsync(patient);

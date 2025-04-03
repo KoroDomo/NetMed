@@ -9,7 +9,7 @@ namespace NetMed.Domain.Entities
     {
         [Column("DoctorID")]
         [Key]
-        public override int UserId { get; set; }
+        public override int Id { get; set; }
 
         [Required]
         public short SpecialtyID { get; set; }

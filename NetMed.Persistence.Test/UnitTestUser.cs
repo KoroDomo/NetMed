@@ -31,7 +31,7 @@ public class UnitTestUsers
     {
         var users = new Users
         {
-            UserId = 1,
+            Id = 1,
             FirstName = "Juan",
             LastName = "Perez",
             Email = "rrr@gmail.com",
@@ -49,7 +49,7 @@ public class UnitTestUsers
     {
         var users = new Users
         {
-            UserId = 1,
+            Id = 1,
             FirstName = "Juan",
             LastName = "Perez",
             Email = "rr@ffaf",
@@ -68,7 +68,7 @@ public class UnitTestUsers
     {
         var users = new Users
         {
-            UserId = 1,
+            Id = 1,
             FirstName = "Juan",
             LastName = "Perez",
             Email = "rr@ffaf",
@@ -86,7 +86,7 @@ public class UnitTestUsers
     {
         var users = new Users
         {
-            UserId = 1,
+            Id = 1,
             FirstName = "Juan",
             LastName = "Perez",
             Email = "rr@ffaf",
@@ -104,7 +104,7 @@ public class UnitTestUsers
     {
         var users = new Users
         {
-            UserId = 1,
+            Id = 1,
             FirstName = "Juan",
             LastName = "Perez",
             Email = "rr@ffaf",

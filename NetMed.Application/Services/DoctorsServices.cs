@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Extensions.Logging;
 using NetMed.Application.Contracts;
+using NetMed.Application.Dtos;
 using NetMed.Application.Dtos.Doctors;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
@@ -32,8 +33,9 @@ namespace NetMed.Application.Services
                 var doctor = await _doctorsRepository.GetEntityByIdAsync(id);
                 if (doctor != null)
                 {
+                    var data = doctor.ConvertToDto();
                     result.Success = true;
-                    result.data = doctor;
+                    result.data = data;
                 }
                 else
                 {
@@ -49,8 +51,8 @@ namespace NetMed.Application.Services
             return result;
         }
 
-           
-        
+
+
 
 
         public async Task<OperationResult> GetAllData()
@@ -89,7 +91,7 @@ namespace NetMed.Application.Services
 
                 var doctor = new Doctors
                 {
-                    UserId = dto.UserId,    
+                    Id = dto.Id,    
                     SpecialtyID = (short)dto.SpecialtyID,
                     LicenseNumber = dto.LicenseNumber,
                     PhoneNumber = dto.PhoneNumber,
@@ -163,7 +165,7 @@ namespace NetMed.Application.Services
             {
                 var doctor = new Doctors
                 {
-                    UserId = dto.UserId,
+                    Id = dto.Id,
                     SpecialtyID = dto.SpecialtyID,
                     LicenseNumber = dto.LicenseNumber,
                     PhoneNumber = dto.PhoneNumber,
@@ -200,7 +202,7 @@ namespace NetMed.Application.Services
                     ClinicAddress = dto.ClinicAddress,
                     PhoneNumber = dto.PhoneNumber,
                     LicenseNumber = dto.LicenseNumber,
-                    UserId = dto.UserId,
+                    Id = dto.Id,
                     Education = dto.Education,
                     SpecialtyID = dto.SpecialtyID,
                     AvailabilityModeId = (short)dto.AvailabilityModeId

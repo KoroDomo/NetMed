@@ -140,53 +140,7 @@ namespace NetMed.Persistence.Repositories
             }
             return result;
         }
-       //public async Task<OperationResult> GetPhoneNumber(string phoneNumber)
-       // {
-       //     OperationResult result = new OperationResult();
-       //     try
-       //     {
-       //         result.data = await _context.Users.Where(x => x.PhoneNumber == phoneNumber).FirstOrDefaultAsync();
-       //         result.Success = true;
-       //         if (result.data == null)
-       //         {
-       //             result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-       //             result.Success = false;
-       //         }
-
-       //     }
-       //     catch (Exception ex )
-       //     {
-       //         result.Success = false;
-       //         result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetPhoneNumberAsync"];
-       //     }
-       //     return result;
-       // }
-
-
-
-
-        //public async Task<OperationResult> GetAddressAsync(string address)
-        //{
-        //    OperationResult result = new OperationResult();
-        //    try
-        //    {
-               
-        //        result.data = await _context.Users.Where(x => x.Address == address).FirstOrDefaultAsync();
-        //        result.Success = true;
-        //        if (result.data == null)
-        //        {
-        //            result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-        //            result.Success = false;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        result.Success = false;
-        //        result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetAddressAsync"];
-        //    }
-        //    return result;
-        //}
-
+      
 
         public async Task<OperationResult> GetPasswordAsync(string password)
         {
@@ -242,17 +196,20 @@ namespace NetMed.Persistence.Repositories
                 var consult = await _context.Users.ToListAsync();
 
                 result.data = consult;
+                result.Message = "Doctores encontrados";
+                return result;
             }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"];
                 _logger.LogError(_repErrorMapper.SaveEntityErrorMessage + ex.Message.ToString());
+                return result;
             }
-            return result;
+            
         }
 
-        public override async Task<OperationResult> GetEntityByIdAsync(int id)
+        public override async Task<Users> GetEntityByIdAsync(int id)
         {
             OperationResult result = new OperationResult();
             try
@@ -274,7 +231,7 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + _repErrorMapper.GetEntityByIdErrorMessage["GetEntityByIdError"];
             }
-            return result;
+            return result.data;
         }
 
     
@@ -290,7 +247,7 @@ public override async Task<OperationResult> SaveEntityAsync(Users user)
                     result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
                     return result;
                 }
-                user.UserId = 0;
+                user.Id = 0;
                 _context.Users.Add(user);
 
                 await _context.SaveChangesAsync();
@@ -313,7 +270,7 @@ public override async Task<OperationResult> SaveEntityAsync(Users user)
             OperationResult result = new OperationResult();
             try
             {
-                var existingUser = await _context.Users.FindAsync(user.UserId);
+                var existingUser = await _context.Users.FindAsync(user.Id);
                 if (existingUser == null)
                 {
                     result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
@@ -333,7 +290,7 @@ public override async Task<OperationResult> SaveEntityAsync(Users user)
                     _context.Users.Update(existingUser);
                     await _context.SaveChangesAsync();
 
-                    result.data = existingUser; // Return the updated entity
+                    result.data = existingUser; 
                     result.Success = true;
                 }
             }

@@ -40,7 +40,7 @@ namespace NetMed.Persistence.Base
             return result;
         }
 
-        public virtual async Task<OperationResult> GetEntityByIdAsync(int id)
+        public virtual async Task<TEntity> GetEntityByIdAsync(int id)
         {
             OperationResult result = new OperationResult();
             try
@@ -62,7 +62,7 @@ namespace NetMed.Persistence.Base
                 result.Success = false;
                 result.Message = ex.Message + " Ocurrio un error obteniendo los datos.";
             }
-            return result;
+            return result.data;
         }
 
 

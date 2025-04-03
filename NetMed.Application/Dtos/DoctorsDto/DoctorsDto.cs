@@ -5,7 +5,6 @@ namespace NetMed.Application.Dtos.Doctors
     public class DoctorsDto : DtoBase
     {
 
-  
         public required short SpecialtyID { get; set; }
         public required string LicenseNumber { get; set; }
 
@@ -26,6 +25,6 @@ namespace NetMed.Application.Dtos.Doctors
         }
         public short AvailabilityModeId { get; set; } 
 
-    //    public bool IsActive { get; set; }
+   
     }
 }

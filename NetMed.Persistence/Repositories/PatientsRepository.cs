@@ -310,7 +310,7 @@ namespace NetMed.Persistence.Repositories
             return result;
         }
 
-        public override async Task<OperationResult> GetEntityByIdAsync(int id)
+        public override async Task<Patients> GetEntityByIdAsync(int id)
         {
             OperationResult result = new OperationResult();
             try
@@ -332,7 +332,7 @@ namespace NetMed.Persistence.Repositories
                 result.Success = false;
                 result.Message = ex.Message + _repErrorMapper.GetEntityByIdErrorMessage["GetEntityByIdError"];
             }
-            return result;
+            return result.data;
         }
         public override async Task<bool> ExistsAsync(Expression<Func<Patients, bool>> filter)
         {

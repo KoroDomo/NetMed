@@ -23,7 +23,8 @@ public class UnitTestUsersServ
     {
         _mockUsersRepository = new Mock<IUsersRepository>();
         _logger = new Mock<ILogger<UsersServices>>().Object;
-        _usersServices = new UsersServices(_mockUsersRepository.Object, _logger);
+        var mockContext = new Mock<NetMedContext>().Object;
+        _usersServices = new UsersServices(_mockUsersRepository.Object, mockContext, _logger);
     }
 
     [Fact]
@@ -32,8 +33,8 @@ public class UnitTestUsersServ
         // Arrange
         var users = new List<Users>
         {
-            new Users { UserId = 1, FirstName = "John", LastName = "Doe", Email = "john@example.com", Password = "33431" },
-            new Users { UserId = 2, FirstName = "Jane", LastName = "Smith", Email = "jane@example.com", Password = "33431" }
+            new Users { Id = 1, FirstName = "John", LastName = "Doe", Email = "john@example.com", Password = "33431" },
+            new Users { Id = 2, FirstName = "Jane", LastName = "Smith", Email = "jane@example.com", Password = "33431" }
         };
 
         var operationResult = new OperationResult
@@ -64,7 +65,7 @@ public class UnitTestUsersServ
     {
         // Arrange
         int userId = 1;
-        var user = new Users { UserId = userId, FirstName = "John", LastName = "Doe", Email = "john@example.com", Password = "33431" };
+        var user = new Users { Id = userId, FirstName = "John", LastName = "Doe", Email = "john@example.com", Password = "33431" };
 
         var operationResult = new OperationResult
         {
@@ -73,8 +74,8 @@ public class UnitTestUsersServ
             data = user
         };
 
-        _mockUsersRepository.Setup(repo => repo.GetEntityByIdAsync(userId))
-            .ReturnsAsync(operationResult);
+        //_mockUsersRepository.Setup(repo => repo.GetEntityByIdAsync(userId))
+        //    .ReturnsAsync(operationResult);
 
         // Act
         var result = await _usersServices.GetById(userId);
@@ -84,7 +85,7 @@ public class UnitTestUsersServ
         Assert.Equal("User found", result.Message);
         var resultUser = result.data as Users;
         Assert.NotNull(resultUser);
-        Assert.Equal(userId, resultUser.UserId);
+        Assert.Equal(userId, resultUser.Id);
         Assert.Equal("John", resultUser.FirstName);
     }
 
@@ -93,7 +94,7 @@ public class UnitTestUsersServ
     {
         // Arrange
         var newUser = new AddUserDto { FirstName = "Alice", LastName = "Johnson", Email = "alice@example.com", Password = "password123" };
-        var createdUser = new Users { UserId = 3, FirstName = "Alice", LastName = "Johnson", Email = "alice@example.com", Password = "password123" };
+        var createdUser = new Users { Id = 3, FirstName = "Alice", LastName = "Johnson", Email = "alice@example.com", Password = "password123" };
 
         var operationResult = new OperationResult
         {
@@ -113,7 +114,7 @@ public class UnitTestUsersServ
         Assert.Equal("User added successfully", result.Message);
         var resultUser = result.data as Users;
         Assert.NotNull(resultUser);
-        Assert.Equal(3, resultUser.UserId);
+        Assert.Equal(3, resultUser.Id);
         Assert.Equal("Alice", resultUser.FirstName);
     }
 
@@ -121,13 +122,13 @@ public class UnitTestUsersServ
     public async Task UpdateUsersReturnUpdatedUser()
     {
         // Arrange
-        var userToUpdate = new UpdateUserDto { UserId = 1, FirstName = "John", LastName = "Updated", Email = "john@example.com", Password = "33431" };
+        var userToUpdate = new UpdateUserDto { Id = 1, FirstName = "John", LastName = "Updated", Email = "john@example.com", Password = "33431" };
 
         var operationResult = new OperationResult
         {
             Success = true,
             Message = "User updated successfully",
-            data = new Users { UserId = 1, FirstName = "John", LastName = "Updated", Email = "john@example.com", Password = "33431" }
+            data = new Users { Id = 1, FirstName = "John", LastName = "Updated", Email = "john@example.com", Password = "33431" }
         };
 
         _mockUsersRepository.Setup(repo => repo.UpdateEntityAsync(It.IsAny<Users>()))
@@ -149,7 +150,7 @@ public class UnitTestUsersServ
     {
         // Arrange
         int userId = 1;
-        var deletedUser = new Users { UserId = userId, FirstName = "John", LastName = "Doe", Email = "john@example.com", Password = "33431" };
+        var deletedUser = new Users { Id = userId, FirstName = "John", LastName = "Doe", Email = "john@example.com", Password = "33431" };
 
         var operationResult = new OperationResult
         {
@@ -163,7 +164,7 @@ public class UnitTestUsersServ
 
         var deleteUserDto = new DeleteUserDto
         {
-            UserId = userId,
+            Id = userId,
             Deleted = true,
             FirstName = "John",
             LastName = "Doe",
@@ -178,6 +179,6 @@ public class UnitTestUsersServ
         Assert.Equal("User deleted successfully", result.Message);
         var resultUser = result.data as Users;
         Assert.NotNull(resultUser);
-        Assert.Equal(userId, resultUser.UserId);
+        Assert.Equal(userId, resultUser.Id);
     }
 }

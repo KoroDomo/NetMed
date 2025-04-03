@@ -268,7 +268,9 @@ namespace NetMed.Persistence.Repositories
             var result = new OperationResult();
             try
             {
-                _context.Doctors.Update(entity);
+
+
+                _context.Entry(entity).CurrentValues.SetValues(entity);
                 await _context.SaveChangesAsync();
                 result.Success = true;
             }
@@ -303,8 +305,7 @@ namespace NetMed.Persistence.Repositories
             try
             {
                   
-                var consult = await _context.Doctors.ToListAsync();
-
+                var consult = await _context.Doctors.Where(d => d.IsActive == true).ToListAsync();
                 result.data = consult;
 
            }
@@ -324,7 +325,7 @@ namespace NetMed.Persistence.Repositories
 
         }
 
-        public override async Task<OperationResult> GetEntityByIdAsync(int id)
+        public override async Task<Doctors> GetEntityByIdAsync(int id)
         {
             OperationResult result = new OperationResult();
 
@@ -353,10 +354,32 @@ namespace NetMed.Persistence.Repositories
 
 
             }
-            return result;
+            return result.data;
         }
 
+      override public  async Task<OperationResult> DeleteEntityAsync(Doctors entity)
+        {
+            OperationResult result = new OperationResult() { Success = true };
 
+            
+            try
+            {
+
+                var getDoctor = await _context.Doctors.FindAsync(entity.Id);
+                getDoctor.IsActive = false;
+                await _context.SaveChangesAsync();
+                result.data = entity;
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message + " Ocurrio un error borrando los datos.";
+
+            }
+
+            return result;
+        }
 
     }
 }

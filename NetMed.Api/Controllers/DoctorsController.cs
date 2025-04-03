@@ -58,22 +58,19 @@ namespace NetMed.Api.Controllers
         [HttpPut("UpdateDoctor/{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] UpdateDoctorsDto doctorsDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+           
 
-            doctorsDto.UserId = id; // Ensure the ID is set correctly
+            doctorsDto.Id = id; 
             var result = await _doctorsServices.Update(doctorsDto);
             if (result.Success)
             {
-                return Ok(result.data);
+                return Ok(result);
             }
             return BadRequest(result.Message);
         }
 
         // DELETE api/<DoctoresControlador>/5
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("Delete")]
         public async Task<IActionResult>  DeleteAsync(DeleteDoctorDto doctorDto)
         {
             var doc = await _doctorsServices.Delete(doctorDto);
