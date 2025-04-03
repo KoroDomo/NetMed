@@ -3,17 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 using NetMed.WebApi.Models.DoctorAvailability;
 using System.Text;
 using System.Text.Json;
+using NetMed.WebApi.ConfiUrl;
 
 namespace NetMed.WebApi.Controllers
 {
     public class DoctorAvailabilityController : Controller
     {
-        // GET: DoctorAvailabilityController
         public async Task<IActionResult> Index()
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5135/api/");
+                client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
 
                 var response = await client.GetAsync("DoctorAvailability/GetDoctorAvailability");
 
@@ -29,13 +29,12 @@ namespace NetMed.WebApi.Controllers
                 }
             }
         }
-        // GET: DoctorAvailabilityController/Details/5
         public async Task<IActionResult> Details(int id)
         {
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5135/api/");
+                client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
 
                 var response = await client.GetAsync($"DoctorAvailability/GetAvailabilityById?id={id}");
 
@@ -53,14 +52,11 @@ namespace NetMed.WebApi.Controllers
                 }
             }           
         }
-
-        // GET: DoctorAvailabilityController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: DoctorAvailabilityController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DoctorAvailabilityModel doctorAvailabilityModel)
@@ -69,7 +65,7 @@ namespace NetMed.WebApi.Controllers
             {
                 using (var client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri("http://localhost:5135/api/");
+                    client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
 
                     var response = await client.PostAsJsonAsync($"DoctorAvailability/SaveDoctorAvailability", doctorAvailabilityModel);
 
@@ -93,12 +89,11 @@ namespace NetMed.WebApi.Controllers
             }
         }
 
-        // GET: DoctorAvailabilityController/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5135/api/");
+                client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
 
                 var response = await client.GetAsync($"DoctorAvailability/GetAvailabilityById?id={id}");
 
@@ -117,7 +112,6 @@ namespace NetMed.WebApi.Controllers
             }
         }
 
-        // POST: DoctorAvailabilityController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(DoctorAvailabilityModelUpdate doctorAvailabilityModel)
@@ -126,7 +120,7 @@ namespace NetMed.WebApi.Controllers
             {
                 using (var client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri("http://localhost:5135/api/");
+                    client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
                     var response = await client.PutAsJsonAsync("DoctorAvailability/UpdateDoctorAvailability", doctorAvailabilityModel);
 
                     string apiResponse = await response.Content.ReadAsStringAsync();
@@ -148,13 +142,11 @@ namespace NetMed.WebApi.Controllers
                 return View();
             }
         }
-
-        // GET: DoctorAvailabilityController/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5135/api/");
+                client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
 
                 var response = await client.GetAsync($"DoctorAvailability/GetAvailabilityById?id={id}");
 
@@ -174,7 +166,6 @@ namespace NetMed.WebApi.Controllers
             }
         }
 
-        // POST: DoctorAvailabilityController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(DoctorAvailabilityModelRemove doctorAvailabilityModel)
@@ -183,7 +174,7 @@ namespace NetMed.WebApi.Controllers
             {
                 using (var client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri("http://localhost:5135/api/");
+                    client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
 
                     var request = new HttpRequestMessage
                     {

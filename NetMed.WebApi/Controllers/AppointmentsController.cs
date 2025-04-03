@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using NetMed.WebApi.ConfiUrl;
 using NetMed.WebApi.Models.Appointments;
 using NetMed.WebApi.Models.OperationsResult;
 using System.Text;
@@ -9,12 +10,11 @@ namespace NetMed.WebApi.Controllers
 {
     public class AppointmentsController : Controller
     {
-        // GET: AppointmentsController
         public async Task<IActionResult> Index()
         {            
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5135/api/");
+                client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
                 var response = await client.GetAsync("Appointments/GetAppointment");
 
                 if (response.IsSuccessStatusCode)
@@ -27,16 +27,13 @@ namespace NetMed.WebApi.Controllers
                     ViewBag.Message = "Error obteniendo las Citas";
                     return View();
                 }
-            }
-            
+            }            
         }
-
-        // GET: AppointmentsController/Details/5
         public async Task<IActionResult> Details(int id)
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5135/api/");
+                client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
                 var response = await client.GetAsync($"Appointments/GetAppointmentById?id={id}");
 
                 string apiResponse = await response.Content.ReadAsStringAsync();
@@ -53,14 +50,11 @@ namespace NetMed.WebApi.Controllers
                 }
             }  
         }
-
-        // GET: AppointmentsController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: AppointmentsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AppointmentsModelSave appointmentsModel)
@@ -69,7 +63,7 @@ namespace NetMed.WebApi.Controllers
             {
                 using (var client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri("http://localhost:5135/api/");
+                    client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
 
                     var response = await client.PostAsJsonAsync($"Appointments/SaveAppointement",appointmentsModel);
 
@@ -92,13 +86,11 @@ namespace NetMed.WebApi.Controllers
                 return View();
             }
         }
-
-        // GET: AppointmentsController/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5135/api/");
+                client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
                 var response = await client.GetAsync($"Appointments/GetAppointmentById?id={id}");
 
                 string apiResponse = await response.Content.ReadAsStringAsync();
@@ -116,7 +108,6 @@ namespace NetMed.WebApi.Controllers
             }
         }
 
-        // POST: AppointmentsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(AppointmentsModelUpdate appointmentsModel)
@@ -125,7 +116,7 @@ namespace NetMed.WebApi.Controllers
             {
                 using (var client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri("http://localhost:5135/api/");
+                    client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
 
                     var response = await client.PutAsJsonAsync($"Appointments/UpdateAppointment", appointmentsModel);
 
@@ -148,13 +139,11 @@ namespace NetMed.WebApi.Controllers
                 return View();
             }
         }
-
-        // GET: AppointmentsController/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5135/api/");
+                client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
                 var response = await client.GetAsync($"Appointments/GetAppointmentById?id={id}");
 
                 string apiResponse = await response.Content.ReadAsStringAsync();
@@ -172,7 +161,6 @@ namespace NetMed.WebApi.Controllers
             }
         }
 
-        // POST: AppointmentsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task <IActionResult> Delete(int id,AppointmentsModelRemove appointmentsModel)
@@ -181,7 +169,7 @@ namespace NetMed.WebApi.Controllers
             {
                 using (var client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri("http://localhost:5135/api/");
+                    client.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
 
                     var request = new HttpRequestMessage
                     {
