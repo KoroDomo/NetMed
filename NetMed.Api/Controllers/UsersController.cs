@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.UsersDto;
+using NetMed.Domain.Entities;
 
 namespace NetMed.Api.Controllers
 {
@@ -23,15 +24,20 @@ namespace NetMed.Api.Controllers
         public async Task<IActionResult> Get()
         {
             var user = await _usersServices.GetAllData();
-            return Ok(user);
+            if (user.Success == true)
+            {
+                return Ok(user.data);
+            }
+            return Ok();
         }
 
         // GET api/<UsersController>/5
         [HttpGet("GetUserById/{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var users = await _usersServices.GetById(id);
-            return Ok(users);
+            var  result = await _usersServices.GetById(id);
+
+            return Ok(result);
         }
 
         // POST api/<UsersController>
@@ -74,8 +80,13 @@ namespace NetMed.Api.Controllers
         }
         // DELETE api/<UsersController>/5
         [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> DeleteAsync(DeleteUserDto usersDto) // Updated parameter type
+        public async Task<IActionResult> DeleteAsync([FromBody] DeleteUserDto usersDto) // Updated parameter type
         {
+            if (usersDto == null)
+            {
+                return BadRequest("User data is required.");
+            }
+
             var usuario = await _usersServices.Delete(usersDto);
             return Ok(usuario);
         }

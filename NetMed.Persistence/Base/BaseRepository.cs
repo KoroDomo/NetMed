@@ -124,19 +124,21 @@ namespace NetMed.Persistence.Base
         }
         public virtual async Task<OperationResult> GetAllAsync()
         {
-            OperationResult result = new OperationResult();
             try
             {
-                result.data = await Entity.ToListAsync();
-                result.Success = true;
+              
+                return new OperationResult { data = await Entity.ToListAsync(), Success = true };
             }
             catch (Exception ex)
             {
-                result.Message = ex.Message + "Error al llamar los datos";
-                result.Success = false;
+                return new OperationResult
+                {
+                    Success = false,
+                    Message = ex.Message + " Ocurrio un error obteniendo los datos."
+                };
             }
 
-            return result;
+           
         }
 
         public virtual async Task<OperationResult> DeleteEntityAsync(TEntity entity)

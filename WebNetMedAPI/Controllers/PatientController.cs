@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Net.Http.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NetMed.Web.Models;
+using WebNetMedAPI.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NetMed.Web.Controllers
 {
     public class PatientController : Controller
     {
         // GET: PatientController
-        public async Task<ActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             List<PatientModel> patients = new List<PatientModel>();
             using (var client = new HttpClient())
@@ -16,10 +19,10 @@ namespace NetMed.Web.Controllers
                 var response = await client.GetAsync("api/Patients/GetPatients");
                 if (response.IsSuccessStatusCode)
                 {
-                    var patientsResponse = await response.Content.ReadFromJsonAsync<List<PatientModel>>();
+                    var patientsResponse = await response.Content.ReadFromJsonAsync<OperationResultList<PatientModel>>();
                     if (patientsResponse != null)
                     {
-                        patients = patientsResponse;
+                        patients = patientsResponse.data;
                     }
                 }
             }
@@ -27,27 +30,28 @@ namespace NetMed.Web.Controllers
         }
 
         // GET: PatientController/Details/5
-        public async Task<ActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            PatientModel? patientModel = null;
+     
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost:5261");
                 var response = await client.GetAsync($"api/Patients/GetPatientsById/{id}");
                 if (response.IsSuccessStatusCode)
                 {
-                    patientModel = await response.Content.ReadFromJsonAsync<PatientModel>();
-                    if (patientModel == null)
+                    var result = await response.Content.ReadFromJsonAsync<OperationResult<PatientModel>>();
+                    if (result == null)
                     {
                         return NotFound();
                     }
+                    return View(result.data);
                 }
             }
-            return View(patientModel);
+            return View();
         }
 
         // GET: PatientController/Create
-        public ActionResult Create()
+        public async Task<IActionResult>Create()
         {
             return View();
         }
@@ -55,7 +59,7 @@ namespace NetMed.Web.Controllers
         // POST: PatientController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(PatientModel patientModel)
+        public async Task<IActionResult> Create(PatientModel patientModel)
         {
             try
             {
@@ -65,7 +69,7 @@ namespace NetMed.Web.Controllers
                     var response = await client.PostAsJsonAsync("api/Patients/SavePatients", patientModel);
                     if (response.IsSuccessStatusCode)
                     {
-                        var res = await response.Content.ReadFromJsonAsync<OperationResult<DoctorModel>>();
+                        var res = await response.Content.ReadFromJsonAsync<OperationResult<PatientModel>>();
                         if (res == null)
                         {
                             return NotFound();
@@ -84,46 +88,108 @@ namespace NetMed.Web.Controllers
 
 
         // GET: PatientController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-           PatientModel patientModel = new PatientModel();
-            return View(patientModel);
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:5261");
+                var response = await client.GetAsync($"api/Patients/GetPatientsById/{id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseData = await response.Content.ReadAsStringAsync();
+
+                    var datos = await response.Content.ReadFromJsonAsync<OperationResult<PatientModel>>();
+                    if (datos == null)
+                    {
+                        return NotFound();
+                    }
+                        return View(datos.data); 
+                }
+            }
+            return View();
         }
+        
+        
 
         // POST: PatientController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, PatientModel patientModel)
+        public async Task <IActionResult> Edit(int id, PatientModel patientModel)
         {
-            try
+            using (var client = new HttpClient())
             {
-                return RedirectToAction(nameof(Index));
+                client.BaseAddress = new Uri("http://localhost:5261");
+                var response = await client.PutAsJsonAsync($"/api/Patients/UpdatePatients/{id}", patientModel);
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseData = await response.Content.ReadAsStringAsync();
+                    var datos = await response.Content.ReadFromJsonAsync<OperationResult<PatientModel>>();
+                    if (datos != null)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+
+
+                }
             }
-            catch
-            {
-                return View();
-            }
+            return View();
+
         }
 
         // GET: PatientController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            using (var client  = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:5261");
+                var response = await client.GetAsync($"api/Patients/GetPatientsById/{id}");
+                if(response.IsSuccessStatusCode)
+                {
+                    string responseData = await response.Content.ReadAsStringAsync();
+
+                    var dato = await response.Content.ReadFromJsonAsync<OperationResult<PatientModel>>();
+                    if (dato == null)
+                    {
+                        return NotFound();
+                    }
+                    return View(dato.data);
+                }
+            }
             return View();
         }
 
         // POST: PatientController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> Delete(int Id, PatientModel patientModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://localhost:5261");
+                    var response = await client.DeleteAsync($"api/Patients/DeletePatient/{Id}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var dat = await response.Content.ReadFromJsonAsync<OperationResult<PatientModel>>();
+                        if (dat != null)
+                        {
+                            return RedirectToAction(nameof(Index));
+                        }
+
+
+                        return View(dat);
+                          
+                    }
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Message = ex.Message;
                 return View();
             }
+            return View(patientModel);
         }
     }
 }

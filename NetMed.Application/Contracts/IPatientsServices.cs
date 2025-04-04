@@ -1,7 +1,7 @@
 ﻿
 using NetMed.Application.Dtos;
 using NetMed.Application.Base;
-using NetMed.Application.Dtos.PatientsDto;
+using NetMed.Application.Dtos.Patients;
 using NetMed.Domain.Base;
 
 namespace NetMed.Application.Contracts

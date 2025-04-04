@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NetMed.Application.Contracts;
-using NetMed.Application.Dtos.PatientsDto;
+using NetMed.Application.Dtos.Patients;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,7 +23,11 @@ namespace NetMed.Api.Controllers
         public async Task<IActionResult> Get()
         {
            var patients = await _patientsServices.GetAllData();
-            return Ok(patients);
+            if (patients.Success == true)
+            {
+                return Ok(patients.data);
+            }
+            return Ok();
         }
 
         // GET api/<PatientsController>/5
@@ -63,8 +67,21 @@ namespace NetMed.Api.Controllers
         public async Task<IActionResult> Put([FromBody] UpdatePatientDto patientsDto)
 
         {
-            var pacients = await _patientsServices.Update(patientsDto);
-            return Ok(pacients);
+            try
+            {
+                var pacients = await _patientsServices.Update(patientsDto);
+                if (pacients.Success != true)
+                {
+                    return BadRequest(pacients.Message);
+                }
+
+                return Ok(pacients.data);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating the patient.");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         // DELETE api/<PatientsController>/5

@@ -3,11 +3,11 @@
     public class UsersModel
     {
 
-        public int UserId { get; set; }
-        public required string FirstName { get; set; }
-        public required string LastName { get; set; }
-        public required string? Email { get; set; }
-        public required string Password { get; set; }
-        public int RoleID { get; set; }
-    }
+        public int Id { get; set; }
+        public string? firstName { get; set; }
+        public string? lastName { get; set; }
+        public  string? email { get; set; }
+        public  string? password { get; set; }
+        public int roleID { get; set; }
+    } 
 }

@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NetMed.Application.Contracts;
-using NetMed.Application.Dtos.PatientsDto;
+using NetMed.Application.Dtos.Patients;
 using NetMed.Application.Services;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;

@@ -6,9 +6,9 @@ namespace NetMed.Domain.Base
     {
         public OperationResult()
         {
-            this.Message = string.Empty; 
+            this.Message = string.Empty;
             this.Success = true;
-            this.data = null;
+            
 
         }
         public string Message { get; set; }

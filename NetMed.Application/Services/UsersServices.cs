@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using NetMed.Persistence.Context;
 using static System.Net.Mime.MediaTypeNames;
 using Microsoft.Extensions.Options;
+using System.Numerics;
+using NetMed.Application.Dtos;
 
 
 namespace NetMed.Application.Services
@@ -116,8 +118,17 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
-              var  res = await _usersRepository.GetEntityByIdAsync(id);
-                result.Success = true;
+
+                var user = await _usersRepository.GetEntityByIdAsync(id);
+               if(user != null)
+                {
+                    var datos = user.ConvertToDto();
+                    result.Success = true;
+                    result.data = datos;
+                    return result;
+                }   
+
+                
             }
             catch (Exception ex)
             {
@@ -136,10 +147,17 @@ namespace NetMed.Application.Services
             OperationResult result = new OperationResult();
             try
             {
-                var data = await _usersRepository.GetAllAsync();
-                result.data = data;
+               result.data = await _usersRepository.GetAllAsync();
+            
                 result.Success = true;
-                return result;
+                if (!result.Success)
+                {
+
+                    result.data = result.data;
+                    result.Success = result.Success;
+                    return result;
+
+                }
             }
             catch (Exception ex)
             {
@@ -162,7 +180,7 @@ namespace NetMed.Application.Services
                     FirstName = dto.FirstName ?? string.Empty,
                     LastName = dto.LastName ?? string.Empty,
                     Email = dto.Email,
-              
+                    RoleID = dto.RoleID,
                     Password = dto.Password ?? string.Empty,
                 };
 

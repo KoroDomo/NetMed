@@ -175,9 +175,9 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-              result.data = await _context.Users.ToListAsync();
-              result.Success = true;
-                return result;
+                var consult = await _context.Users.Where(u => u.IsActive == true).ToListAsync();
+                result.data = consult;
+                
             }
             catch (Exception ex)
             {
@@ -224,6 +224,9 @@ namespace NetMed.Persistence.Repositories
                 {
                     result.data = user;
                     result.Success = true;
+                    result.Message = "Usuarios encontrados";
+
+                    return user;
                 }
             }
             catch (Exception ex)
@@ -232,6 +235,7 @@ namespace NetMed.Persistence.Repositories
                 result.Message = ex.Message + _repErrorMapper.GetEntityByIdErrorMessage["GetEntityByIdError"];
             }
             return result.data;
+
         }
 
     

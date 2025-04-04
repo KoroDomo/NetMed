@@ -1,8 +1,7 @@
 ﻿
 
-using System.ComponentModel.DataAnnotations;
 
-namespace NetMed.Application.Dtos.PatientsDto
+namespace NetMed.Application.Dtos.Patients
 {
     public class PatientsDto : DtoBase
     {

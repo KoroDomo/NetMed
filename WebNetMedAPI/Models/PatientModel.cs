@@ -2,7 +2,7 @@
 {
     public class PatientModel
     {
-        public int PatientId { get; set; }
+        public int Id { get; set; }
         public DateOnly DateOfBirth { get; set; }
         public char Gender { get; set; }
         public  string? PhoneNumber { get; set; }

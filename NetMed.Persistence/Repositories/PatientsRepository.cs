@@ -285,6 +285,8 @@ namespace NetMed.Persistence.Repositories
                 _context.Patients.Update(patients);
                 await _context.SaveChangesAsync();
                 result.Success = true;
+            result.data = patients;
+                return result;
             }
             catch (Exception ex)
             {
@@ -344,16 +346,18 @@ namespace NetMed.Persistence.Repositories
             OperationResult result = new OperationResult();
             try
             {
-                var consult = await _context.Patients.ToListAsync();
-                result.data = consult;
+                var consult = await base.GetAllAsync();
+          
+                
+                return consult;
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"];
                 _logger.LogError(ex.Message);
+
+                return new OperationResult { Success = false, Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"] };
+             
             }
-            return result;
         }
     }
 

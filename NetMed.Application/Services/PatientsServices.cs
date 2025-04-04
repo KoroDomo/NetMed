@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using NetMed.Application.Base;
 using NetMed.Application.Contracts;
 using NetMed.Application.Dtos.Doctors;
-using NetMed.Application.Dtos.PatientsDto;
+using NetMed.Application.Dtos.Patients;
 using NetMed.Domain.Base;
 using NetMed.Domain.Entities;
 using NetMed.Persistence.Interfaces;
@@ -124,17 +124,24 @@ namespace NetMed.Application.Services
         public async Task<OperationResult> GetAllData()
         {
             OperationResult result = new OperationResult();
+
+           
             try
             {
                 result.data = await _patientsRepository.GetAllAsync();
-            
-             if (!result.Success)
-            {
+
+                if (!result.Success)
+                {
+
+                    result.data = result.data;
+                    result.Success = result.Success;
+                   
+                }
+                result.Success = true;
                 result.data = result.data;
-                result.Success = result.Success;
-                    return result;
+                return result;
+              
             }
-        }
             catch (Exception ex)
             {
                 result.Success = false;
@@ -154,9 +161,44 @@ namespace NetMed.Application.Services
                 var patient = new Patients
                 {
                     Id = dto.Id,
-                    EmergencyContactPhone = dto.EmergencyContactPhone ?? string.Empty
+                    EmergencyContactPhone = dto.EmergencyContactPhone ?? string.Empty,
+                    DateOfBirth = dto.DateOfBirth,
+                    InsuranceProviderID = dto.InsuranceProviderID,
+                    Address = dto.Address,
+                    PhoneNumber = dto.PhoneNumber,
+                    Allergies = dto.Allergies,
+                    EmergencyContactName = dto.EmergencyContactName,
+                    IsActive = dto.IsActive,
+                    BloodType = dto.BloodType,
+                    Gender = dto.Gender,
+                    
+                  
+                    
+                    
                 };
-                result.data = await _patientsRepository.UpdateEntityAsync(patient);
+                var validationResults = new List<OperationResult>
+                {
+                    ValidatePatientAge(patient),
+                    ValidatePatientGender(patient),
+                    ValidatePatientEmergencyContact(patient),
+                    ValidatePatientBloodType(patient),
+                    ValidatePatientAllergies(patient),
+                    ValidatePatientPhoneNumber(patient),
+                    ValidatePatientAddress(patient),
+                    ValidatePatientInsuranceProvider(patient),
+                    ValidatePatientWithoutInsurance(patient)
+                };
+                var failedValidation = validationResults.FirstOrDefault(v => !v.Success);
+                if (failedValidation != null)
+                {
+                    return failedValidation;
+                }
+
+
+                var pat = await _patientsRepository.UpdateEntityAsync(patient);
+                result.data = pat;
+                result.Success = true;
+                return result;
             }
 
             catch (Exception ex)

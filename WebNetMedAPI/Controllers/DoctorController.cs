@@ -1,10 +1,5 @@
-﻿using System.Net.Http.Json;
-using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Client;
-using NetMed.Application.Contracts;
-using NetMed.Application.Dtos;
-using NetMed.Domain.Entities;
 using NetMed.Web.Models;
 using WebNetMedAPI.Models;
 
@@ -58,7 +53,7 @@ namespace NetMed.Web.Controllers
         }
 
         // GET: DoctorController/Create
-        public ActionResult Create()
+        public async Task<IActionResult> Create()
         {
             return View();
         }
@@ -182,7 +177,7 @@ namespace NetMed.Web.Controllers
                         var data = await response.Content.ReadFromJsonAsync<OperationResult<DoctorModel>>();
                         if (data != null)
                         {
-                            // Optionally, you can check the success status of the operation
+                            
                             if (data.Success)
                             {
                                 
@@ -190,7 +185,6 @@ namespace NetMed.Web.Controllers
                             }
                             else
                             {
-                                
                                 ViewBag.Message = data.Message;
                             }
                         }
@@ -202,8 +196,6 @@ namespace NetMed.Web.Controllers
             {
                 ViewBag.Message = ex.Message;
                 return View();
-
-
             }
             return View(doctorModel);
         }

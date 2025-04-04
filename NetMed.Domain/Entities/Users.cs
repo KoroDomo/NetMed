@@ -8,6 +8,7 @@ namespace NetMed.Domain.Entities
     [Table("Users", Schema = "users")]
     public sealed class Users : PersonEntity
     {
+        [Column("UserID")]
         [Key]
         [Required]
         public override int Id { get; set; }

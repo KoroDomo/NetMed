@@ -1,6 +1,6 @@
 ﻿
 
-namespace NetMed.Application.Dtos.PatientsDto
+namespace NetMed.Application.Dtos.Patients
 {
  public class DeletePatientDto : DtoBase
     {
