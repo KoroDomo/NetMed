@@ -5,6 +5,8 @@ using WebApiApplication.Persistence.Interfaces;
 using WebApiApplication.Persistence.Repository;
 using WebApiApplication.Infraestructura.Logger;
 using WebApiApplication.Application.Services;
+using WebApiApplication.Infraestructura.Validators;
+using WebApiApplication.UrlConfi;
 
 namespace WebApiApplication.IOC
 {
