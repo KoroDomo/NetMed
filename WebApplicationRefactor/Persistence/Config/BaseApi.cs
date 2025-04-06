@@ -9,7 +9,7 @@
         {
             _httpClient = httpClient;
             _configuration = configuration;
-            _httpClient.BaseAddress = new Uri(_configuration["BaseUrl"]);
+            _httpClient.BaseAddress = new Uri(_configuration["UrlSet:BaseUrl"]);
         }
 
         protected async Task<T> GetAsync<T>(string url)

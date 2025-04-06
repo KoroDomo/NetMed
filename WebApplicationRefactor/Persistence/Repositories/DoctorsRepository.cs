@@ -1,55 +1,32 @@
-﻿
-
-
-
-using WebApplicationRefactor.Application.BaseApp;
-using WebApplicationRefactor.Core.IRepository;
+﻿using WebApplicationRefactor.Models;
 using WebApplicationRefactor.Models.Doctors;
 using WebApplicationRefactor.Persistence.Config;
+using WebApplicationRefactor.Persistence.Interfaces.IRepository;
 
 namespace NetMed.WebApplicationRefactor.Persistence.Repositories
 {
-
-
     public class DoctorsRepository : BaseApi, IRepository<DoctorsApiModel>
     {
         private readonly ILogger<DoctorsRepository> _logger;
 
-
-        public DoctorsRepository(HttpClient httpClient,
-            IConfiguration configuration,
-            ILogger<DoctorsRepository> logger) : base(httpClient, configuration)
+        public DoctorsRepository(HttpClient httpClient, IConfiguration configuration, ILogger<DoctorsRepository> logger)
+            : base(httpClient, configuration)
         {
             _logger = logger;
-
         }
 
-        public async Task AddAsync(DoctorsApiModel entity)
+        private OperationResult ValidateDoctorPersistence(DoctorsApiModel doctor)
         {
-            try
+            if (doctor == null)
             {
-                await PostAsync("Doctor", entity);
-
+                return new OperationResult
+                {
+                    Success = false,
+                };
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error adding doctor");
-                throw;
-            }
+            return new OperationResult { Success = true };
         }
 
-        public Task DeleteAsync(int id)
-        {
-            try
-            {
-                return DeleteAsync($"Doctor/Delete/{id}");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error deleting doctor");
-                throw;
-            }
-        }
         public async Task<IEnumerable<DoctorsApiModel>> GetAllAsync()
         {
             try
@@ -58,39 +35,72 @@ namespace NetMed.WebApplicationRefactor.Persistence.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching all doctors");
-                throw;
+                _logger.LogError(ex, message: "GenericError");
+                return new List<DoctorsApiModel>();
             }
         }
 
         public async Task<DoctorsApiModel> GetByIdAsync(int id)
         {
-
             try
             {
                 return await GetAsync<DoctorsApiModel>($"Doctor/GetById/{id}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching doctor by ID");
-                throw;
+                _logger.LogError(ex, message: "GenericError");
+                return null;
             }
         }
 
-        public Task UpdateAsync(DoctorsApiModel entity)
+        public async Task AddAsync(DoctorsApiModel entity)
         {
+            var result = ValidateDoctorPersistence(entity);
+            if (!result.Success)
+            {
+                _logger.LogError(new Exception(result.message), result.message);
+                return;
+            }
+
             try
             {
-                return PutAsync($"Doctor/Update/{entity.Id}", entity);
+                await PostAsync("Doctor", entity);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating doctor");
-                throw;
+                _logger.LogError(ex, message: "SaveFailed");
+            }
+        }
+
+        public async Task UpdateAsync(DoctorsApiModel entity)
+        {
+            var result = ValidateDoctorPersistence(entity);
+            if (!result.Success)
+            {
+                _logger.LogError(new Exception(result.message), result.message);
+                return;
             }
 
+            try
+            {
+                await PutAsync($"Doctor/Update/{entity.Id}", entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, message: "UpdateFailed");
+            }
+        }
 
+        public async Task DeleteAsync(int id)
+        {
+            try
+            {
+                await DeleteAsync($"Doctor/Delete/{id}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, message: "DeleteFailed");
+            }
         }
     }
-
 }

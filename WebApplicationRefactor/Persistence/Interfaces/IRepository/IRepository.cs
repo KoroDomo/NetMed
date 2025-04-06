@@ -1,4 +1,4 @@
-﻿namespace WebApplicationRefactor.Core.IRepository
+﻿namespace WebApplicationRefactor.Persistence.Interfaces.IRepository
 {
     public interface IRepository<T>
     {

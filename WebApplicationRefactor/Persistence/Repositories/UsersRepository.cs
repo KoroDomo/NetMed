@@ -1,310 +1,96 @@
-﻿using NetMed.Persistence.Base;
-using NetMed.Domain.Entities;
-using NetMed.Persistence.Context;
-using NetMed.Domain.Base;
-using Microsoft.EntityFrameworkCore;
-using NetMed.Persistence.Interfaces;
-using Microsoft.Extensions.Logging;
-using System.Linq.Expressions;
-using System.ComponentModel.DataAnnotations;
-using System.Net;
-using Microsoft.Extensions.Configuration;
-using NetMed.Infrastructure.Mapper.IRepositoryErrorMapper;
-using System.Linq;
+﻿using WebApplicationRefactor.Models.Users;
+using WebApplicationRefactor.Persistence.Config;
+using WebApplicationRefactor.Persistence.Interfaces.IRepository;
 
-
-namespace NetMed.Persistence.Repositories
+namespace NetMed.WebApplicationRefactor.Persistence.Repositories
 {
-    public class UsersRepository : BaseRepository<Users>, IUsersRepository
+    public class UsersRepository : BaseApi, IRepository<UsersApiModel>
     {
-        private readonly NetMedContext _context;
         private readonly ILogger<UsersRepository> _logger;
-        private readonly IRepErrorMapper _repErrorMapper;
 
-
-        public UsersRepository(NetMedContext context,
-         ILogger<UsersRepository> logger, IRepErrorMapper repErrorMapper) : base(context)
+        public UsersRepository(HttpClient httpClient, IConfiguration configuration, ILogger<UsersRepository> logger)
+            : base(httpClient, configuration)
         {
-            _context = context;
             _logger = logger;
-            _repErrorMapper = repErrorMapper;
         }
 
-
-        public async Task<OperationResult> GetEmailAsync(string email)
+        private bool ValidateUserPersistence(UsersApiModel user)
         {
-            OperationResult result = new OperationResult();
+            return user != null;
+        }
+
+        public async Task<IEnumerable<UsersApiModel>> GetAllAsync()
+        {
             try
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-
-                if (user == null)
-                {
-                    result.Success = true;
-                    result.Message = "Correo disponible";
-                }
-                else
-                {
-
-                    result.Success = false;
-                    result.Message = "Email ya registrado";
-
-                    var userMail = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-                    if (user == null)
-                    {
-                        result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-                        result.Success = false;
-                    }
-                    else
-                    {
-                        result.data = userMail;
-                        result.Success = true;
-                    }
-
-                }
+                return await GetAsync<List<UsersApiModel>>("Users/GetAll");
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetEmailAsync"];
+                _logger.LogError(ex, "Error fetching all users");
+                return new List<UsersApiModel>();
             }
-            return result;
         }
 
-        public async Task<OperationResult> GetActiveUsersAsync(bool isActive = true)
+        public async Task<UsersApiModel> GetByIdAsync(int id)
         {
-            OperationResult result = new OperationResult();
-
             try
             {
-                var users = await _context.Users.Where(x => x.IsActive == isActive).ToListAsync();
-                if (users == null)
-                {
-                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-                    result.Success = false;
-                }
-                else
-                {
-                    result.data = users;
-                    result.Success = true;
-                }
+                return await GetAsync<UsersApiModel>($"Users/GetById/{id}");
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetActiveUsersAsync"];
+                _logger.LogError(ex, "Error fetching user by ID");
+                return null;
             }
-            return result;
         }
 
-        public async Task<OperationResult> GetByRoleByIDAsync(int roleID)
+        public async Task AddAsync(UsersApiModel entity)
         {
-            OperationResult result = new OperationResult();
+            if (!ValidateUserPersistence(entity))
+            {
+                _logger.LogError("Invalid user entity");
+                return;
+            }
 
             try
             {
-                if (result.data == null)
-                {
-                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-                    result.Success = false;
-                }
-                result.data = await _context.Users.Where(x => x.RoleID == roleID).FirstOrDefaultAsync();
-                result.Success = true;
+                await PostAsync("Users", entity);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetByRoleByIDAsync"];
+                _logger.LogError(ex, "Error adding user");
             }
-            return result;
         }
 
-        public async Task<OperationResult> SearchByNameAsync(string firstName, string lastName)
+        public async Task UpdateAsync(UsersApiModel entity)
         {
-            OperationResult result = new OperationResult();
+            if (!ValidateUserPersistence(entity))
+            {
+                _logger.LogError("Invalid user entity");
+                return;
+            }
+
             try
             {
-                if (result.data == null)
-                {
-                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-                    result.Success = false;
-                }
-                result.data = await _context.Users.Where(x => x.FirstName == firstName && x.LastName == lastName).FirstOrDefaultAsync();
-
-                result.Success = true;
+                await PutAsync($"Users/Update/{entity.Id}", entity);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["SearchByNameAsync"];
+                _logger.LogError(ex, "Error updating user");
             }
-            return result;
         }
-      
 
-        public async Task<OperationResult> GetPasswordAsync(string password)
+        public async Task DeleteAsync(int id)
         {
-            OperationResult result = new OperationResult();
             try
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Password == password);
-
-                if (user != null)
-                {
-
-                    result.data = user;
-                    result.Success = true;
-                    result.Message = "Contraseña válida";
-                }
-                else
-                {
-
-                    result.Success = false;
-                    result.Message = "Contraseña no encontrada";
-                }
+                await DeleteAsync($"Users/Delete/{id}");
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["GetPasswordAsync"];
+                _logger.LogError(ex, "Error deleting user");
             }
-            return result;
         }
-        public override async Task<OperationResult> GetAllAsync()
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                var consult = await _context.Users.Where(u => u.IsActive == true).ToListAsync();
-                result.data = consult;
-                
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"];
-                _logger.LogError(_repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"] + ex.Message.ToString());
-            }
-            return result;
-        }
-
-        public override async Task<OperationResult> GetAllAsync(Expression<Func<Users, bool>> filter)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                var consult = await _context.Users.ToListAsync();
-
-                result.data = consult;
-                result.Message = "Doctores encontrados";
-                return result;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.GetAllEntitiesErrorMessage["GetAllEntitiesError"];
-                _logger.LogError(_repErrorMapper.SaveEntityErrorMessage + ex.Message.ToString());
-                return result;
-            }
-            
-        }
-
-        public override async Task<Users> GetEntityByIdAsync(int id)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                var user = await _context.Users.FindAsync(id);
-                if (user == null)
-                {
-                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-                    result.Success = false;
-                }
-                else
-                {
-                    result.data = user;
-                    result.Success = true;
-                    result.Message = "Usuarios encontrados";
-
-                    return user;
-                }
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = ex.Message + _repErrorMapper.GetEntityByIdErrorMessage["GetEntityByIdError"];
-            }
-            return result.data;
-
-        }
-
-    
-
-public override async Task<OperationResult> SaveEntityAsync(Users user)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                if (user == null)
-                {
-                    result.Success = false;
-                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-                    return result;
-                }
-                user.Id = 0;
-                _context.Users.Add(user);
-
-                await _context.SaveChangesAsync();
-                result.data = user;
-                result.Success = true;
-               
-            }
-            catch (Exception ex)
-            {
-                result.Message = ex.Message + _repErrorMapper.SaveEntityErrorMessage["SaveEntityError"];
-                result.Success = false;
-                _logger.LogError(ex, "Error while saving User.");
-                return result;
-            }
-            return result;
-        }
-
-        public override async Task<OperationResult> UpdateEntityAsync(Users user)
-        {
-            OperationResult result = new OperationResult();
-            try
-            {
-                var existingUser = await _context.Users.FindAsync(user.Id);
-                if (existingUser == null)
-                {
-                    result.Message = _repErrorMapper.DataISNullErrorGlogal["DataIsNull"];
-                    result.Success = false;
-                }
-                else
-                {
-                    // Update properties
-                    existingUser.FirstName = user.FirstName;
-                    existingUser.LastName = user.LastName;
-                    existingUser.Email = user.Email;
-                    existingUser.Password = user.Password;
-                    existingUser.RoleID = user.RoleID;
-                    existingUser.IsActive = user.IsActive;
-                    existingUser.UpdatedAt = DateTime.UtcNow;
-
-                    _context.Users.Update(existingUser);
-                    await _context.SaveChangesAsync();
-
-                    result.data = existingUser; 
-                    result.Success = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                result.Message = ex.Message + _repErrorMapper.ErrorUsersRepositoryMessages["UpdateEntityAsync"];
-                result.Success = false;
-            }
-            return result;
-        }
-
     }
 }

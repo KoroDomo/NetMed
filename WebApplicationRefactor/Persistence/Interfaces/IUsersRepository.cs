@@ -4,8 +4,7 @@ namespace NetMed.WebApplicationRefactor.Persistence.Interfaces
 { 
     public interface IUsersRepository : IBaseAppService<UsersApiModel, UsersApiModel, UsersApiModel>
     {
-        Task<UsersApiModel> GetByUsernameAsync(string username);
-        Task<UsersApiModel> GetUserDetailByIdAsync(int userId);
+
     }
     
 }
