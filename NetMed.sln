@@ -41,9 +41,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{C41095
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.WebApi", "NetMed.WebApi\NetMed.WebApi.csproj", "{2CB03448-0274-4FD4-AA14-53DD7AFCA7E5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApiApplication", "WebApiApplication", "{64AA3DBE-6BC6-4281-85ED-9F7BE7FE3E25}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApiConsummer", "WebApiConsummer", "{64AA3DBE-6BC6-4281-85ED-9F7BE7FE3E25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiApplication", "WebApiApplication\WebApiApplication.csproj", "{A78CA475-E36E-42C2-9EBA-3E03E28E5B5B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiConsummer", "WebApiApplication\WebApiConsummer.csproj", "{A78CA475-E36E-42C2-9EBA-3E03E28E5B5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
