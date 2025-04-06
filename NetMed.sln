@@ -41,6 +41,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web.Api", "Web.Api", "{4810
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebNetMedAPI", "WebNetMedAPI\WebNetMedAPI.csproj", "{3022CCAD-00C0-4B53-B8EA-34EA5E8B0347}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplicationRefactor", "WebApplicationRefactor\WebApplicationRefactor.csproj", "{430883C2-B966-4C84-ABA2-CE5F66553F3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{3022CCAD-00C0-4B53-B8EA-34EA5E8B0347}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3022CCAD-00C0-4B53-B8EA-34EA5E8B0347}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3022CCAD-00C0-4B53-B8EA-34EA5E8B0347}.Release|Any CPU.Build.0 = Release|Any CPU
+		{430883C2-B966-4C84-ABA2-CE5F66553F3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{430883C2-B966-4C84-ABA2-CE5F66553F3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{430883C2-B966-4C84-ABA2-CE5F66553F3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{430883C2-B966-4C84-ABA2-CE5F66553F3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
