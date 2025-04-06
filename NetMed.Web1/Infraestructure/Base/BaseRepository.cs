@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace NetMed.ApiConsummer.Infraestructure.Base
 {
-    public abstract class BaseRepository : IBaseRepository
+    public abstract class BaseRepository : ResponseHttps, IBaseRepository
     {
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
@@ -19,18 +19,6 @@ namespace NetMed.ApiConsummer.Infraestructure.Base
             _httpClient.BaseAddress = new Uri(ApiConfig.GetBaseUrl());
         }
 
-        public async Task<TEntity> ProcessResponse<TEntity>(HttpResponseMessage response)
-        {
-            try
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                return await response.Content.ReadFromJsonAsync<TEntity>(_jsonOptions);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            } 
-        }
 
         public virtual async Task<OperationResult<TResult>> GetAsync<TResult>(string endpoint, int id)
         {
