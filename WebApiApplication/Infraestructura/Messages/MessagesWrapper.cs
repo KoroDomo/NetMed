@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-
-namespace NetMed.Infraestructure.Messages
+namespace WebApiApplication.Infraestructura.Messages
 {
     public class MessagesWrapper
     {

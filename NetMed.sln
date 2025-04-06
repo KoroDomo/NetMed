@@ -41,6 +41,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{C41095
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.WebApi", "NetMed.WebApi\NetMed.WebApi.csproj", "{2CB03448-0274-4FD4-AA14-53DD7AFCA7E5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApiApplication", "WebApiApplication", "{64AA3DBE-6BC6-4281-85ED-9F7BE7FE3E25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiApplication", "WebApiApplication\WebApiApplication.csproj", "{A78CA475-E36E-42C2-9EBA-3E03E28E5B5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +95,10 @@ Global
 		{2CB03448-0274-4FD4-AA14-53DD7AFCA7E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CB03448-0274-4FD4-AA14-53DD7AFCA7E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CB03448-0274-4FD4-AA14-53DD7AFCA7E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A78CA475-E36E-42C2-9EBA-3E03E28E5B5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A78CA475-E36E-42C2-9EBA-3E03E28E5B5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A78CA475-E36E-42C2-9EBA-3E03E28E5B5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A78CA475-E36E-42C2-9EBA-3E03E28E5B5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -107,6 +115,7 @@ Global
 		{8554FEFF-218C-477A-AA1B-AC09998164DD} = {5EA639D5-C646-4D59-940A-011D8A676DA6}
 		{A9D5DFCC-E8D0-4D6B-AAA4-529EDFA5F4C7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{2CB03448-0274-4FD4-AA14-53DD7AFCA7E5} = {C410958A-3A59-49D9-B299-4D7F0B4B50D6}
+		{A78CA475-E36E-42C2-9EBA-3E03E28E5B5B} = {64AA3DBE-6BC6-4281-85ED-9F7BE7FE3E25}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E95875F1-A7C7-4CBC-AC20-D0AC4EEBC7E9}

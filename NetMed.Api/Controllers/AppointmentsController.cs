@@ -2,6 +2,7 @@
 using NetMed.Application.Dtos.Appointments;
 using NetMed.Application.Interfaces;
 
+
 namespace NetMed.Api.Controllers
 {
     [Route("api/[controller]")]
