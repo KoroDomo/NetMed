@@ -39,7 +39,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.Web", "NetMed.Web\Ne
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{4B41908E-505F-4285-ADDC-106B879C696E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.Web1", "NetMed.Web1\NetMed.Web1.csproj", "{781D533C-90BB-4E02-B8CD-E9D8BDB03DA7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMed.ApiConsummer", "NetMed.Web1\NetMed.ApiConsummer.csproj", "{781D533C-90BB-4E02-B8CD-E9D8BDB03DA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

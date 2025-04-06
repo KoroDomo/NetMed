@@ -1,66 +1,45 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NetMed.Web1.Models;
-using NetMed.Web1.Models.InsuranceProvider;
-using System.Text;
-using System.Text.Json;
+using NetMed.ApiConsummer.Application.Contracts;
+using NetMed.ApiConsummer.Core.Models.InsuranceProvider;
 
-namespace NetMed.Web1.Controllers
+namespace NetMed.ApiConsummer.Controllers
 {
     public class InsuranceProviderWebController : Controller
     {
+        private readonly IInsuranceProviderService _service;
+
+        public InsuranceProviderWebController(IInsuranceProviderService service)
+        {
+            _service = service;
+        }
         // GET: InsuranceProviderWebController
         public async Task<IActionResult> Index()
         {
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("https://localhost:7099/api/");
-
-                var response = await client.GetAsync("InsuranceProviderApi/GetInsuranceProviders");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-
-                    var data = await response.Content.ReadFromJsonAsync<ListOperationResult<GetInsuranceProviderModel>>(options);
-                    return View(data.Result);
-                    
-                }
-                else
-                {
-                    ViewBag.Message = "Error obteniendo los InsuranceProviders";
-                    return View();
-                }
+                var result = await _service.GetAll();
+                return View(result.Result);
             }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"Error: {ex.Message}";
+                return View();
+            }
+
         }
 
         // GET: InsuranceProviderWebController/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("https://localhost:7099/api/");
-
-                var response = await client.GetAsync($"InsuranceProviderApi/GetInsuranceProviderBy{id}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-
-                    var data = await response.Content.ReadFromJsonAsync<OperationResult<GetInsuranceProviderModel>>(options);
-                    
-                    return View(data.Result);
-                }
-                else
-                {
-                    ViewBag.Message = "Error obteniendo el InsuranceProvider";
-                    return View();
-                }
+                var result = await _service.GetById<GetInsuranceProviderModel>(id);
+                return View(result.Result);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"Error: {ex.Message}";
+                return View();
             }
         }
 
@@ -78,30 +57,9 @@ namespace NetMed.Web1.Controllers
             try
             {
                 //Hay que validar los datos
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("https://localhost:7099/api/");
-                    insuranceProvider.changeDate = DateTime.Now;
+                await _service.Save(insuranceProvider);
+                return RedirectToAction(nameof(Index));
 
-                    var response = await client.PostAsJsonAsync("InsuranceProviderApi/SaveInsuranceProvider", insuranceProvider);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var options = new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        };
-
-                        var data = await response.Content.ReadFromJsonAsync<OperationResult<SaveInsuranceProviderModel>>(options);
-
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        ViewBag.Message = "Error guardando el InsuranceProvider";
-                        return View();
-                    }
-                }
             }
             catch
             {
@@ -112,28 +70,15 @@ namespace NetMed.Web1.Controllers
         // GET: InsuranceProviderWebController/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("https://localhost:7099/api/");
-
-                var response = await client.GetAsync($"InsuranceProviderApi/GetInsuranceProviderBy{id}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-
-                    var data = await response.Content.ReadFromJsonAsync<OperationResult<UpdateInsuranceProviderModel>>(options);
-
-                    return View(data.Result);
-                }
-                else
-                {
-                    ViewBag.Message = "Error obteniendo el InsuranceProvider";
-                    return View();
-                }
+                var result = await _service.GetById<UpdateInsuranceProviderModel>(id);
+                return View(result.Result);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"Error: {ex.Message}";
+                return View();
             }
         }
 
@@ -142,65 +87,33 @@ namespace NetMed.Web1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UpdateInsuranceProviderModel insuranceProvider)
         {
+            
+            //Hay que validar los datos
             try
             {
-                //Hay que validar los datos
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("https://localhost:7099/api/");
-                    insuranceProvider.changeDate = DateTime.Now;
+                await _service.Update(insuranceProvider);
+                return RedirectToAction(nameof(Index));
 
-                    var response = await client.PutAsJsonAsync($"InsuranceProviderApi/UpdateInsuranceProvider", insuranceProvider);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var options = new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        };
-
-                        var data = await response.Content.ReadFromJsonAsync<OperationResult<UpdateInsuranceProviderModel>>(options);
-
-                        return RedirectToAction(nameof(Index)); 
-                    }
-                    else
-                    {
-                        ViewBag.Message = "Error actualizando el InsuranceProvider";
-                        return View();
-                    }
-                }
             }
             catch
             {
                 return View();
             }
+            
         }
 
         // GET: InsuranceProviderWebController/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("https://localhost:7099/api/");
-
-                var response = await client.GetAsync($"InsuranceProviderApi/GetInsuranceProviderBy{id}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-
-                    var data = await response.Content.ReadFromJsonAsync<OperationResult<RemoveInsuranceProviderModel>>(options);
-
-                    return View(data.Result);
-                }
-                else
-                {
-                    ViewBag.Message = "Error obteniendo el InsuranceProvider";
-                    return View();
-                }
+                var result = await _service.GetById<RemoveInsuranceProviderModel>(id);
+                return View(result.Result);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"Error: {ex.Message}";
+                return View();
             }
         }
 
@@ -210,41 +123,18 @@ namespace NetMed.Web1.Controllers
         public async Task<IActionResult> Delete(RemoveInsuranceProviderModel insuranceProvider)
         {
 
+            //Hay que validar los datos
             try
             {
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("https://localhost:7099/api/");
+                await _service.Remove(insuranceProvider);
 
-                    var request = new HttpRequestMessage
-                    {
-                        Method = HttpMethod.Delete,
-                        RequestUri = new Uri(client.BaseAddress, "InsuranceProviderApi/RemoveInsuranceProvider"),
-                        Content = new StringContent(JsonSerializer.Serialize(insuranceProvider), Encoding.UTF8, "application/json")
-                    };
-
-                    var response = await client.SendAsync(request);
-
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        await response.Content.ReadFromJsonAsync<OperationResult<RemoveInsuranceProviderModel>>();
-
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        ViewBag.Message = $"Error del servidor: {response.StatusCode}";
-                        return View();
-                    }
-                }
+                return RedirectToAction(nameof(Index));
             }
-            catch (Exception ex)
+            catch
             {
-                ViewBag.Message = $"Error inesperado: {ex.Message}";
-                return View("Error");
+                return View();
             }
+           
         }
     }
 }

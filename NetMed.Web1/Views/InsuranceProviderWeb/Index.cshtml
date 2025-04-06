@@ -1,4 +1,4 @@
-﻿@model IEnumerable<NetMed.Web1.Models.InsuranceProvider.GetInsuranceProviderModel>
+﻿@model IEnumerable<NetMed.ApiConsummer.Core.Models.InsuranceProvider.GetInsuranceProviderModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -61,7 +61,7 @@
                 @Html.DisplayNameFor(model => model.maxCoverageAmount)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.changeDate)
+                @Html.DisplayNameFor(model => model.ChangeDate)
             </th>
             <th></th>
         </tr>
@@ -118,12 +118,12 @@
                 @Html.DisplayFor(modelItem => item.maxCoverageAmount)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.changeDate)
+                @Html.DisplayFor(modelItem => item.ChangeDate)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new {  id = item.insuranceProviderID }) |
-                @Html.ActionLink("Details", "Details", new { id = item.insuranceProviderID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.insuranceProviderID })
+                @Html.ActionLink("Edit", "Edit", new {  id=item.insuranceProviderID  }) |
+                @Html.ActionLink("Details", "Details", new { id=item.insuranceProviderID }) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.insuranceProviderID})
             </td>
         </tr>
 }

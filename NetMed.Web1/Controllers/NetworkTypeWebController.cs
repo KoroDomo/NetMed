@@ -1,66 +1,44 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NetMed.Web1.Models;
-using System.Text.Json;
-using System.Text;
-using NetMed.Web1.Models.NetworkType;
+using NetMed.ApiConsummer.Core.Models.NetworkType;
+using NetMed.ApiConsummer.Application.Contracts;
 
 namespace NetMed.Web1.Controllers
 {
     public class NetworkTypeWebController : Controller
     {
+        private readonly INetworkTypeService _service;
+
+        public NetworkTypeWebController(INetworkTypeService service)
+        {
+            _service = service;
+        }
         // GET: NetworkTypeWebController
         public async Task<IActionResult> Index()
         {
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("https://localhost:7099/api/");
-
-                var response = await client.GetAsync("NetworkTypeApi/GetNetworkTypeRepositorys");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-
-                    var data = await response.Content.ReadFromJsonAsync<ListOperationResult<GetNetworkTypeModel>>(options);
-                    return View(data.Result);
-
-                }
-                else
-                {
-                    ViewBag.Message = "Error obteniendo los Network Type";
-                    return View();
-                }
+                var result = await _service.GetAll();
+                return View(result.Result);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"Error: {ex.Message}";
+                return View();
             }
         }
 
         // GET: NetworkTypeWebController/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("https://localhost:7099/api/");
-
-                var response = await client.GetAsync($"NetworkTypeApi/GetNetworkTypeRepositoryBy{id}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-
-                    var data = await response.Content.ReadFromJsonAsync<OperationResult<GetNetworkTypeModel>>(options);
-
-                    return View(data.Result);
-                }
-                else
-                {
-                    ViewBag.Message = "Error obteniendo el Network Type";
-                    return View();
-                }
+                var result = await _service.GetById<GetNetworkTypeModel>(id);
+                return View(result.Result);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"Error: {ex.Message}";
+                return View();
             }
         }
 
@@ -73,34 +51,20 @@ namespace NetMed.Web1.Controllers
         // POST: NetworkTypeWebController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(SaveNetworkTypeModel insuranceProvider)
+        public async Task<IActionResult> Create(SaveNetworkTypeModel network)
         {
             try
             {
-                //Hay que validar los datos
-                using (var client = new HttpClient())
+                try
                 {
-                    client.BaseAddress = new Uri("https://localhost:7099/api/");
-                    insuranceProvider.changeDate = DateTime.Now;
+                    //Hay que validar los datos
+                    await _service.Save(network);
+                    return RedirectToAction(nameof(Index));
 
-                    var response = await client.PostAsJsonAsync("NetworkTypeApi/SaveNetworkTypeRepository", insuranceProvider);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var options = new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        };
-
-                        var data = await response.Content.ReadFromJsonAsync<OperationResult<SaveNetworkTypeModel>>(options);
-
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        ViewBag.Message = "Error guardando el Network Type";
-                        return View();
-                    }
+                }
+                catch
+                {
+                    return View();
                 }
             }
             catch
@@ -112,62 +76,35 @@ namespace NetMed.Web1.Controllers
         // GET: NetworkTypeWebController/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("https://localhost:7099/api/");
-
-                var response = await client.GetAsync($"NetworkTypeApi/GetNetworkTypeRepositoryBy{id}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-
-                    var data = await response.Content.ReadFromJsonAsync<OperationResult<UpdateNetworkTypeModel>>(options);
-
-                    return View(data.Result);
-                }
-                else
-                {
-                    ViewBag.Message = "Error obteniendo el Network Type";
-                    return View();
-                }
+                var result = await _service.GetById<UpdateNetworkTypeModel>(id);
+                return View(result.Result);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"Error: {ex.Message}";
+                return View();
             }
         }
 
         // POST: NetworkTypeWebController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UpdateNetworkTypeModel insuranceProvider)
+        public async Task<IActionResult> Edit(UpdateNetworkTypeModel network)
         {
             try
             {
                 //Hay que validar los datos
-                using (var client = new HttpClient())
+                try
                 {
-                    client.BaseAddress = new Uri("https://localhost:7099/api/");
-                    insuranceProvider.changeDate = DateTime.Now;
+                    await _service.Update(network);
+                    return RedirectToAction(nameof(Index));
 
-                    var response = await client.PutAsJsonAsync($"NetworkTypeApi/UpdateNetworkTypeRepository", insuranceProvider);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var options = new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        };
-
-                        var data = await response.Content.ReadFromJsonAsync<OperationResult<UpdateNetworkTypeModel>>(options);
-
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        ViewBag.Message = "Error actualizando el Network Type";
-                        return View();
-                    }
+                }
+                catch
+                {
+                    return View();
                 }
             }
             catch
@@ -179,71 +116,34 @@ namespace NetMed.Web1.Controllers
         // GET: NetworkTypeWebController/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("https://localhost:7099/api/");
-
-                var response = await client.GetAsync($"NetworkTypeApi/GetNetworkTypeRepositoryBy{id}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-
-                    var data = await response.Content.ReadFromJsonAsync<OperationResult<RemoveNetworkTypeModel>>(options);
-
-                    return View(data.Result);
-                }
-                else
-                {
-                    ViewBag.Message = "Error obteniendo el Network Type";
-                    return View();
-                }
+                var result = await _service.GetById<RemoveNetworkTypeModel>(id);
+                return View(result.Result);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"Error: {ex.Message}";
+                return View();
             }
         }
 
         // POST: NetworkTypeWebController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(RemoveNetworkTypeModel networkType)
+        public async Task<IActionResult> Delete(RemoveNetworkTypeModel network)
         {
 
+            //Hay que validar los datos
             try
             {
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("https://localhost:7099/api/");
+                await _service.Remove(network);
 
-                    var request = new HttpRequestMessage
-                    {
-                        Method = HttpMethod.Delete,
-                        RequestUri = new Uri(client.BaseAddress, "NetworkTypeApi/RemoveInsuranceProvider"),
-                        Content = new StringContent(JsonSerializer.Serialize(networkType), Encoding.UTF8, "application/json")
-                    };
-
-                    var response = await client.SendAsync(request);
-
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        await response.Content.ReadFromJsonAsync<OperationResult<RemoveNetworkTypeModel>>();
-
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        ViewBag.Message = $"Error del servidor: {response.StatusCode}";
-                        return View();
-                    }
-                }
+                return RedirectToAction(nameof(Index));
             }
-            catch (Exception ex)
+            catch
             {
-                ViewBag.Message = $"Error inesperado: {ex.Message}";
-                return View("Error");
+                return View();
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿@model NetMed.Web1.Models.NetworkType.UpdateNetworkTypeModel
+﻿@model NetMed.ApiConsummer.Core.Models.NetworkType.UpdateNetworkTypeModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,6 +12,7 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="NetworkTypeId" />
             <div class="form-group">
                 <label asp-for="NetworkTypeId" class="control-label"></label>
                 <div class="form-control-plaintext">@Model.NetworkTypeId</div>
@@ -27,9 +28,9 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="changeDate" class="control-label"></label>
-                <input asp-for="changeDate" class="form-control" />
-                <span asp-validation-for="changeDate" class="text-danger"></span>
+                <label asp-for="ChangeDate" class="control-label"></label>
+                <input asp-for="ChangeDate" class="form-control" />
+                <span asp-validation-for="ChangeDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

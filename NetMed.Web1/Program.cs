@@ -1,10 +1,24 @@
-namespace NetMed.Web1
+using NetMed.ApiConsummer.Infraestructure.Validator.Implementacions;
+using NetMed.ApiConsummer.Infraestructure.Validator.Interfaces;
+using NetMed.ApiConsummer.IOC.Dependencies;
+using NetMed.ApiConsummer.Persistence.Logger;
+
+namespace NetMed.ApiConsummer
 {
     public class Program
     {
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddHttpClient();
+            builder.Services.AddInsuranceProviderDependencies(builder.Configuration);
+            builder.Services.AddNetworkTypeDependencies(builder.Configuration);
+            builder.Services.AddSingleton<ICustomLogger, CustomLogger>();
+
+            builder.Services.AddSingleton<IMessageService, MessageService>();
+
+            builder.Services.AddScoped(typeof(ICustomLogger), typeof(CustomLogger));
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

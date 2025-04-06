@@ -106,15 +106,15 @@ namespace NetMed.Persistence.Repositories
                     return result;
                 }
 
-                var Provider = await _context.InsuranceProviders.FindAsync(provider.Id);
-                if (Provider == null)
+                var ProviderCont = await _context.InsuranceProviders.FindAsync(provider.Id);
+                if (ProviderCont == null)
                 {
                     _logger.LogWarning(_operations.GetErrorMessage("Entitys", "NotFound"));
                     return _operations.HandleException("Entitys", "NotFound");
                 }
 
-                Provider.UpdatedAt = DateTime.Now;
-                _context.Entry(Provider).CurrentValues.SetValues(provider);
+                ProviderCont.UpdatedAt = DateTime.Now;
+                _context.Entry(ProviderCont).CurrentValues.SetValues(provider);
                 await _context.SaveChangesAsync();
 
                 _logger.LogInformation(_operations.GetSuccesMessage("Operations", "UpdateSuccess"));

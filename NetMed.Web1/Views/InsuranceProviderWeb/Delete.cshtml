@@ -1,4 +1,4 @@
-﻿@model NetMed.Web1.Models.InsuranceProvider.RemoveInsuranceProviderModel
+﻿@model NetMed.ApiConsummer.Core.Models.InsuranceProvider.RemoveInsuranceProviderModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -12,10 +12,10 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.insuranceProviderID)
+            @Html.DisplayNameFor(model => model.InsuranceProviderID)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.insuranceProviderID)
+            @Html.DisplayFor(model => model.InsuranceProviderID)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.name)
@@ -108,15 +108,15 @@
             @Html.DisplayFor(model => model.maxCoverageAmount)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.changeDate)
+            @Html.DisplayNameFor(model => model.ChangeDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.changeDate)
+            @Html.DisplayFor(model => model.ChangeDate)
         </dd>
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="insuranceProviderID" />
+        <input type="hidden" asp-for="InsuranceProviderID" />
         <input type="hidden" asp-for="name" />
         <input type="hidden" asp-for="contactNumber" />
         <input type="hidden" asp-for="email" />
@@ -132,7 +132,7 @@
         <input type="hidden" asp-for="customerSupportContact" />
         <input type="hidden" asp-for="acceptedRegions" />
         <input type="hidden" asp-for="maxCoverageAmount" />
-        <input type="hidden" asp-for="changeDate" />
+        <input type="hidden" asp-for="ChangeDate" />
 
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>

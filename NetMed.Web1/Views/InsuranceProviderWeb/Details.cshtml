@@ -1,4 +1,4 @@
-﻿@model NetMed.Web1.Models.InsuranceProvider.GetInsuranceProviderModel
+﻿@model NetMed.ApiConsummer.Core.Models.InsuranceProvider.GetInsuranceProviderModel
 
 @{
     ViewData["Title"] = "Details";
@@ -106,10 +106,10 @@
             @Html.DisplayFor(model => model.maxCoverageAmount)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.changeDate)
+            @Html.DisplayNameFor(model => model.ChangeDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.changeDate)
+            @Html.DisplayFor(model => model.ChangeDate)
         </dd>
     </dl>
 </div>

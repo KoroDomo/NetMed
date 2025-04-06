@@ -16,40 +16,40 @@ namespace NetMed.Api.Controllers
         {
             _networkTypeService = networkTypeRepository;
         }
-        [HttpGet("GetNetworkTypeRepositorys")]
+        [HttpGet("GetNetworkTypes")]
         public async Task<IActionResult> Get()
         {
-            var networkTypeRepositorys = await _networkTypeService.GetAll();
+            var networkTypes = await _networkTypeService.GetAll();
 
-            return Ok(networkTypeRepositorys);
+            return Ok(networkTypes);
         }
 
-        [HttpGet("GetNetworkTypeRepositoryBy{id}")]
+        [HttpGet("GetNetworkTypeBy{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var networkTypeRepositorys = await _networkTypeService.GetById(id);
+            var networkType = await _networkTypeService.GetById(id);
 
-            return Ok(networkTypeRepositorys);
+            return Ok(networkType);
         }
 
 
-        [HttpPost("SaveNetworkTypeRepository")]
+        [HttpPost("SaveNetworkType")]
         public async Task<IActionResult> Post(SaveNetworkTypeDto networks)
         {
-            var networkTypeRepositorys = await _networkTypeService.Save(networks);
+            var networkType = await _networkTypeService.Save(networks);
 
-            return Ok(networkTypeRepositorys);
+            return Ok(networkType);
         }
 
 
-        [HttpPut("UpdateNetworkTypeRepository")]
+        [HttpPut("UpdateNetworkType")]
         public async Task<IActionResult> Put(UpdateNetworkTypeDto networks)
         {
-            var networkTypeRepositorys = await _networkTypeService.Update(networks);
+            var networkType = await _networkTypeService.Update(networks);
 
-            return Ok(networkTypeRepositorys);
+            return Ok(networkType);
         }
-        [HttpDelete("RemoveInsuranceProvider")]
+        [HttpDelete("RemoveNetworkType")]
         public async Task<IActionResult> Remove(RemoveNetworkTypeDto networks)
         {
             var networkType = await _networkTypeService.Remove(networks);
