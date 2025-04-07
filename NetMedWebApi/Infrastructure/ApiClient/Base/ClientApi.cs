@@ -85,25 +85,25 @@ namespace NetMedWebApi.Infrastructure.ApiClient.Base
 
         public virtual async Task<OperationResult<T>> DeleteAsync<T>(string uri, T model)
         {
-            //try
-            //{
-            //    //var request = new HttpRequestMessage(HttpMethod.Delete, uri)
-            //    //{
-            //    //    Content = new StringContent(JsonSerializer.Serialize(model, _jsonOptions), Encoding.UTF8, "application/json")
-            //    //};
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Delete, uri)
+                {
+                    Content = new StringContent(JsonSerializer.Serialize(model, _jsonOptions), Encoding.UTF8, "application/json")
+                };
 
-            //    //var reponse = await _httpClient.SendAsync(request);
-            //    //return await ProcessResponse<OperationResult<T>>(reponse);
+                var reponse = await _httpClient.SendAsync(request);
+                return await ProcessResponse<OperationResult<T>>(reponse);
 
-            //    ;
+                ;
 
 
-            //}
-            //catch (Exception ex)
-            //{
-            //    return new OperationResult<T> { Success = false, Message = ex.Message };
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult<T> { Success = false, Message = ex.Message };
 
-            //}
+            }
 
             throw new NotImplementedException();
         }
