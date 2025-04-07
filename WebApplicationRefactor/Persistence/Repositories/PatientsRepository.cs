@@ -1,115 +1,111 @@
 ﻿using WebApplicationRefactor.Models;
-using WebApplicationRefactor.Models.Doctors;
 using WebApplicationRefactor.Models.Patients;
-using WebApplicationRefactor.Persistence.Config;
+using WebApplicationRefactor.Application.BaseApp;
+using WebApplicationRefactor.Persisten.Configuration;
+using WebApplicationRefactor.Services.Interface;
 using WebApplicationRefactor.Persistence.Interfaces.IRepository;
 
-namespace NetMed.WebApplicationRefactor.Persistence.Repositories
+namespace WebApplicationRefactor.Persisten.Repository
 {
     public class PatientsRepository : BaseApi, IRepository<PatientsApiModel>
     {
         private readonly ILogger<PatientsRepository> _logger;
+        private readonly IErrorMessageService _errorMessageService;
 
-        public PatientsRepository(HttpClient httpClient,
-            IConfiguration configuration,
-            ILogger<PatientsRepository> logger) : base(httpClient, configuration)
+        public PatientsRepository(HttpClient httpClient, IConfiguration configuration, ILogger<PatientsRepository> logger, IErrorMessageService errorMessageService)
+            : base(httpClient, configuration)
         {
             _logger = logger;
+            _errorMessageService = errorMessageService;
         }
 
-        private OperationResult ValidateDoctorPersistence(PatientsApiModel patientsApiModel)
+        private OperationResult ValidatePatientPersistence(PatientsApiModel patient)
         {
-            if (patientsApiModel == null)
+            if (patient == null)
             {
                 return new OperationResult
                 {
-                    Success = false,
+                    success = false,
+                    message = _errorMessageService.GetErrorMessage("EntityBase", "NullEntity")
                 };
             }
-            return new OperationResult { Success = true };
-        }
-        public async Task<PatientsApiModel> GetByIdAsync(int id)
-        {
-            try
-            {
-                return await GetAsync<PatientsApiModel>($"Patients/GetById/{id}");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error fetching patient by ID");
-                return null;
-            }
+            return new OperationResult { success = true };
         }
 
         public async Task<IEnumerable<PatientsApiModel>> GetAllAsync()
         {
             try
             {
-                return await GetAsync<List<PatientsApiModel>>("Patients/GetAll");
+                return await GetAsync<List<PatientsApiModel>>("Patients/GetPatients");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching all patients");
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Generic", "GenericError"));
                 return new List<PatientsApiModel>();
+            }
+        }
+
+        public async Task<PatientsApiModel> GetByIdAsync(int id)
+        {
+            try
+            {
+                return await GetAsync<PatientsApiModel>($"Patients/GetPatientsByID?id={id}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Generic", "GenericError"));
+                return null;
             }
         }
 
         public async Task AddAsync(PatientsApiModel entity)
         {
-            var result = ValidateDoctorPersistence(entity);
-            if (!result.Success)
+            var result = ValidatePatientPersistence(entity);
+            if (!result.success)
             {
                 _logger.LogError(new Exception(result.message), result.message);
                 return;
             }
+
             try
             {
-                await PostAsync("Patients", entity);
+                await PostAsync("Patients/SavePatient", entity);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error adding patient");
-       
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "SaveFailed"));
             }
         }
 
         public async Task UpdateAsync(PatientsApiModel entity)
         {
-            var result = ValidateDoctorPersistence(entity);
-            if (!result.Success)
+            var result = ValidatePatientPersistence(entity);
+            if (!result.success)
             {
                 _logger.LogError(new Exception(result.message), result.message);
                 return;
             }
+
             try
             {
-              await PutAsync($"Patients/Update/{entity.Id}", entity);
+                await PutAsync($"Patients/UpdatePatient/{entity.Id}", entity);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating patient");
-           
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "UpdateFailed"));
             }
         }
 
         public async Task DeleteAsync(int id)
         {
-
             try
             {
-                await DeleteAsync($"Patients/Delete/{id}");
+                await DeleteAsync($"Patients/DeletePatient/{id}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting patient");
-                
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "DeleteFailed"));
             }
-
         }
     }
-
-
-
-
 }
-

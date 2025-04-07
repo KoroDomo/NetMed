@@ -1,17 +1,18 @@
 ﻿using NetMed.WebApplicationRefactor.Persistence.Interfaces;
-using WebApplicationRefactor.Application.Contracts;
+
 using WebApplicationRefactor.Models;
 using WebApplicationRefactor.Models.Doctors;
 using System.Text.RegularExpressions;
+using WebApplicationRefactor.Application.Contracts;
 
 namespace WebApplicationRefactor.Application.Services
 {
-    public class DoctorServices : IDoctorServices
+    public class DoctorService : IDoctorServices
     {
         private readonly IDoctorRepository _doctorRepository;
-        private readonly ILogger<DoctorServices> _logger;
+        private readonly ILogger<DoctorService> _logger;
 
-        public DoctorServices(IDoctorRepository doctorRepository, ILogger<DoctorServices> logger)
+        public DoctorService(IDoctorRepository doctorRepository, ILogger<DoctorService> logger)
         {
             _doctorRepository = doctorRepository;
             _logger = logger;
@@ -23,13 +24,13 @@ namespace WebApplicationRefactor.Application.Services
             try
             {
                 var doctors = await _doctorRepository.GetAllData();
-                result.Success = true;
+                result.success = true;
                 result.data = doctors;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching all doctors");
-                result.Success = false;
+                result.success = false;
                 result.message = "Error fetching all doctors";
             }
             return result;
@@ -41,7 +42,7 @@ namespace WebApplicationRefactor.Application.Services
             if (id <= 0)
             {
                 _logger.LogWarning("Invalid ID");
-                result.Success = false;
+                result.success = false;
                 result.message = "Invalid ID";
                 return result;
             }
@@ -51,17 +52,17 @@ namespace WebApplicationRefactor.Application.Services
                 if (doctor == null)
                 {
                     _logger.LogError("Doctor not found");
-                    result.Success = false;
+                    result.success = false;
                     result.message = "Doctor not found";
                     return result;
                 }
-                result.Success = true;
+                result.success = true;
                 result.data = doctor;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching doctor by ID");
-                result.Success = false;
+                result.success = false;
                 result.message = "Error fetching doctor by ID";
             }
             return result;
@@ -70,7 +71,7 @@ namespace WebApplicationRefactor.Application.Services
         public async Task<OperationResult> Add(DoctorsApiModel dto)
         {
             var validationResult = ValidateDoctor(dto);
-            if (!validationResult.Success)
+            if (!validationResult.success)
             {
                 return validationResult;
             }
@@ -84,7 +85,7 @@ namespace WebApplicationRefactor.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error adding doctor");
-                result.Success = false;
+                result.success = false;
                 result.message = "Error adding doctor";
             }
             return result;
@@ -93,7 +94,7 @@ namespace WebApplicationRefactor.Application.Services
         public async Task<OperationResult> Update(DoctorsApiModel dto)
         {
             var validationResult = ValidateDoctor(dto);
-            if (!validationResult.Success)
+            if (!validationResult.success)
             {
                 return validationResult;
             }
@@ -102,13 +103,13 @@ namespace WebApplicationRefactor.Application.Services
             try
             {
                 await _doctorRepository.Update(dto);
-                result.Success = true;
+                result.success = true;
                 result.message = "Doctor updated Successfully";
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating doctor");
-                result.Success = false;
+                result.success = false;
                 result.message = "Error updating doctor";
             }
             return result;
@@ -120,13 +121,13 @@ namespace WebApplicationRefactor.Application.Services
             try
             {
                 await _doctorRepository.Delete(dto);
-                result.Success = true;
+                result.success = true;
                 result.message = "Doctor deleted Successfully";
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting doctor");
-                result.Success = false;
+                result.success = false;
                 result.message = "Error deleting doctor";
             }
             return result;
@@ -138,7 +139,7 @@ namespace WebApplicationRefactor.Application.Services
             {
                 return new OperationResult
                 {
-                    Success = false,
+                    success = false,
                     message = "Doctor is null"
                 };
             }
@@ -147,7 +148,7 @@ namespace WebApplicationRefactor.Application.Services
             {
                 return new OperationResult
                 {
-                    Success = false,
+                    success = false,
                     message = "Doctor name is empty"
                 };
             }
@@ -156,7 +157,7 @@ namespace WebApplicationRefactor.Application.Services
             {
                 return new OperationResult
                 {
-                    Success = false,
+                    success = false,
                     message = "Doctor address is invalid"
                 };
             }
@@ -165,7 +166,7 @@ namespace WebApplicationRefactor.Application.Services
             {
                 return new OperationResult
                 {
-                    Success = false,
+                    success = false,
                     message = "Doctor  is too short"
                 };
             }
@@ -174,7 +175,7 @@ namespace WebApplicationRefactor.Application.Services
             {
                 return new OperationResult
                 {
-                    Success = false,
+                    success = false,
                     message = "Doctor bio contains invalid characters"
                 };
             }
@@ -183,12 +184,12 @@ namespace WebApplicationRefactor.Application.Services
             {
                 return new OperationResult
                 {
-                    Success = false,
+                    success = false,
                     message = "Doctor Address is too short"
                 };
             }
 
-            return new OperationResult { Success = true };
+            return new OperationResult { success = true };
         }
 
         private bool IsValidDoctorBio(string bio)

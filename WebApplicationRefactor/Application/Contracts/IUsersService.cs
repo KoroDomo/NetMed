@@ -3,7 +3,7 @@ using WebApplicationRefactor.Models.Users;
 
 namespace WebApplicationRefactor.Application.Contracts
 {
-    public interface IUsersSevice : IBaseAppService<UsersApiModel, UsersApiModel, UsersApiModel>
+    public interface IUsersService : IBaseAppService<UsersApiModel, UsersApiModel, UsersApiModel>
 
     {
 

@@ -1,33 +1,46 @@
-﻿using WebApplicationRefactor.Models.Users;
-using WebApplicationRefactor.Persistence.Config;
+﻿using WebApplicationRefactor.Models;
+using WebApplicationRefactor.Models.Users;
+using WebApplicationRefactor.Application.BaseApp;
+using WebApplicationRefactor.Services.Interface;
+using WebApplicationRefactor.Persisten.Configuration;
 using WebApplicationRefactor.Persistence.Interfaces.IRepository;
 
-namespace NetMed.WebApplicationRefactor.Persistence.Repositories
+namespace WebApplicationRefactor.Persisten.Repository
 {
     public class UsersRepository : BaseApi, IRepository<UsersApiModel>
     {
         private readonly ILogger<UsersRepository> _logger;
+        private readonly IErrorMessageService _errorMessageService;
 
-        public UsersRepository(HttpClient httpClient, IConfiguration configuration, ILogger<UsersRepository> logger)
+        public UsersRepository(HttpClient httpClient, IConfiguration configuration, ILogger<UsersRepository> logger, IErrorMessageService errorMessageService)
             : base(httpClient, configuration)
         {
             _logger = logger;
+            _errorMessageService = errorMessageService;
         }
 
-        private bool ValidateUserPersistence(UsersApiModel user)
+        private OperationResult ValidateUserPersistence(UsersApiModel user)
         {
-            return user != null;
+            if (user == null)
+            {
+                return new OperationResult
+                {
+                    success = false,
+                    message = _errorMessageService.GetErrorMessage("EntityBase", "NullEntity")
+                };
+            }
+            return new OperationResult { success = true };
         }
 
         public async Task<IEnumerable<UsersApiModel>> GetAllAsync()
         {
             try
             {
-                return await GetAsync<List<UsersApiModel>>("Users/GetAll");
+                return await GetAsync<List<UsersApiModel>>("Users/GetUsers");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching all users");
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Generic", "GenericError"));
                 return new List<UsersApiModel>();
             }
         }
@@ -36,48 +49,50 @@ namespace NetMed.WebApplicationRefactor.Persistence.Repositories
         {
             try
             {
-                return await GetAsync<UsersApiModel>($"Users/GetById/{id}");
+                return await GetAsync<UsersApiModel>($"Users/GetUsersByID?id={id}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching user by ID");
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Generic", "GenericError"));
                 return null;
             }
         }
 
         public async Task AddAsync(UsersApiModel entity)
         {
-            if (!ValidateUserPersistence(entity))
+            var result = ValidateUserPersistence(entity);
+            if (!result.success)
             {
-                _logger.LogError("Invalid user entity");
+                _logger.LogError(new Exception(result.message), result.message);
                 return;
             }
 
             try
             {
-                await PostAsync("Users", entity);
+                await PostAsync("Users/SaveUser", entity);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error adding user");
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "SaveFailed"));
             }
         }
 
         public async Task UpdateAsync(UsersApiModel entity)
         {
-            if (!ValidateUserPersistence(entity))
+            var result = ValidateUserPersistence(entity);
+            if (!result.success)
             {
-                _logger.LogError("Invalid user entity");
+                _logger.LogError(new Exception(result.message), result.message);
                 return;
             }
 
             try
             {
-                await PutAsync($"Users/Update/{entity.Id}", entity);
+                await PutAsync($"Users/UpdateUser/{entity.Id}", entity);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating user");
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "UpdateFailed"));
             }
         }
 
@@ -85,11 +100,11 @@ namespace NetMed.WebApplicationRefactor.Persistence.Repositories
         {
             try
             {
-                await DeleteAsync($"Users/Delete/{id}");
+                await DeleteAsync($"Users/DeleteUser/{id}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting user");
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "DeleteFailed"));
             }
         }
     }

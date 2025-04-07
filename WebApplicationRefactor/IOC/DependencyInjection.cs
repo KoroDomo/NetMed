@@ -1,6 +1,14 @@
-﻿using NetMed.WebApplicationRefactor.Persistence.Interfaces;
-using NetMed.WebApplicationRefactor.Persistence.Repositories;
+﻿using WebApplicationRefactor.Models.Doctors;
+using WebApplicationRefactor.Models.Patients;
+using WebApplicationRefactor.Models.Users;
+
+
+using WebApplicationRefactor.Application.Contracts;
+using WebApplicationRefactor.Persistence.Interfaces.IRepository;
 using WebApplicationRefactor.Persistence.Config;
+using NetMed.WebApplicationRefactor.Persistence.Repositories;
+using WebApplicationRefactor.Application.Services;
+using NetMed.Application.Services;
 
 namespace WebApplicationRefactor.IOC
 {
@@ -13,13 +21,25 @@ namespace WebApplicationRefactor.IOC
 
             // Register HttpClient without BaseAddress
             services.AddHttpClient<DoctorsRepository>();
-
-            // Register Repositories
             services.AddHttpClient<PatientsRepository>();
-
-            // Register Services
             services.AddHttpClient<UsersRepository>();
 
+            // Register Repositories
+            services.AddScoped<IRepository<DoctorsApiModel>, DoctorsRepository>();
+            services.AddScoped<IRepository<PatientsApiModel>, PatientsRepository>();
+            services.AddScoped<IRepository<UsersApiModel>, UsersRepository>();
+
+            // Register Services
+            services.AddScoped<IDoctorServices, DoctorService>();
+            services.AddScoped<IPatientsService, PatientsService>();
+            services.AddScoped<IUsersService, UsersServices>();
+            // Register Error Message Service
+                   services.AddSingleton<IErrorMessageService, ErrorMessageService>();
+
+                  services.AddScoped(typeof(ILoggerManger), typeof(LoggerManger<>));
+
+
+            // Add other dependencies as needed
 
             return services;
         }

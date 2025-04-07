@@ -1,9 +1,10 @@
-﻿using WebApplicationRefactor.Application.BaseApp;
+﻿using NetMed.Application.Base;
 using WebApplicationRefactor.Models.Patients;
+using WebApplicationRefactor.Application.Contracts;
 
-namespace WebApplicationRefactor.Application.Contracts
+namespace WebApplicationRefactor.ServicesApi.Interface
 {
-    public interface IPatientsService : IBaseAppService<PatientsApiModel, PatientsApiModel, PatientsApiModel>
+    public interface IPatientsService : IBaseService<PatientsApiModel, PatientsApiModel, PatientsApiModel>
     {
     }
 }

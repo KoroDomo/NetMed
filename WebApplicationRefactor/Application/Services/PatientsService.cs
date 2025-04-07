@@ -5,12 +5,12 @@ using WebApplicationRefactor.Models.Patients;
 
 namespace WebApplicationRefactor.Application.Services
 {
-    public class PatientsServices : IBaseAppService<PatientsApiModel, PatientsApiModel, PatientsApiModel>
+    public class PatientsService : IBaseAppService<PatientsApiModel, PatientsApiModel, PatientsApiModel>
     {
         private readonly IPatientsRepository _patientsRepository;
-        private readonly ILogger<PatientsServices> _logger;
+        private readonly ILogger<PatientsService> _logger;
 
-        public PatientsServices(IPatientsRepository patientsRepository, ILogger<PatientsServices> logger)
+        public PatientsService(IPatientsRepository patientsRepository, ILogger<PatientsService> logger)
         {
             _patientsRepository = patientsRepository;
             _logger = logger;
@@ -21,7 +21,7 @@ namespace WebApplicationRefactor.Application.Services
             if (dto == null)
             {
                 _logger.LogWarning("Invalid DTO");
-                result.Success = false;
+                result.success = false;
                 result.message = "Invalid DTO";
                 return result;
             }
@@ -31,17 +31,17 @@ namespace WebApplicationRefactor.Application.Services
                 if (patient == null)
                 {
                     _logger.LogError("Failed to add patient");
-                    result.Success = false;
+                    result.success = false;
                     result.message = "Failed to add patient";
                     return result;
                 }
-                result.Success = true;
+                result.success = true;
                 result.data = patient;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error adding patient");
-                result.Success = false;
+                result.success = false;
                 result.message = "Error adding patient";
             }
             return result;
@@ -55,17 +55,17 @@ namespace WebApplicationRefactor.Application.Services
                 if (patient == null)
                 {
                     _logger.LogError("Failed to delete patient");
-                    result.Success = false;
+                    result.success = false;
                     result.message = "Failed to delete patient";
                     return result;
                 }
-                result.Success = true;
+                result.success = true;
                 result.data = patient;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting patient");
-                result.Success = false;
+                result.success = false;
                 result.message = "Error deleting patient";
             }
             return result;
@@ -76,13 +76,13 @@ namespace WebApplicationRefactor.Application.Services
             try
             {
                 var patients = await _patientsRepository.GetAllData();
-                result.Success = true;
+                result.success = true;
                 result.data = patients;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching all patients");
-                result.Success = false;
+                result.success = false;
                 result.message = "Error fetching all patients";
             }
             return result;
@@ -93,7 +93,7 @@ namespace WebApplicationRefactor.Application.Services
             if (id <= 0)
             {
                 _logger.LogWarning("Invalid ID");
-                result.Success = false;
+                result.success = false;
                 result.message = "Invalid ID";
                 return result;
             }
@@ -103,17 +103,17 @@ namespace WebApplicationRefactor.Application.Services
                 if (patient == null)
                 {
                     _logger.LogError("Patient not found");
-                    result.Success = false;
+                    result.success = false;
                     result.message = "Patient not found";
                     return result;
                 }
-                result.Success = true;
+                result.success = true;
                 result.data = patient;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching patient by ID");
-                result.Success = false;
+                result.success = false;
                 result.message = "Error fetching patient by ID";
             }
             return result;
@@ -127,17 +127,17 @@ namespace WebApplicationRefactor.Application.Services
                 if (patient == null)
                 {
                     _logger.LogError("Failed to update patient");
-                    result.Success = false;
+                    result.success = false;
                     result.message = "Failed to update patient";
                     return result;
                 }
-                result.Success = true;
+                result.success = true;
                 result.data = patient;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating patient");
-                result.Success = false;
+                result.success = false;
                 result.message = "Error updating patient";
             }
             return result;

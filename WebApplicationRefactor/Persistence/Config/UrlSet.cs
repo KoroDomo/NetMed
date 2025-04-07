@@ -1,4 +1,4 @@
-﻿namespace WebApplicationRefactor.Persistence.Config
+﻿namespace WebApplicationRefactor.Persisten.Config
 {
     public class UrlSet
     {

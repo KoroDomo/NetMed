@@ -1,18 +1,24 @@
 ﻿using WebApplicationRefactor.Models;
-using WebApplicationRefactor.Models.Doctors;
-using WebApplicationRefactor.Persistence.Config;
-using WebApplicationRefactor.Persistence.Interfaces.IRepository;
 
-namespace NetMed.WebApplicationRefactor.Persistence.Repositories
+using WebApplicationRefactor.Models.Doctors;
+using WebApplicationRefactor.Persisten.Configuration;
+using WebApplicationRefactor.Application.Contracts;
+using WebApplicationRefactor.Persistence.Interfaces.IRepository;
+using WebApplicationRefactor.Application.Services;
+using WebApplicationRefactor.Services.Interface;
+
+namespace WebApplicationRefactor.Persisten.Repository
 {
     public class DoctorsRepository : BaseApi, IRepository<DoctorsApiModel>
     {
         private readonly ILogger<DoctorsRepository> _logger;
+        private readonly IErrorMessageService _errorMessageService;
 
-        public DoctorsRepository(HttpClient httpClient, IConfiguration configuration, ILogger<DoctorsRepository> logger)
+        public DoctorsRepository(HttpClient httpClient, IConfiguration configuration, ILogger<DoctorsRepository> logger, IErrorMessageService errorMessageService)
             : base(httpClient, configuration)
         {
             _logger = logger;
+            _errorMessageService = errorMessageService;
         }
 
         private OperationResult ValidateDoctorPersistence(DoctorsApiModel doctor)
@@ -21,21 +27,22 @@ namespace NetMed.WebApplicationRefactor.Persistence.Repositories
             {
                 return new OperationResult
                 {
-                    Success = false,
+                    success = false,
+                    message = _errorMessageService.GetErrorMessage("EntityBase", "NullEntity")
                 };
             }
-            return new OperationResult { Success = true };
+            return new OperationResult { success = true };
         }
 
         public async Task<IEnumerable<DoctorsApiModel>> GetAllAsync()
         {
             try
             {
-                return await GetAsync<List<DoctorsApiModel>>("Doctors/GetAll");
+                return await GetAsync<List<DoctorsApiModel>>("Doctors/GetDoctors");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, message: "GenericError");
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Generic", "GenericError"));
                 return new List<DoctorsApiModel>();
             }
         }
@@ -44,11 +51,11 @@ namespace NetMed.WebApplicationRefactor.Persistence.Repositories
         {
             try
             {
-                return await GetAsync<DoctorsApiModel>($"Doctor/GetById/{id}");
+                return await GetAsync<DoctorsApiModel>($"Doctors/GetDoctorsByID?id={id}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, message: "GenericError");
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Generic", "GenericError"));
                 return null;
             }
         }
@@ -56,7 +63,7 @@ namespace NetMed.WebApplicationRefactor.Persistence.Repositories
         public async Task AddAsync(DoctorsApiModel entity)
         {
             var result = ValidateDoctorPersistence(entity);
-            if (!result.Success)
+            if (!result.success)
             {
                 _logger.LogError(new Exception(result.message), result.message);
                 return;
@@ -64,18 +71,18 @@ namespace NetMed.WebApplicationRefactor.Persistence.Repositories
 
             try
             {
-                await PostAsync("Doctor", entity);
+                await PostAsync("Doctors/SaveDoctor", entity);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, message: "SaveFailed");
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "SaveFailed"));
             }
         }
 
         public async Task UpdateAsync(DoctorsApiModel entity)
         {
             var result = ValidateDoctorPersistence(entity);
-            if (!result.Success)
+            if (!result.success)
             {
                 _logger.LogError(new Exception(result.message), result.message);
                 return;
@@ -83,11 +90,11 @@ namespace NetMed.WebApplicationRefactor.Persistence.Repositories
 
             try
             {
-                await PutAsync($"Doctor/Update/{entity.Id}", entity);
+                await PutAsync($"Doctors/UpdateDoctor/{entity.Id}", entity);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, message: "UpdateFailed");
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "UpdateFailed"));
             }
         }
 
@@ -95,11 +102,11 @@ namespace NetMed.WebApplicationRefactor.Persistence.Repositories
         {
             try
             {
-                await DeleteAsync($"Doctor/Delete/{id}");
+                await DeleteAsync($"Doctors/DeleteDoctor/{id}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, message: "DeleteFailed");
+                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "DeleteFailed"));
             }
         }
     }
