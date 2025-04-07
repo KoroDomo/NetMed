@@ -105,7 +105,6 @@ namespace NetMedWebApi.Infrastructure.ApiClient.Base
 
             }
 
-            throw new NotImplementedException();
         }
 
     }
