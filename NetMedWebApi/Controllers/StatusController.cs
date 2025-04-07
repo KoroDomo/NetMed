@@ -1,228 +1,142 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NetMedWebApi.Models;
 using NetMedWebApi.Models.Status;
-using System.Text;
-using System.Text.Json;
+
 
 namespace NetMedWebApi.Controllers
 {
     public class StatusController : Controller
     {
-        // GET: StatusController1
-        public async Task<IActionResult> Index()
-        {
-            List<StatusApiModel> status = new List<StatusApiModel>();
-            using (var client = new HttpClient())
+            public StatusController(StatusController services)
             {
-                client.BaseAddress = new Uri(" http://localhost:5261/api/");
-                var reponse = await client.GetAsync("Status/GetAllStatus");
-
-                if (reponse.IsSuccessStatusCode)
-                {
-                    var data = await reponse.Content.ReadFromJsonAsync<OperationResultList<StatusApiModel>>();
-                    return View(data.Data);
-
-                }
-
+                _services = services;
             }
-            return View();
-        }
 
 
-        // GET: StatusController1/Details/5
-        public async Task<IActionResult> Details(int id)
-        {
-            using (var client = new HttpClient())
+
+            public async Task<IActionResult> Index()
             {
-                client.BaseAddress = new Uri("http://localhost:5261/api/");
-                var response = await client.GetAsync($"Status/GetStatusById?ID={id}");
-
-                string apiResponse = await response.Content.ReadAsStringAsync();
-
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    var result = await response.Content.ReadFromJsonAsync<OperationResultSingle<StatusApiModel>>();
+                    var result = await _services.GetAll();
                     return View(result.Data);
                 }
-                else
+                catch (Exception ex)
                 {
-                    ViewBag.Message = "Error obteniendo la Cita";
+                    ViewBag.Message = $"{ex.Message}";
                     return View();
-
                 }
 
             }
-        }
 
-        // GET: StatusController1/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: StatusController1/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(SaveStatusModel saveStatus)
-        {
-            try
+            public async Task<IActionResult> Details(int id)
             {
-                using (var client = new HttpClient())
+                try
                 {
-                    client.BaseAddress = new Uri("http://localhost:5261/api/");
-                    var response = await client.PostAsJsonAsync("Status/CreateStatus", saveStatus);
-
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        await response.Content.ReadFromJsonAsync<OperationResultList<SaveStatusModel>>();
-                        return RedirectToAction(nameof(Index));
-
-                    }
-                    else
-                    {
-                        ViewBag.Message = "Error al guardar los roles";
-                        return View();
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-
-                ViewBag.Message = "Error al guardar los roles";
-                return View();
-            }
-        }
-
-
-
-        // GET: StatusController1/Edit/5
-        public async Task<IActionResult> Edit(int id)
-        {
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri("http://localhost:5261/api/");
-                var response = await client.GetAsync($"Status/GetStatusById?ID={id}");
-
-                string apiResponse = await response.Content.ReadAsStringAsync();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var result = await response.Content.ReadFromJsonAsync<OperationResultSingle<UpdateStatusModel>>();
+                    var result = await _services.GetById<StatusApiModel>(id);
                     return View(result.Data);
                 }
-                else
+                catch (Exception ex)
                 {
-                    ViewBag.Message = "Error obteniendo la Cita";
+                    ViewBag.Message = $"{ex.Message}";
                     return View();
-
                 }
 
             }
-        }
 
-
-        // POST: StatusController1/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UpdateStatusModel updateStatus)
-        {
-            try
+            public ActionResult Create()
             {
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("http://localhost:5261/api/");
-                    var response = await client.PutAsJsonAsync("Status/UpdateStatus", updateStatus);
-
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        await response.Content.ReadFromJsonAsync<OperationResultSingle<UpdateStatusModel>>();
-                        return RedirectToAction(nameof(Index));
-
-                    }
-                    else
-                    {
-                        ViewBag.Message = "Error al guardar los roles";
-                        return View();
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-
-                ViewBag.Message = "Error al guardar los roles";
                 return View();
-            }
-        }
 
-        // GET: StatusController1/Delete/5
+            }
+
+            // POST: RolesCController/Create
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+
+            public async Task<IActionResult> Create(SaveStatusModel save)
+            {
+
+                try
+                {
+                    await _services.Create(save);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+
+                    return View();
+                }
+            }
+
+            // GET: RolesCController/Edit/5
+            public async Task<IActionResult> Edit(int id)
+            {
+                try
+                {
+                    var result = await _services.GetById<UpdateStatusModel>(id);
+                    return View(result.Data);
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = $"{ex.Message}";
+                    return View();
+                }
+            }
+
+        // POST:  StatusController/Edit/5
+        [HttpPost]
+            [ValidateAntiForgeryToken]
+            public async Task<IActionResult> Edit(UpdateStatusModel update)
+            {
+                try
+                {
+                    await _services.Update(update);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+
+                    return View();
+                }
+
+            }
+
+
+
+
+        // GET: StatusController/Delete/5
         public async Task<IActionResult> Delete(int id)
-        {
-            using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:5261/api/");
-                var response = await client.GetAsync($"Status/GetStatusById?ID={id}");
-
-                string apiResponse = await response.Content.ReadAsStringAsync();
-
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    var result = await response.Content.ReadFromJsonAsync<OperationResultSingle<DeleteStatusModel>>();
+                    var result = await _services.GetById<DeleteStatusModel>(id);
                     return View(result.Data);
                 }
-                else
+                catch (Exception ex)
                 {
-                    ViewBag.Message = "Error obteniendo la Cita";
+                    ViewBag.Message = $"{ex.Message}";
                     return View();
-
                 }
-
             }
-        }
 
-        // POST: StatusController1/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id,DeleteStatusModel deleteStatusModel)
-        {
-            try
+            // POST: StatusController/Delete/5
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            public async Task<IActionResult> Delete(int id, DeleteStatusModel delete)
             {
-                using (var client = new HttpClient())
+                try
                 {
-                    client.BaseAddress = new Uri(" http://localhost:5261/api/");
+                    await _services.Delete(delete);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
 
-                    var request = new HttpRequestMessage
-                    {
-                        Method = HttpMethod.Delete,
-                        RequestUri = new Uri(client.BaseAddress, "Status/DeleteStatus"),
-                        Content = new StringContent(JsonSerializer.Serialize(deleteStatusModel), Encoding.UTF8, "application/json")
-                    };
-
-                    var response = await client.SendAsync(request);
-
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        await response.Content.ReadFromJsonAsync<OperationResultList<DeleteStatusModel>>();
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        ViewBag.Message = "Error Eliminando la Cita";
-                        return View();
-                    }
+                    return View();
                 }
             }
-            catch
-            {
-                return View();
-            }
         }
+
+
     }
 }

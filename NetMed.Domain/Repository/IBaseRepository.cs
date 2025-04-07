@@ -18,8 +18,5 @@ namespace NetMed.Domain.Repository
 
         Task<OperationResult> DeleteEntityAsync(TEntity entity);
 
-
-
-
     }
 }

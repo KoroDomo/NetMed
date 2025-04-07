@@ -1,58 +1,50 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NetMedWebApi.Models;
+using NetMedWebApi.Application.Contracts;
 using NetMedWebApi.Models.Notification;
-using System.Text;
-using System.Text.Json;
+
 
 namespace NetMedWebApi.Controllers
 {
     public class NotificationController : Controller
     {
+
+        private readonly INotificationContract _services;
+
+        public NotificationController(INotificationContract services)
+        {
+            _services = services;
+        }
+
         // GET: NotificationController
         public async Task<IActionResult> Index()
         {
-            List<NotificationApiModel> notifications = new List<NotificationApiModel>();
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("http://localhost:5261/api/");
-                var reponse = await client.GetAsync("Notification/GetAllNotifications");
-
-                if (reponse.IsSuccessStatusCode)
-                {
-                    var data = await reponse.Content.ReadFromJsonAsync<OperationResultList<NotificationApiModel>>();
-                    return View(data.Data);
-
-                }
-
+                var result = await _services.GetAll();
+                return View(result.Data);
             }
-            return View();
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"{ex.Message}";
+                return View();
+            }
 
         }
 
         // GET: NotificationController/Details/5
         public async Task<IActionResult> Details(int id)
         {
-
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("http://localhost:5261/api/");
-                var response = await client.GetAsync($"Notification/GetById?Id={id}");
-
-                string apiResponse = await response.Content.ReadAsStringAsync();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var result = await response.Content.ReadFromJsonAsync<OperationResultSingle<NotificationApiModel>>();
-                    return View(result.Data);
-                }
-                else
-                {
-                    ViewBag.Message = "Error obteniendo la Cita";
-                    return View();
-
-                }
-
+                var result = await _services.GetById<NotificationApiModel>(id);
+                return View(result.Data);
             }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"{ex.Message}";
+                return View();
+            }
+
         }
 
         public ActionResult Create()
@@ -70,31 +62,12 @@ namespace NetMedWebApi.Controllers
        
             try  
             {
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri(" http://localhost:5261/api/");
-                    var response = await client.PostAsJsonAsync("Notification/CreatedNotifications", saveNotification);
-
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        await response.Content.ReadFromJsonAsync < OperationResultList<NotificationApiModel>>();
-                        return RedirectToAction(nameof(Index));
-
-                    }
-                    else
-                    {
-                        ViewBag.Message = "Error al guardar los roles";
-                        return View();
-                    }
-
-                }
+                await _services.Create(saveNotification);
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
 
-                ViewBag.Message = "Error al guardar los roles";
                 return View();
             }
         }
@@ -102,25 +75,15 @@ namespace NetMedWebApi.Controllers
         // GET: NotificationController/Edit/5
         public async Task<IActionResult>  Edit(int id)
         {
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("http://localhost:5261/api/");
-                var response = await client.GetAsync($"Notification/GetById?Id={id}");
-
-                string apiResponse = await response.Content.ReadAsStringAsync();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var result = await response.Content.ReadFromJsonAsync <OperationResultSingle<UpdateNotificationModel>>();
-                    return View(result.Data);
-                }
-                else
-                {
-                    ViewBag.Message = "Error obteniendo la Cita";
-                    return View();
-
-                }
-
+                var result = await _services.GetById<UpdateNotificationModel>(id);
+                return View(result.Data);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"{ex.Message}";
+                return View();
             }
         }
 
@@ -131,60 +94,29 @@ namespace NetMedWebApi.Controllers
         {
             try
             {
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("http://localhost:5261/api/");
-                    var response = await client.PutAsJsonAsync("Notification/UpdateNotifications", updateNotificationModel);
-
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        await response.Content.ReadFromJsonAsync<OperationResultSingle<UpdateNotificationModel>>();
-                        return RedirectToAction(nameof(Index));
-
-                    }
-                    else
-                    {
-                        ViewBag.Message = "Error al guardar los roles";
-                        return View();
-                    }
-
-                }
+                await _services.Update(updateNotificationModel);
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
 
-                ViewBag.Message = "Error al guardar los roles";
                 return View();
             }
+           
         }
-
-
-
              
         // GET: NotificationController/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("http://localhost:5261/api/");
-                var response = await client.GetAsync($"Notification/GetById?Id={id}");
-
-                string apiResponse = await response.Content.ReadAsStringAsync();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var result = await response.Content.ReadFromJsonAsync<OperationResultSingle<DeleteNotificationModel>>();
-                    return View(result.Data);
-                }
-                else
-                {
-                    ViewBag.Message = "Error obteniendo la Cita";
-                    return View();
-
-                }
-
+                var result = await _services.GetById<DeleteNotificationModel>(id);
+                return View(result.Data);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"{ex.Message}";
+                return View();
             }
         }
 
@@ -195,36 +127,12 @@ namespace NetMedWebApi.Controllers
         {
             try
             {
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri("http://localhost:5261/api/");
-
-                    var request = new HttpRequestMessage
-                    {
-                        Method = HttpMethod.Delete,
-                        RequestUri = new Uri(client.BaseAddress, "Notification/DeleteNotifications"),
-                        Content = new StringContent(JsonSerializer.Serialize(deleteNotification), Encoding.UTF8, "application/json")
-                    };
-
-                    var response = await client.SendAsync(request);
-
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        await response.Content.ReadFromJsonAsync<OperationResultList<DeleteNotificationModel>>();
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        ViewBag.Message = "Error Eliminando la Cita";
-                        return View();
-                    }
-                }
-               
+                await _services.Delete(deleteNotification);
+                return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+
                 return View();
             }
         }

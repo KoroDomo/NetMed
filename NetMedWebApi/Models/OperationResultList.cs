@@ -1,5 +1,4 @@
-﻿using NetMedWebApi.Models.Notification;
-
+﻿
 namespace NetMedWebApi.Models
 {
     public class OperationResultList <T>
@@ -9,8 +8,13 @@ namespace NetMedWebApi.Models
         public List<T> Data { get; set; }
 
     }
-    public class OperationResultSingle <T>
+    public class OperationResult<T>
     {
+        public OperationResult()
+        {
+            Success = false;
+        
+        }
         public string Message { get; set; }
         public bool Success { get; set; }
 

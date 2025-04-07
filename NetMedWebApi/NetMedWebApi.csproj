@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NetMed.Domain\NetMed.Domain.csproj" />
+    <ProjectReference Include="..\NetMed.Persistence\NetMed.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>
