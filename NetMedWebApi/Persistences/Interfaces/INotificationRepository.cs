@@ -5,9 +5,9 @@ namespace NetMedWebApi.Persistence.Interfaces
 {
     public interface INotificationRepository 
     {
-        Task<OperationResult<T>> GetNotificationByIdAsync<T>(int Id);
-
         Task<OperationResultList<NotificationApiModel>> GetAllNotificationAsync();
+
+        Task<OperationResult<T>> GetNotificationByIdAsync<T>(int Id);
 
         Task<OperationResult<SaveNotificationModel>> CreateNotificationAsync(SaveNotificationModel model);
 
@@ -16,4 +16,6 @@ namespace NetMedWebApi.Persistence.Interfaces
         Task<OperationResult<DeleteNotificationModel>> DeleteNotificationAsync(DeleteNotificationModel model);
 
     }
-}
+
+           
+    }

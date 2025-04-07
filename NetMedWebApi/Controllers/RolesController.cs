@@ -14,8 +14,6 @@ namespace NetMedWebApi.Controllers
             _services = services;
         }
 
-
-
         public async Task<IActionResult> Index()
         {
             try
@@ -52,7 +50,7 @@ namespace NetMedWebApi.Controllers
 
         }
 
-        // POST: RolesCController/Create
+        // POST: RolesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
 
@@ -71,7 +69,7 @@ namespace NetMedWebApi.Controllers
             }
         }
 
-        // GET: RolesCController/Edit/5
+        // GET: RolesController/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -86,7 +84,7 @@ namespace NetMedWebApi.Controllers
             }
         }
 
-        // POST: RolesCController/Edit/5
+        // POST: RolesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UpdateRolesModel update)
@@ -104,10 +102,7 @@ namespace NetMedWebApi.Controllers
 
         }
 
-
-
-
-        // GET: RolesCController/Delete/5
+        // GET: RolesController/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
             try

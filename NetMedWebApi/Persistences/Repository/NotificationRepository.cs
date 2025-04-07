@@ -57,7 +57,6 @@ namespace NetMedWebApi.Persistence.Repository
             const string operation = "Update";
             var result = _validator.CheckIfEntityIsNull(model, operation);
 
-
             try
             {
                 _logger.LogInformation(_message.SuccessMessages["NotificationUpdated"]);
@@ -95,8 +94,6 @@ namespace NetMedWebApi.Persistence.Repository
             }
         }
 
-        
-
         public async Task<OperationResult<SaveNotificationModel>> CreateNotificationAsync(SaveNotificationModel model)
         {
             const string operation = "Create";
@@ -111,10 +108,6 @@ namespace NetMedWebApi.Persistence.Repository
             {
                 _logger.LogInformation(_message.SuccessMessages["NotificationCreated"]);
                 return await PostAsync($"CreatedNotifications", model);
-
-          
-
-
 
             }
             catch (Exception ex)

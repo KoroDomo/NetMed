@@ -1,16 +1,19 @@
-﻿using NetMed.Domain.Base;
-using NetMed.Domain.Entities;
+﻿using NetMedWebApi.Models;
+using NetMedWebApi.Models.Status;
 
 namespace NetMedWebApi.Persistence.Interfaces
 {
     public interface IStatusRepository 
     {
-        Task<OperationResult> GetStatusByIdAsync(int statusId);
-        Task<OperationResult> CreateStatusAsync(Status status);
+        Task<OperationResultList<StatusApiModel>> GetAllStatusAsync();
 
-        Task<OperationResult> UpdateStatusAsync(Status status);
+        Task<OperationResult<T>> GetStatusByIdAsync<T>(int Id);
 
-        Task<OperationResult> DeleteStatusAsync(int statusId);
+        Task<OperationResult<SaveStatusModel>> CreateStatusAsync(SaveStatusModel model);
+
+        Task<OperationResult<UpdateStatusModel>> UpdateStatusAsync(UpdateStatusModel model);
+
+        Task<OperationResult<DeleteStatusModel>> DeleteStatusAsync(DeleteStatusModel model);
     }
 
 }

@@ -41,7 +41,6 @@ namespace NetMedWebApi.Infrastructure.MessageJson
                 ["NotificationLessZero"] = "El ID de notificacion no puede ser menor a 0",
                 ["RolesLessZero"] = "El ID de  roles no puede ser menor a 0",
                 ["StatusLessZero"] = "El ID de Status no puede ser menor a 0",
-
                 ["NotificationMessage"] = "El mensaje no puede pasar de los 600 caracteres",
                 ["RolesMessage"] = "Los roles no puede pasar de 20 caracteres",
                 ["NotificationSentAt"] = "No puede sobrepasar el tiempo mano",

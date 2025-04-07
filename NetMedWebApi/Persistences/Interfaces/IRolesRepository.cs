@@ -1,19 +1,19 @@
-﻿using NetMed.Domain.Base;
-using NetMed.Domain.Entities;
-
+﻿using NetMedWebApi.Models;
+using NetMedWebApi.Models.Roles;
 
 namespace NetMedWebApi.Persistence.Interfaces
 {
     public interface IRolesRepository
     {
+        Task<OperationResultList<RolesApiModel>> GetAllRolesAsync();
 
-        Task<OperationResult> GetRoleByIdAsync(int roles);
+        Task<OperationResult<T>> GetRoleByIdAsync<T>(int Id);
 
-        Task<OperationResult> CreateRoleAsync(Roles roles);
+        Task<OperationResult<SaveRolesModel>> CreateRoleAsync(SaveRolesModel model);
 
-        Task<OperationResult> UpdateRoleAsync(Roles roles);
+        Task<OperationResult<UpdateRolesModel>> UpdateRoleAsync(UpdateRolesModel model);
 
-        Task<OperationResult> DeleteRoleAsync(int roles);
-
+        Task<OperationResult<DeleteRolesModel>> DeleteRoleAsync(DeleteRolesModel model);
     }
 }
+

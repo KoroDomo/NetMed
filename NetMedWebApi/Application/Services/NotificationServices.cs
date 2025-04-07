@@ -64,8 +64,7 @@ namespace NetMedWebApi.Application.Services
 
             try
             {
-               
-
+              
                 if (!result.Success)
                 {
                     _logger.LogWarning(result.Message);

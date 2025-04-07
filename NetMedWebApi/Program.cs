@@ -15,7 +15,9 @@ namespace WebApi
 
             builder.Services.AddHttpClient();
             builder.Services.AddNotificationDependency(builder.Configuration);
-            //builder.Services.AddNetworkTypeDependencies(builder.Configuration);
+            builder.Services.AddRolesDependency(builder.Configuration);
+            builder.Services.AddStatusDependency(builder.Configuration);
+
             builder.Services.AddSingleton<ILoggerCustom, LoggerCustom>();
 
             builder.Services.AddSingleton<IJsonMessage, JsonMessage>();

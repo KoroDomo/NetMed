@@ -1,19 +1,18 @@
-﻿using NetMed.Domain.Entities;
-using NetMedWebApi.Infrastructure.ApiClient.Base;
+﻿using NetMedWebApi.Infrastructure.ApiClient.Base;
 using NetMedWebApi.Infrastructure.Loggin.Interfaces;
 using NetMedWebApi.Infrastructure.MessageJson.interfaces;
 using NetMedWebApi.Infrastructure.Validator;
 using NetMedWebApi.Models;
+using NetMedWebApi.Models.Roles;
 using NetMedWebApi.Persistence.Interfaces;
 
-namespace NetMedWebApi.Persistences.Repository
+namespace NetMedWebApi.Persistence.Repository
 {
     public class RolesRepository : ClientApi, IRolesRepository
     {
         private readonly ILoggerCustom _logger;
         private readonly IValidateGeneral _validator;
         private readonly IJsonMessage _message;
-        private readonly string _baseEndPoint = "Roles/";
 
         public RolesRepository(
             HttpClient httpClient,
@@ -23,103 +22,26 @@ namespace NetMedWebApi.Persistences.Repository
             _logger = logger;
             _message = message;
             _validator = new ValidateGeneral(_logger, _message);
-            BaseEndPoint = _baseEndPoint;
+            BaseEndPoint = "Roles/";
         }
 
-        public async Task<NetMed.Domain.Base.OperationResult> GetRoleByIdAsync(int roles)
+        public async Task<OperationResultList<RolesApiModel>> GetAllRolesAsync()
         {
-            const string operation = "Get";
-            var result = _validator.CheckIfId<Roles>(roles, operation);
-
-            if (!result.Success)
-                return result;
+            const string operation = "GetAll";
+            var result = new OperationResultList<RolesApiModel>();
 
             try
             {
-                return await GetByIdAsync<Roles>($"GetRolesById?roles=", roles);
-            }
-            catch (Exception ex)
-            {
-                result.Message = _message.ErrorMessages["DatabaseError"];
-                _logger.LogError(ex, result.Message);
-                return result;
-            }
-        }
-
-        public async Task<OperationResult> CreateRoleAsync(Roles roles)
-        {
-            const string operation = "Create";
-            var result = _validator.CheckIfEntityIsNull(roles, operation);
-
-            if (!result.Success)
-                return result;
-
-            try
-            {
-                return await PostAsync("CreateRole", roles);
-            }
-            catch (Exception ex)
-            {
-                result.Message = _message.ErrorMessages["GeneralError"];
-                _logger.LogError(ex, result.Message);
-                return result;
-            }
-        }
-
-        public async Task<OperationResult> UpdateRoleAsync(Roles roles)
-        {
-            const string operation = "Update";
-            var result = _validator.CheckIfEntityIsNull(roles, operation);
-
-            if (!result.Success)
-                return result;
-
-            try
-            {
-                return await PutAsync("UpdateRole", roles);
-            }
-            catch (Exception ex)
-            {
-                result.Message = _message.ErrorMessages["GeneralError"];
-                _logger.LogError(ex, result.Message);
-                return result;
-            }
-        }
-
-        public async Task<OperationResult> DeleteRoleAsync(int roles)
-        {
-            const string operation = "Delete";
-            var result = _validator.CheckIfId<Roles>(roles, operation);
-
-            if (!result.Success)
-                return result;
-
-            try
-            {
-                return await DeleteAsync($"{_baseEndPoint}DeleteRole", roles);
-            }
-            catch (Exception ex)
-            {
-                result.Message = _message.ErrorMessages["GeneralError"];
-                _logger.LogError(ex, result.Message);
-                return result;
-            }
-        }
-
-        public async Task<OperationResultList<Roles>> GetAllRolesAsync()
-        {
-            var result = new OperationResultList<Roles>();
-
-            try
-            {
-                result = await GetAllAsync<Roles>("GetAllRoles");
+                result = await GetAllAsync<RolesApiModel>($"GetAllRoles");
 
                 if (result == null || !result.Success)
                 {
-                    result.Message = _message.ErrorMessages["GetAllNull"];
+                    result.Message = _message.ErrorMessages["NullEntity"];
                     _logger.LogWarning(result.Message);
+                    return result;
                 }
-
+                result.Success = true;
+                _logger.LogInformation(_message.SuccessMessages["GetAllEntity"]);
                 return result;
             }
             catch (Exception ex)
@@ -129,5 +51,94 @@ namespace NetMedWebApi.Persistences.Repository
                 return result;
             }
         }
+
+        public async Task<OperationResult<UpdateRolesModel>> UpdateRoleAsync(UpdateRolesModel model)
+        {
+            const string operation = "Update";
+            var result = _validator.CheckIfEntityIsNull(model, operation);
+
+
+            try
+            {
+                _logger.LogInformation(_message.SuccessMessages["RoleUpdated"]);
+                return await PutAsync($"UpdateRole", model);
+            }
+            catch (Exception ex)
+            {
+                result.Message = _message.ErrorMessages["DatabaseError"];
+                _logger.LogError(ex, result.Message);
+                return result;
+            }
+        }
+
+
+        public async Task<OperationResult<T>> GetRoleByIdAsync<T>(int Id)
+        {
+            const string operation = "Get";
+            var result = _validator.CheckIfId<T>(Id, operation);
+
+            if (!result.Success)
+            {
+                return result;
+            }
+
+            try
+            {
+                _logger.LogInformation(_message.SuccessMessages["RoleFound"]);
+                return await GetByIdAsync<T>($"GetRolesById?roles=", Id);
+
+            }
+            catch (Exception ex)
+            {
+                result.Message = _message.ErrorMessages["DatabaseError"];
+                _logger.LogError(ex, result.Message);
+                return result;
+            }
+        }
+
+        public async Task<OperationResult<SaveRolesModel>> CreateRoleAsync(SaveRolesModel model)
+        {
+            const string operation = "Create";
+            var result = _validator.CheckIfEntityIsNull(model, operation);
+
+            if (!result.Success)
+            {
+                return result;
+            }
+
+            try
+            {
+                _logger.LogInformation(_message.SuccessMessages["RoleCreated"]);
+                return await PostAsync($"CreateRole", model);
+
+            }
+            catch (Exception ex)
+            {
+                result.Message = _message.ErrorMessages["DatabaseError"];
+                _logger.LogError(ex, result.Message);
+                return result;
+            }
+        }
+
+        public async Task<OperationResult<DeleteRolesModel>> DeleteRoleAsync(DeleteRolesModel model)
+        {
+            const string operation = "Delete";
+            var result = _validator.CheckIfEntityIsNull(model, operation);
+
+            if (!result.Success) return result;
+
+            try
+            {
+                _logger.LogInformation(_message.SuccessMessages["RoleDeleted"]);
+                return await DeleteAsync($"DeleteRole", model);
+            }
+            catch (Exception ex)
+            {
+                result.Message = _message.ErrorMessages["DatabaseError"];
+                _logger.LogError(ex, result.Message);
+                return result;
+            }
+        }
+
     }
 }
