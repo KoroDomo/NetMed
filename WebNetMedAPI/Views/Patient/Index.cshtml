@@ -48,6 +48,13 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
+			if (item == null)
+			{
+				<tr>
+					<td colspan="10">No data available</td>
+				</tr>
+				break;
+			}
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Id)

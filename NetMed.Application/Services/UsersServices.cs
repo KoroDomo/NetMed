@@ -16,7 +16,7 @@ using NetMed.Application.Dtos;
 
 namespace NetMed.Application.Services
 {
-    public class UsersServices : UsersValidations, IUsersServices
+    public class UsersServices : UsersValidations, IUsersService
     {
         private NetMedContext _context;
         private readonly ILogger<UsersServices> _logger;

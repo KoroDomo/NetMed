@@ -7,7 +7,7 @@ using NetMed.Domain.Entities;
 
 namespace NetMed.Application.Contracts
 {
-    public interface IUsersServices : IBaseService<AddUserDto, UpdateUserDto, DeleteUserDto >
+    public interface IUsersService : IBaseService<AddUserDto, UpdateUserDto, DeleteUserDto >
     {
 
     }

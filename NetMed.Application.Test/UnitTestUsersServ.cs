@@ -17,7 +17,7 @@ public class UnitTestUsersServ
 {
     private readonly Mock<IUsersRepository> _mockUsersRepository;
     private readonly ILogger<UsersServices> _logger;
-    private readonly IUsersServices _usersServices;
+    private readonly IUsersService _usersServices;
 
     public UnitTestUsersServ()
     {

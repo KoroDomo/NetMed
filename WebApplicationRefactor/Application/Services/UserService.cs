@@ -10,19 +10,20 @@ namespace WebApplicationRefactor.Services.Service
     public class UsersService : IUsersService
     {
         private readonly IRepository<UsersApiModel> _userRepository;
-        private readonly ILoggerManger<UsersService> _logger;
-        private readonly IErrorMessageService _errorMessageService;
+        private readonly ILogger<UsersService> _logger;
 
-        public UsersService(IRepository<UsersApiModel> userRepository, ILoggerManger<UsersService> logger, IErrorMessageService errorMessageService)
+
+        public UsersService(IRepository<UsersApiModel> userRepository, ILogger<UsersService> logger, IErrorMessageService errorMessageService)
         {
             _userRepository = userRepository;
             _logger = logger;
-            _errorMessageService = errorMessageService;
+      
         }
 
-        public async Task<OperationResult> GetAll()
+        public async Task<OperationResult> GetAllData()
         {
-            var result = new OperationResult();
+     
+        var result = new OperationResult();
             try
             {
                 var users = await _userRepository.GetAllAsync();
@@ -31,9 +32,9 @@ namespace WebApplicationRefactor.Services.Service
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "GenericError"));
+               
                 result.success = false;
-                result.message = _errorMessageService.GetErrorMessage("Operations", "GenericError");
+                result.message = "Operations, GenericError";
             }
             return result;
         }
@@ -43,9 +44,9 @@ namespace WebApplicationRefactor.Services.Service
             var result = new OperationResult();
             if (id <= 0)
             {
-                _logger.LogWarning(_errorMessageService.GetErrorMessage("EntityBase", "InvalidID"));
+                _logger.LogWarning("Invalid ID provided: {Id}", id); 
                 result.success = false;
-                result.message = _errorMessageService.GetErrorMessage("EntityBase", "InvalidID");
+                result.message = "EntityBase, InvalidID";
                 return result;
             }
             try
@@ -53,9 +54,8 @@ namespace WebApplicationRefactor.Services.Service
                 var user = await _userRepository.GetByIdAsync(id);
                 if (user == null)
                 {
-                    _logger.LogError(new Exception(_errorMessageService.GetErrorMessage("Entity", "NotFound")), _errorMessageService.GetErrorMessage("Entity", "NotFound"));
                     result.success = false;
-                    result.message = _errorMessageService.GetErrorMessage("Entity", "NotFound");
+                    result.message = "Entity NotFound";
                     return result;
                 }
                 result.success = true;
@@ -63,19 +63,19 @@ namespace WebApplicationRefactor.Services.Service
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "GenericError"));
+                _logger.LogError(ex, "An error occurred while retrieving user by ID: {Id}", id); 
                 result.success = false;
-                result.message = _errorMessageService.GetErrorMessage("Operations", "GenericError");
+                result.message = "Operations GenericError";
             }
             return result;
         }
 
-        public async Task<OperationResult> Save(UsersApiModel dto)
+        public async Task<OperationResult> Add(UsersApiModel dto)
         {
             var validationResult = ValidateUser(dto);
             if (!validationResult.success)
             {
-                return validationResult;
+                return await Task.FromResult(validationResult);
             }
 
             var result = new OperationResult();
@@ -83,13 +83,13 @@ namespace WebApplicationRefactor.Services.Service
             {
                 await _userRepository.AddAsync(dto);
                 result.success = true;
-                result.message = _errorMessageService.GetErrorMessage("Operations", "SaveSuccess");
+                result.message = "Operations SaveSuccess";
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "SaveFailed"));
+                _logger.LogError(ex, "Operations, SaveFailed");
                 result.success = false;
-                result.message = _errorMessageService.GetErrorMessage("Operations", "SaveFailed");
+                result.message = "Operations " + " SaveFailed";
             }
             return result;
         }
@@ -107,31 +107,32 @@ namespace WebApplicationRefactor.Services.Service
             {
                 await _userRepository.UpdateAsync(dto);
                 result.success = true;
-                result.message = _errorMessageService.GetErrorMessage("Operations", "UpdateSuccess");
+                result.message = ("Operations" +  " UpdateSuccess");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "UpdateFailed"));
+                _logger.LogError(ex, ("Operations"+"UpdateFailed"));
                 result.success = false;
-                result.message = _errorMessageService.GetErrorMessage("Operations", "UpdateFailed");
+                result.message = "Operations"+ "UpdateFailed";
             }
             return result;
         }
 
-        public async Task<OperationResult> Remove(UsersApiModel dto)
+        public async Task<OperationResult> Delete(UsersApiModel dto)
         {
-            var result = new OperationResult();
+       
+        var result = new OperationResult();
             try
             {
                 await _userRepository.DeleteAsync(dto.Id);
                 result.success = true;
-                result.message = _errorMessageService.GetErrorMessage("Operations", "DeleteSuccess");
+                result.message = "Operations" + "DeleteSuccess";
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, _errorMessageService.GetErrorMessage("Operations", "DeleteFailed"));
+                _logger.LogError(ex,("Operations" + " DeleteFailed"));
                 result.success = false;
-                result.message = _errorMessageService.GetErrorMessage("Operations", "DeleteFailed");
+                result.message = ("Operations" +  " DeleteFailed");
             }
             return result;
         }
@@ -143,7 +144,8 @@ namespace WebApplicationRefactor.Services.Service
                 return new OperationResult
                 {
                     success = false,
-                    message = _errorMessageService.GetErrorMessage("User", "NullUser")
+                    message = "User " + 
+                    "NullUser"
                 };
             }
 
@@ -152,7 +154,7 @@ namespace WebApplicationRefactor.Services.Service
                 return new OperationResult
                 {
                     success = false,
-                    message = _errorMessageService.GetErrorMessage("User", "EmptyName")
+                    message = "User" + "EmptyName"
                 };
             }
 
@@ -161,12 +163,17 @@ namespace WebApplicationRefactor.Services.Service
                 return new OperationResult
                 {
                     success = false,
-                    message = _errorMessageService.GetErrorMessage("User", "NameTooLong")
+                    message = "User"+"NameTooLong"
                 };
             }
 
             return new OperationResult { success = true };
         }
 
+   
+
+     
+
+      
     }
 }

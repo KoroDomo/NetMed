@@ -14,4 +14,9 @@
     <ProjectReference Include="..\NetMed.Application\NetMed.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\DoctorWeb\" />
+    <Folder Include="Views\Users\" />
+  </ItemGroup>
+
 </Project>

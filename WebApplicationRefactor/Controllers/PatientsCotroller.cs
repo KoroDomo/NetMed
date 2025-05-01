@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NetMed.Domain.Base;
 using WebApplicationRefactor.Models.Patients;
 using WebApplicationRefactor.ServicesApi.Interface;
 
@@ -16,7 +17,8 @@ namespace WebApplicationRefactor.Controllers
         // GET: PatientsWebController
         public async Task<IActionResult> Index()
         {
-            var result = await _patientsService.GetAllData();
+            OperationResult result = new OperationResult();
+            await _patientsService.GetAllData();
             if (result.Success)
             {
                 return View(result.data);
@@ -28,7 +30,8 @@ namespace WebApplicationRefactor.Controllers
         // GET: PatientsWebController/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            var result = await _patientsService.GetById(id);
+            OperationResult result = new OperationResult();
+            await _patientsService.GetById(id);
             if (result.Success)
             {
                 return View(result.data);
@@ -48,7 +51,8 @@ namespace WebApplicationRefactor.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PatientsApiModel patient)
         {
-            var result = await _patientsService.Add(patient);
+            OperationResult result = new OperationResult();
+            await _patientsService.Add(patient);
             if (result.Success)
             {
                 return RedirectToAction(nameof(Index));
@@ -60,7 +64,8 @@ namespace WebApplicationRefactor.Controllers
         // GET: PatientsWebController/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            var result = await _patientsService.GetById(id);
+            OperationResult result = new OperationResult();
+            await _patientsService.GetById(id);
             if (result.Success)
             {
                 return View(result.data);
@@ -74,7 +79,8 @@ namespace WebApplicationRefactor.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, PatientsApiModel patient)
         {
-            var result = await _patientsService.Update(patient);
+            OperationResult result = new OperationResult();
+            await _patientsService.Update(patient);
             if (result.Success)
             {
                 return RedirectToAction(nameof(Index));
@@ -87,7 +93,8 @@ namespace WebApplicationRefactor.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _patientsService.GetById(id);
+            OperationResult result = new OperationResult();
+            await _patientsService.GetById(id);
             if (result.Success)
             {
                 return View(result.data);
@@ -101,7 +108,8 @@ namespace WebApplicationRefactor.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var result = await _patientsService.Delete(new PatientsApiModel { Id = id });
+            OperationResult result = new OperationResult();
+          await _patientsService.Delete(new PatientsApiModel { Id = id });
             if (result.Success)
             {
                 return RedirectToAction(nameof(Index));

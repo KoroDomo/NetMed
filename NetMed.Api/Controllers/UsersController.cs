@@ -10,8 +10,8 @@ namespace NetMed.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly ILogger<UsersController> _logger;
-        private readonly IUsersServices _usersServices;
-        public UsersController(IUsersServices usersServices,
+        private readonly IUsersService _usersServices;
+        public UsersController(IUsersService usersServices,
             ILogger<UsersController> logger)
         {
             _usersServices = usersServices;

@@ -1,16 +1,20 @@
-﻿using NetMed.WebApplicationRefactor.Persistence.Interfaces;
+﻿using WebApplicationRefactor.Models.Patients;
+using WebApplicationRefactor.Persistence.Interfaces.IRepository;
+using WebApplicationRefactor.Services.Interface;
 using WebApplicationRefactor.Application.BaseApp;
+using NetMed.Persistence.Interfaces;
+using WebApplicationRefactor.ServicesApi.Interface;
 using WebApplicationRefactor.Models;
-using WebApplicationRefactor.Models.Patients;
 
-namespace WebApplicationRefactor.Application.Services
+
+namespace WebApplicationRefactor.Services.Service
 {
-    public class PatientsService : IBaseAppService<PatientsApiModel, PatientsApiModel, PatientsApiModel>
+    public class PatientsService : IPatientsService
     {
-        private readonly IPatientsRepository _patientsRepository;
+        private readonly IRepository<PatientsApiModel> _patientsRepository;
         private readonly ILogger<PatientsService> _logger;
 
-        public PatientsService(IPatientsRepository patientsRepository, ILogger<PatientsService> logger)
+        public PatientsService(IRepository<PatientsApiModel> patientsRepository,  ILogger<PatientsService> logger)
         {
             _patientsRepository = patientsRepository;
             _logger = logger;
@@ -27,8 +31,8 @@ namespace WebApplicationRefactor.Application.Services
             }
             try
             {
-                var patient = await _patientsRepository.Add(dto);
-                if (patient == null)
+              await _patientsRepository.AddAsync(dto);
+                if (result == null)
                 {
                     _logger.LogError("Failed to add patient");
                     result.success = false;
@@ -36,7 +40,7 @@ namespace WebApplicationRefactor.Application.Services
                     return result;
                 }
                 result.success = true;
-                result.data = patient;
+              
             }
             catch (Exception ex)
             {
@@ -51,8 +55,8 @@ namespace WebApplicationRefactor.Application.Services
             var result = new OperationResult();
             try
             {
-                var patient = await _patientsRepository.Delete(dto);
-                if (patient == null)
+                 await _patientsRepository.DeleteAsync(dto.Id);
+                if (result == null)
                 {
                     _logger.LogError("Failed to delete patient");
                     result.success = false;
@@ -60,7 +64,7 @@ namespace WebApplicationRefactor.Application.Services
                     return result;
                 }
                 result.success = true;
-                result.data = patient;
+                
             }
             catch (Exception ex)
             {
@@ -75,7 +79,7 @@ namespace WebApplicationRefactor.Application.Services
             var result = new OperationResult();
             try
             {
-                var patients = await _patientsRepository.GetAllData();
+                var patients = await _patientsRepository.GetAllAsync();
                 result.success = true;
                 result.data = patients;
             }
@@ -99,7 +103,7 @@ namespace WebApplicationRefactor.Application.Services
             }
             try
             {
-                var patient = await _patientsRepository.GetById(id);
+                var patient = await _patientsRepository.GetByIdAsync(id);
                 if (patient == null)
                 {
                     _logger.LogError("Patient not found");
@@ -123,16 +127,8 @@ namespace WebApplicationRefactor.Application.Services
             var result = new OperationResult();
             try
             {
-                var patient = await _patientsRepository.Update(dto);
-                if (patient == null)
-                {
-                    _logger.LogError("Failed to update patient");
-                    result.success = false;
-                    result.message = "Failed to update patient";
-                    return result;
-                }
+                await _patientsRepository.UpdateAsync(dto);
                 result.success = true;
-                result.data = patient;
             }
             catch (Exception ex)
             {

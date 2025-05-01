@@ -5,10 +5,14 @@ using WebApplicationRefactor.Models.Users;
 
 using WebApplicationRefactor.Application.Contracts;
 using WebApplicationRefactor.Persistence.Interfaces.IRepository;
-using WebApplicationRefactor.Persistence.Config;
-using NetMed.WebApplicationRefactor.Persistence.Repositories;
 using WebApplicationRefactor.Application.Services;
 using NetMed.Application.Services;
+using WebApplicationRefactor.Persisten.Config;
+using WebApplicationRefactor.Persisten.Repository;
+using WebApplicationRefactor.ServicesApi.Interface;
+using WebApplicationRefactor.Services.Interface;
+using WebApplicationRefactor.Application.IBaseApp;
+using WebApplicationRefactor.Services.Service;
 
 namespace WebApplicationRefactor.IOC
 {
@@ -30,13 +34,15 @@ namespace WebApplicationRefactor.IOC
             services.AddScoped<IRepository<UsersApiModel>, UsersRepository>();
 
             // Register Services
-            services.AddScoped<IDoctorServices, DoctorService>();
             services.AddScoped<IPatientsService, PatientsService>();
-            services.AddScoped<IUsersService, UsersServices>();
-            // Register Error Message Service
-                   services.AddSingleton<IErrorMessageService, ErrorMessageService>();
+            services.AddScoped<IDoctorServices, DoctorService>();
 
-                  services.AddScoped(typeof(ILoggerManger), typeof(LoggerManger<>));
+            // Fix for CS0311: Ensure UsersServices implements IUsersService
+            services.AddScoped<IUsersService, UsersService>();
+
+            // Register Error Message Service
+
+            services.AddScoped<ILoggerManager, ILoggerManager>();
 
 
             // Add other dependencies as needed
